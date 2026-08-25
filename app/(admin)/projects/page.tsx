@@ -1,3 +1,5 @@
+import ProjectMain from "./components/projectMain";
+
 export default function ProjectsPage() {
-  return null;
+  return <ProjectMain />;
 }

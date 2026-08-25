@@ -1,36 +1,37 @@
 import apiServices from "../apiServices";
 import { validateOrThrowApiResponse } from "../response-validator";
 
-export type PortItem = {
+export type ProjectItem = {
   id: number;
-  port_number: number;
-  project_id: number;
-  project_name: string;
+  name: string;
   description: string | null;
+  resource_type_id: number;
+  resource_type_code: string;
+  resource_type_name: string;
   is_active: boolean;
   created_at: string;
   updated_at: string;
 };
 
-export type CreatePortPayload = {
-  port_number: number;
-  project_id: number;
+export type CreateProjectPayload = {
+  name: string;
   description?: string | null;
+  resource_type_id: number;
   is_active?: boolean;
 };
 
-export type UpdatePortPayload = {
-  port_number?: number;
-  project_id?: number;
+export type UpdateProjectPayload = {
+  name?: string;
   description?: string | null;
+  resource_type_id?: number;
   is_active?: boolean;
 };
 
-export type PortListParams = {
+export type ProjectListParams = {
   is_active?: boolean;
-  project_id?: number;
-  project_name?: string;
-  port_number?: number;
+  name?: string;
+  resource_type_id?: number;
+  resource_type_code?: string;
 };
 
 function failedResult(err: unknown, fallback: string) {
@@ -45,10 +46,10 @@ function failedResult(err: unknown, fallback: string) {
   };
 }
 
-const portAPI = {
-  getPortAll(params?: PortListParams) {
+const projectAPI = {
+  getProjectAll(params?: ProjectListParams) {
     return apiServices
-      .get(`ports`, {
+      .get(`projects`, {
         params,
         headers: {
           "Content-Type": "application/json",
@@ -57,14 +58,14 @@ const portAPI = {
       })
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error getPortAll:", err);
-        return failedResult(err, "การดึงข้อมูล Port ล้มเหลว");
+        console.log("Error getProjectAll:", err);
+        return failedResult(err, "การดึงข้อมูล Project ล้มเหลว");
       });
   },
 
-  getPortById(id: string | number) {
+  getProjectById(id: string | number) {
     return apiServices
-      .get(`ports/${id}`, {
+      .get(`projects/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -72,14 +73,14 @@ const portAPI = {
       })
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error getPortById:", err);
-        return failedResult(err, "การดึงข้อมูล Port ล้มเหลว");
+        console.log("Error getProjectById:", err);
+        return failedResult(err, "การดึงข้อมูล Project ล้มเหลว");
       });
   },
 
-  createPort(payload: CreatePortPayload) {
+  createProject(payload: CreateProjectPayload) {
     return apiServices
-      .post(`ports`, payload, {
+      .post(`projects`, payload, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -87,14 +88,14 @@ const portAPI = {
       })
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error createPort:", err);
-        return failedResult(err, "การสร้าง Port ล้มเหลว");
+        console.log("Error createProject:", err);
+        return failedResult(err, "การสร้าง Project ล้มเหลว");
       });
   },
 
-  updatePort(id: string | number, payload: UpdatePortPayload) {
+  updateProject(id: string | number, payload: UpdateProjectPayload) {
     return apiServices
-      .put(`ports/${id}`, payload, {
+      .put(`projects/${id}`, payload, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -102,15 +103,15 @@ const portAPI = {
       })
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error updatePort:", err);
-        return failedResult(err, "การแก้ไข Port ล้มเหลว");
+        console.log("Error updateProject:", err);
+        return failedResult(err, "การแก้ไข Project ล้มเหลว");
       });
   },
 
-  patchPortIsActive(id: string | number, is_active: boolean) {
+  patchProjectIsActive(id: string | number, is_active: boolean) {
     return apiServices
       .patch(
-        `ports/${id}/is-active`,
+        `projects/${id}/is-active`,
         { is_active },
         {
           headers: {
@@ -121,14 +122,14 @@ const portAPI = {
       )
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error patchPortIsActive:", err);
-        return failedResult(err, "การเปลี่ยนสถานะ Port ล้มเหลว");
+        console.log("Error patchProjectIsActive:", err);
+        return failedResult(err, "การเปลี่ยนสถานะ Project ล้มเหลว");
       });
   },
 
-  softDeletePort(id: string | number) {
+  softDeleteProject(id: string | number) {
     return apiServices
-      .delete(`ports/${id}`, {
+      .delete(`projects/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -136,14 +137,14 @@ const portAPI = {
       })
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error softDeletePort:", err);
-        return failedResult(err, "การลบ Port ล้มเหลว");
+        console.log("Error softDeleteProject:", err);
+        return failedResult(err, "การลบ Project ล้มเหลว");
       });
   },
 
-  hardDeletePort(id: string | number) {
+  hardDeleteProject(id: string | number) {
     return apiServices
-      .delete(`ports/${id}/hard`, {
+      .delete(`projects/${id}/hard`, {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -151,10 +152,10 @@ const portAPI = {
       })
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
-        console.log("Error hardDeletePort:", err);
-        return failedResult(err, "การลบ Port ถาวรล้มเหลว");
+        console.log("Error hardDeleteProject:", err);
+        return failedResult(err, "การลบ Project ถาวรล้มเหลว");
       });
   },
 };
 
-export default portAPI;
+export default projectAPI;

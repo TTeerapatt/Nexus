@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { FiChevronDown, FiX } from "react-icons/fi";
-import portAPI, { type PortItem } from "@/app/services/port/portAPI";
-import type { ProjectItem } from "@/app/services/project/projectAPI";
+import projectAPI, { type ProjectItem } from "@/app/services/project/projectAPI";
+import type { ResourceTypeItem } from "@/app/services/resourceType/resourceTypeAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
 import {
@@ -12,70 +12,60 @@ import {
   filterSelectClass,
 } from "@/app/ui/filterPanel";
 
-type PortFormModalProps = {
+type ProjectFormModalProps = {
   open: boolean;
-  port?: PortItem | null;
-  projects: ProjectItem[];
-  /** project ที่ถูกใช้แล้วใน ports อื่น (สำหรับเตือนตอนสร้าง/แก้ไข) */
-  usedProjects?: Array<{ project_id: number; port_number: number }>;
+  project?: ProjectItem | null;
+  resourceTypes: ResourceTypeItem[];
   onClose: () => void;
   onSaved: () => void;
 };
 
 type FormState = {
-  port_number: string;
-  project_id: string;
+  name: string;
   description: string;
+  resource_type_id: string;
   is_active: boolean;
 };
 
 type FormField = keyof FormState;
 
-function emptyForm(projects: ProjectItem[]): FormState {
-  const activeProjects = projects.filter((item) => item.is_active);
+function emptyForm(resourceTypes: ResourceTypeItem[]): FormState {
   return {
-    port_number: "",
-    project_id:
-      activeProjects.length > 0 ? String(activeProjects[0].id) : "",
+    name: "",
     description: "",
+    resource_type_id:
+      resourceTypes.length > 0 ? String(resourceTypes[0].id) : "",
     is_active: true,
   };
 }
 
-function formFromPort(port: PortItem): FormState {
+function formFromProject(project: ProjectItem): FormState {
   return {
-    port_number: String(port.port_number),
-    project_id: String(port.project_id || ""),
-    description: port.description || "",
-    is_active: Boolean(port.is_active),
+    name: project.name || "",
+    description: project.description || "",
+    resource_type_id: String(project.resource_type_id || ""),
+    is_active: Boolean(project.is_active),
   };
 }
 
-export default function PortFormModal({
+export default function ProjectFormModal({
   open,
-  port = null,
-  projects,
-  usedProjects = [],
+  project = null,
+  resourceTypes,
   onClose,
   onSaved,
-}: PortFormModalProps) {
+}: ProjectFormModalProps) {
   const { withLoading } = useLoading();
-  const isEdit = port != null;
-  const [form, setForm] = useState<FormState>(() => emptyForm(projects));
+  const isEdit = project != null;
+  const [form, setForm] = useState<FormState>(() => emptyForm(resourceTypes));
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<FormField, boolean>>
   >({});
 
-  const selectableProjects = projects.filter((item) => {
-    if (item.is_active) return true;
-    if (isEdit && Number(item.id) === Number(port?.project_id)) return true;
-    return false;
-  });
-
   const resetState = useCallback(() => {
-    setForm(port ? formFromPort(port) : emptyForm(projects));
+    setForm(project ? formFromProject(project) : emptyForm(resourceTypes));
     setFieldErrors({});
-  }, [port, projects]);
+  }, [project, resourceTypes]);
 
   useEffect(() => {
     if (!open) return;
@@ -130,37 +120,19 @@ export default function PortFormModal({
   };
 
   const handleSave = async () => {
-    const portNumber = Number(form.port_number.trim());
-    const projectId = Number(form.project_id);
+    const name = form.name.trim();
     const description = form.description.trim();
+    const resourceTypeId = Number(form.resource_type_id);
 
-    if (!Number.isInteger(portNumber) || portNumber < 1 || portNumber > 65535) {
-      setFieldErrors({ port_number: true });
-      await popup.warning(
-        "ข้อมูลไม่ครบ",
-        "กรุณากรอกเลข Port เป็นตัวเลขระหว่าง 1–65535"
-      );
+    if (!name) {
+      setFieldErrors({ name: true });
+      await popup.warning("ข้อมูลไม่ครบ", "กรุณากรอกชื่อ Project");
       return;
     }
 
-    if (!Number.isInteger(projectId) || projectId <= 0) {
-      setFieldErrors({ project_id: true });
-      await popup.warning("ข้อมูลไม่ครบ", "กรุณาเลือก Project");
-      return;
-    }
-
-    const conflict = usedProjects.find((item) => {
-      if (Number(item.project_id) !== projectId) return false;
-      if (isEdit && Number(port.project_id) === projectId) return false;
-      return true;
-    });
-
-    if (conflict) {
-      setFieldErrors({ project_id: true });
-      await popup.warning(
-        "ไม่สามารถบันทึกได้",
-        `Project นี้ถูกใช้กับ port ${conflict.port_number} แล้ว กรุณาเลือก Project อื่น`
-      );
+    if (!Number.isInteger(resourceTypeId) || resourceTypeId <= 0) {
+      setFieldErrors({ resource_type_id: true });
+      await popup.warning("ข้อมูลไม่ครบ", "กรุณาเลือก Resource Type");
       return;
     }
 
@@ -168,16 +140,16 @@ export default function PortFormModal({
 
     await withLoading(async () => {
       const payload = {
-        port_number: portNumber,
-        project_id: projectId,
+        name,
         description: description || null,
+        resource_type_id: resourceTypeId,
         is_active: form.is_active,
       };
 
       const result = (
         isEdit
-          ? await portAPI.updatePort(port.id, payload)
-          : await portAPI.createPort(payload)
+          ? await projectAPI.updateProject(project.id, payload)
+          : await projectAPI.createProject(payload)
       ) as {
         success?: boolean;
         status?: string;
@@ -190,13 +162,15 @@ export default function PortFormModal({
           isEdit ? "แก้ไขไม่สำเร็จ" : "สร้างไม่สำเร็จ",
           result?.errMessage ||
             result?.message ||
-            (isEdit ? "ไม่สามารถแก้ไข Port ได้" : "ไม่สามารถสร้าง Port ได้")
+            (isEdit
+              ? "ไม่สามารถแก้ไข Project ได้"
+              : "ไม่สามารถสร้าง Project ได้")
         );
         return;
       }
 
       saved = true;
-    }, isEdit ? "กำลังบันทึกการแก้ไข..." : "กำลังสร้าง Port...");
+    }, isEdit ? "กำลังบันทึกการแก้ไข..." : "กำลังสร้าง Project...");
 
     if (!saved) return;
 
@@ -204,7 +178,9 @@ export default function PortFormModal({
     onSaved();
     await popup.success(
       isEdit ? "แก้ไขสำเร็จ" : "เพิ่มสำเร็จ",
-      isEdit ? "บันทึกข้อมูล Port เรียบร้อยแล้ว" : "สร้าง Port เรียบร้อยแล้ว"
+      isEdit
+        ? "บันทึกข้อมูล Project เรียบร้อยแล้ว"
+        : "สร้าง Project เรียบร้อยแล้ว"
     );
   };
 
@@ -226,10 +202,10 @@ export default function PortFormModal({
         <div className="flex items-center justify-between border-b border-[#eef2ff] px-6 py-4">
           <div>
             <h2 className="text-[18px] font-bold text-[#1f2640]">
-              {isEdit ? "แก้ไข Port" : "เพิ่ม Port"}
+              {isEdit ? "แก้ไข Project" : "เพิ่ม Project"}
             </h2>
             <p className="text-[13px] text-[#7a849c]">
-              ระบุเลข port และ project ที่ใช้งาน
+              ระบุชื่อ project และประเภท resource
             </p>
           </div>
           <button
@@ -243,45 +219,40 @@ export default function PortFormModal({
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">
-          <FilterField label="Port Number *" htmlFor="port-number">
+          <FilterField label="ชื่อ Project *" htmlFor="project-name">
             <input
-              id="port-number"
-              type="number"
-              min={1}
-              max={65535}
-              value={form.port_number}
+              id="project-name"
+              type="text"
+              value={form.name}
               onChange={(e) => {
-                clearFieldError("port_number");
-                setForm((prev) => ({ ...prev, port_number: e.target.value }));
+                clearFieldError("name");
+                setForm((prev) => ({ ...prev, name: e.target.value }));
               }}
               placeholder=""
-              className={`${filterInputClass} ${fieldErrors.port_number ? inputErrorClass : ""}`}
+              className={`${filterInputClass} ${fieldErrors.name ? inputErrorClass : ""}`}
             />
           </FilterField>
 
-          <FilterField label="Project *" htmlFor="port-project">
+          <FilterField label="Resource Type *" htmlFor="project-type">
             <div className="relative">
               <select
-                id="port-project"
-                value={form.project_id}
+                id="project-type"
+                value={form.resource_type_id}
                 onChange={(e) => {
-                  clearFieldError("project_id");
+                  clearFieldError("resource_type_id");
                   setForm((prev) => ({
                     ...prev,
-                    project_id: e.target.value,
+                    resource_type_id: e.target.value,
                   }));
                 }}
-                className={`${filterSelectClass} cursor-pointer ${fieldErrors.project_id ? inputErrorClass : ""}`}
+                className={`${filterSelectClass} cursor-pointer ${fieldErrors.resource_type_id ? inputErrorClass : ""}`}
               >
-                {selectableProjects.length === 0 ? (
-                  <option value="">ไม่มี Project</option>
+                {resourceTypes.length === 0 ? (
+                  <option value="">ไม่มี Resource Type</option>
                 ) : (
-                  selectableProjects.map((project) => (
-                    <option key={project.id} value={String(project.id)}>
-                      {project.name}
-                      {project.resource_type_name
-                        ? ` (${project.resource_type_name})`
-                        : ""}
+                  resourceTypes.map((type) => (
+                    <option key={type.id} value={String(type.id)}>
+                      {type.name}
                     </option>
                   ))
                 )}
@@ -290,9 +261,9 @@ export default function PortFormModal({
             </div>
           </FilterField>
 
-          <FilterField label="รายละเอียด" htmlFor="port-description">
+          <FilterField label="รายละเอียด" htmlFor="project-description">
             <textarea
-              id="port-description"
+              id="project-description"
               rows={3}
               value={form.description}
               onChange={(e) =>
@@ -346,7 +317,7 @@ export default function PortFormModal({
             onClick={() => void handleSave()}
             className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d44b5]"
           >
-            {isEdit ? "บันทึกการแก้ไข" : "สร้าง Port"}
+            {isEdit ? "บันทึกการแก้ไข" : "สร้าง Project"}
           </button>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import portAPI, { type PortItem } from "@/app/services/port/portAPI";
+import projectAPI, { type ProjectItem } from "@/app/services/project/projectAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
 import PortFilter from "./portFilter";
@@ -19,9 +20,21 @@ type PortListApiResult =
   | null
   | undefined;
 
+type ProjectListApiResult =
+  | {
+      success?: boolean;
+      data?: ProjectItem[];
+      status?: string;
+      errMessage?: string;
+      message?: string;
+    }
+  | null
+  | undefined;
+
 export default function PortMain() {
   const { withLoading } = useLoading();
   const [ports, setPorts] = useState<PortItem[]>([]);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -53,9 +66,25 @@ export default function PortMain() {
     }
   }, []);
 
+  const fetchProjects = useCallback(async () => {
+    try {
+      const result = (await projectAPI.getProjectAll()) as ProjectListApiResult;
+
+      if (!result || result.status === "failed" || result.success === false) {
+        setProjects([]);
+        return;
+      }
+
+      setProjects(Array.isArray(result.data) ? result.data : []);
+    } catch {
+      setProjects([]);
+    }
+  }, []);
+
   useEffect(() => {
     void fetchPorts();
-  }, [fetchPorts]);
+    void fetchProjects();
+  }, [fetchPorts, fetchProjects]);
 
   const filteredPorts = useMemo(() => {
     const keyword = search.trim().toLowerCase();
@@ -158,6 +187,15 @@ export default function PortMain() {
     await popup.success("ลบสำเร็จ", "ลบ Port เรียบร้อยแล้ว");
   };
 
+  const usedProjects = useMemo(
+    () =>
+      ports.map((item) => ({
+        project_id: Number(item.project_id),
+        port_number: Number(item.port_number),
+      })),
+    [ports]
+  );
+
   return (
     <div className="space-y-5">
       <PortFilter
@@ -180,6 +218,8 @@ export default function PortMain() {
 
       <PortFormModal
         open={createOpen}
+        projects={projects}
+        usedProjects={usedProjects}
         onClose={() => setCreateOpen(false)}
         onSaved={() => {
           void fetchPorts();
@@ -189,6 +229,8 @@ export default function PortMain() {
       <PortFormModal
         open={editingPort != null}
         port={editingPort}
+        projects={projects}
+        usedProjects={usedProjects}
         onClose={() => setEditingPort(null)}
         onSaved={() => {
           void fetchPorts();
