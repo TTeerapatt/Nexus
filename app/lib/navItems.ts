@@ -1,13 +1,18 @@
 import type { IconType } from "react-icons";
 import {
-  MdCategory,
-  MdDashboard,
-  MdLocalLaundryService,
-  MdPeople,
-  MdPriceChange,
-  MdReceiptLong,
   MdAdminPanelSettings,
+  MdAnalytics,
+  MdCloud,
+  MdDashboard,
+  MdFolder,
+  MdHistory,
+  MdLanguage,
+  MdSettingsEthernet,
+  MdStorage,
+  MdSync,
 } from "react-icons/md";
+import { GoWorkflow } from "react-icons/go";
+import { FaNetworkWired } from "react-icons/fa";
 
 export type NavItem = {
   href: string;
@@ -18,14 +23,33 @@ export type NavItem = {
 export const TAB_CODE_TO_HREF: Record<string, string> = {
   overview: "/",
   bi: "/bi",
+  vps: "/vps",
+  "ci-cd": "/ci-cd",
+  port: "/port",
+  domain: "/domain",
+  database: "/database",
+  projects: "/projects",
   admins: "/admins",
-  admin_log: "/admin-log",
+  logs: "/logs",
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "แดชบอร์ด", icon: MdDashboard },
-  { href: "/admins", label: "ผู้ดูแลระบบ", icon: MdAdminPanelSettings },
+  { href: "/", label: "Overview", icon: MdDashboard },
+  { href: "/admins", label: "Admins", icon: MdAdminPanelSettings },
 ];
+
+const TAB_CODE_TO_ICON: Record<string, IconType> = {
+  overview: MdDashboard,
+  bi: MdAnalytics,
+  vps: MdCloud,
+  "ci-cd": GoWorkflow,
+  port: FaNetworkWired,
+  domain: MdLanguage,
+  database: MdStorage,
+  projects: MdFolder,
+  admins: MdAdminPanelSettings,
+  logs: MdHistory,
+};
 
 export function getTabHrefByCode(tabCode: string): string | null {
   const key = String(tabCode || "").trim().toLowerCase();
@@ -46,8 +70,7 @@ export function getTabCodeByPath(pathname: string): string | null {
 
 export function getTabIconByCode(tabCode: string): IconType {
   const key = String(tabCode || "").trim().toLowerCase();
-  if (key === "admins" || key === "admin_log") return MdAdminPanelSettings;
-  return MdDashboard;
+  return TAB_CODE_TO_ICON[key] ?? MdDashboard;
 }
 
 export function getNavLabelByPath(pathname: string): string {
@@ -57,5 +80,5 @@ export function getNavLabelByPath(pathname: string): string {
   const nested = NAV_ITEMS.find(
     (item) => item.href !== "/" && pathname.startsWith(item.href)
   );
-  return nested?.label ?? "แดชบอร์ด";
+  return nested?.label ?? "Overview";
 }
