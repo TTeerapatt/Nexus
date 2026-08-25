@@ -29,12 +29,12 @@ function formatDateTime(value: string | null): string {
 function getProjectTypeBadgeClass(type: string): string {
   const key = String(type || "").trim().toLowerCase();
   if (key === "project") {
-    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/60";
+    return "bg-[#0e7490] text-white ring-1 ring-[#155e75]/40";
   }
   if (key === "service") {
-    return "bg-[#f3e8ff] text-[#7e22ce] ring-1 ring-[#d8b4fe]/70";
+    return "bg-[#e11d48] text-white ring-1 ring-[#be123c]/40";
   }
-  return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
+  return "bg-[#64748b] text-white ring-1 ring-[#475569]/40";
 }
 
 function getProjectTypeLabel(type: string): string {
@@ -47,18 +47,18 @@ function getProjectTypeLabel(type: string): string {
 function getResourceTypeBadgeClass(code: string): string {
   const key = String(code || "").trim().toLowerCase();
   if (key === "frontend") {
-    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/60";
+    return "bg-[#2563eb] text-white ring-1 ring-[#1d4ed8]/40";
   }
   if (key === "backend") {
-    return "bg-[#fef3c7] text-[#b45309] ring-1 ring-[#fcd34d]/70";
+    return "bg-[#d97706] text-white ring-1 ring-[#b45309]/40";
   }
   if (key === "database") {
-    return "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70";
+    return "bg-[#16a34a] text-white ring-1 ring-[#15803d]/40";
   }
   if (key === "services") {
-    return "bg-[#f3e8ff] text-[#7e22ce] ring-1 ring-[#d8b4fe]/70";
+    return "bg-[#7c3aed] text-white ring-1 ring-[#6d28d9]/40";
   }
-  return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
+  return "bg-[#64748b] text-white ring-1 ring-[#475569]/40";
 }
 
 function ProjectRowActions({
