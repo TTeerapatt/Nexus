@@ -54,7 +54,7 @@ const menuAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การดึงข้อมูลเมนูล้มเหลว",
+            "Failed to fetch menus",
           error: err,
         };
       });
@@ -77,7 +77,7 @@ const menuAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การดึงข้อมูลเมนู label ล้มเหลว",
+            "Failed to fetch menu labels",
           error: err,
         };
       });
@@ -100,7 +100,7 @@ const menuAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การดึงข้อมูลเมนู tab ล้มเหลว",
+            "Failed to fetch menu tabs",
           error: err,
         };
       });

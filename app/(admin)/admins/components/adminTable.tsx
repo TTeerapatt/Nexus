@@ -60,8 +60,8 @@ function AdminRowActions({
       <button
         type="button"
         onClick={() => onEdit?.(admin)}
-        aria-label={`แก้ไข ${admin.display_name}`}
-        title="แก้ไข"
+        aria-label={`Edit ${admin.display_name}`}
+        title="Edit"
         className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#c7d7ff] bg-white text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
@@ -69,8 +69,8 @@ function AdminRowActions({
       <button
         type="button"
         onClick={() => onDelete?.(admin)}
-        aria-label={`ลบ ${admin.display_name}`}
-        title="ลบ"
+        aria-label={`Delete ${admin.display_name}`}
+        title="Delete"
         className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-white text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#fef2f2] hover:shadow-md active:scale-95"
       >
         <FiTrash2 className="h-4 w-4" />
@@ -89,20 +89,20 @@ export default function AdminTable({
     () => [
       {
         key: "index",
-        title: "ลำดับ",
+        title: "No.",
         cellClassName: "font-medium text-[#5b657d]",
         render: (_admin, index) => index + 1,
       },
       {
         key: "display_name",
-        title: "ชื่อ",
+        title: "Name",
         render: (admin) => (
           <span className="font-semibold text-[#1f2640]">{admin.display_name}</span>
         ),
       },
       {
         key: "email",
-        title: "อีเมล",
+        title: "Email",
         render: (admin) => admin.email,
       },
       {
@@ -118,17 +118,17 @@ export default function AdminTable({
       },
       {
         key: "last_login_at",
-        title: "เข้าใช้ล่าสุด",
+        title: "Last login",
         render: (admin) => formatDateTime(admin.last_login_at),
       },
       // {
       //   key: "created_at",
-      //   title: "วันที่สร้าง",
+      //   title: "Created date",
       //   render: (admin) => formatDateTime(admin.created_at),
       // },
       {
         key: "actions",
-        title: "การใช้งาน",
+        title: "Actions",
         headerClassName: "text-right",
         cellClassName: "text-right",
         render: (admin) => (
@@ -145,8 +145,8 @@ export default function AdminTable({
       data={admins}
       loading={loading}
       getRowKey={(admin) => admin.id}
-      emptyText="ไม่พบข้อมูลผู้ดูแลระบบ"
-      loadingText="กำลังโหลดข้อมูลผู้ดูแลระบบ..."
+      emptyText="No admins found"
+      loadingText="Loading admins..."
     />
   );
 }

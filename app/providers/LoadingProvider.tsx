@@ -26,7 +26,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [manualCount, setManualCount] = useState(0);
   const [routeLoading, setRouteLoading] = useState(false);
-  const [message, setMessage] = useState("กำลังโหลด...");
+  const [message, setMessage] = useState("Loading...");
   const routeTimerRef = useRef<number | null>(null);
 
   const clearRouteTimer = useCallback(() => {
@@ -40,7 +40,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     if (nextMessage?.trim()) {
       setMessage(nextMessage.trim());
     } else {
-      setMessage("กำลังโหลด...");
+      setMessage("Loading...");
     }
     setManualCount((count) => count + 1);
   }, []);
@@ -93,7 +93,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
 
       if (nextPath === pathname) return;
 
-      setMessage("กำลังเปลี่ยนหน้า...");
+      setMessage("Changing page...");
       setRouteLoading(true);
       clearRouteTimer();
       routeTimerRef.current = window.setTimeout(() => {

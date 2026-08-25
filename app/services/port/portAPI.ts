@@ -6,6 +6,10 @@ export type PortItem = {
   port_number: number;
   project_id: number;
   project_name: string;
+  project_type: "project" | "service";
+  resource_type_id: number;
+  resource_type_code: string;
+  resource_type_name: string;
   description: string | null;
   is_active: boolean;
   created_at: string;
@@ -15,6 +19,7 @@ export type PortItem = {
 export type CreatePortPayload = {
   port_number: number;
   project_id: number;
+  resource_type_id: number;
   description?: string | null;
   is_active?: boolean;
 };
@@ -22,6 +27,7 @@ export type CreatePortPayload = {
 export type UpdatePortPayload = {
   port_number?: number;
   project_id?: number;
+  resource_type_id?: number;
   description?: string | null;
   is_active?: boolean;
 };
@@ -30,6 +36,9 @@ export type PortListParams = {
   is_active?: boolean;
   project_id?: number;
   project_name?: string;
+  project_type?: "project" | "service";
+  resource_type_id?: number;
+  resource_type_code?: string;
   port_number?: number;
 };
 
@@ -58,7 +67,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error getPortAll:", err);
-        return failedResult(err, "การดึงข้อมูล Port ล้มเหลว");
+        return failedResult(err, "Failed to fetch Ports");
       });
   },
 
@@ -73,7 +82,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error getPortById:", err);
-        return failedResult(err, "การดึงข้อมูล Port ล้มเหลว");
+        return failedResult(err, "Failed to fetch Ports");
       });
   },
 
@@ -88,7 +97,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error createPort:", err);
-        return failedResult(err, "การสร้าง Port ล้มเหลว");
+        return failedResult(err, "Failed to create Port");
       });
   },
 
@@ -103,7 +112,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error updatePort:", err);
-        return failedResult(err, "การแก้ไข Port ล้มเหลว");
+        return failedResult(err, "Failed to update Port");
       });
   },
 
@@ -122,7 +131,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error patchPortIsActive:", err);
-        return failedResult(err, "การเปลี่ยนสถานะ Port ล้มเหลว");
+        return failedResult(err, "Failed to update Port status");
       });
   },
 
@@ -137,7 +146,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error softDeletePort:", err);
-        return failedResult(err, "การลบ Port ล้มเหลว");
+        return failedResult(err, "Failed to delete Port");
       });
   },
 
@@ -152,7 +161,7 @@ const portAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error hardDeletePort:", err);
-        return failedResult(err, "การลบ Port ถาวรล้มเหลว");
+        return failedResult(err, "Failed to permanently delete Port");
       });
   },
 };

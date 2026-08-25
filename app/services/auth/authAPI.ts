@@ -24,7 +24,7 @@ const authAPI = {
                         err?.message ||
                         err?.errMessage ||
                         (typeof err === "string" ? err : null) ||
-                        "การเข้าสู่ระบบล้มเหลว",
+                        "Login failed",
                     error: err,
                 };
             });
@@ -50,7 +50,7 @@ const authAPI = {
                         err?.message ||
                         err?.errMessage ||
                         (typeof err === "string" ? err : null) ||
-                        "การดึงข้อมูลผู้ใช้งานล้มเหลว",
+                        "Failed to fetch user data",
                     error: err,
                 };
             });

@@ -2,7 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { FiChevronDown, FiX } from "react-icons/fi";
-import projectAPI, { type ProjectItem } from "@/app/services/project/projectAPI";
+import projectAPI, {
+  type ProjectItem,
+  type ProjectType,
+} from "@/app/services/project/projectAPI";
 import type { ResourceTypeItem } from "@/app/services/resourceType/resourceTypeAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
@@ -23,16 +26,23 @@ type ProjectFormModalProps = {
 type FormState = {
   name: string;
   description: string;
+  type: ProjectType;
   resource_type_id: string;
   is_active: boolean;
 };
 
 type FormField = keyof FormState;
 
+const PROJECT_TYPE_OPTIONS: Array<{ value: ProjectType; label: string }> = [
+  { value: "project", label: "Project" },
+  { value: "service", label: "Service" },
+];
+
 function emptyForm(resourceTypes: ResourceTypeItem[]): FormState {
   return {
     name: "",
     description: "",
+    type: "project",
     resource_type_id:
       resourceTypes.length > 0 ? String(resourceTypes[0].id) : "",
     is_active: true,
@@ -43,6 +53,7 @@ function formFromProject(project: ProjectItem): FormState {
   return {
     name: project.name || "",
     description: project.description || "",
+    type: project.type === "service" ? "service" : "project",
     resource_type_id: String(project.resource_type_id || ""),
     is_active: Boolean(project.is_active),
   };
@@ -110,10 +121,10 @@ export default function ProjectFormModal({
 
   const handleRequestClose = async () => {
     const confirmed = await popup.confirm({
-      title: "ต้องการออกจากหน้านี้หรือไม่?",
-      text: "ข้อมูลที่กรอกไว้จะไม่ถูกบันทึก",
-      confirmText: "ตกลง",
-      cancelText: "ยกเลิก",
+      title: "Leave this page?",
+      text: "Unsaved changes will be lost",
+      confirmText: "OK",
+      cancelText: "Cancel",
     });
     if (!confirmed) return;
     onClose();
@@ -126,13 +137,19 @@ export default function ProjectFormModal({
 
     if (!name) {
       setFieldErrors({ name: true });
-      await popup.warning("ข้อมูลไม่ครบ", "กรุณากรอกชื่อ Project");
+      await popup.warning("Incomplete information", "Please enter a name");
+      return;
+    }
+
+    if (form.type !== "project" && form.type !== "service") {
+      setFieldErrors({ type: true });
+      await popup.warning("Incomplete information", "Please select a Type");
       return;
     }
 
     if (!Number.isInteger(resourceTypeId) || resourceTypeId <= 0) {
       setFieldErrors({ resource_type_id: true });
-      await popup.warning("ข้อมูลไม่ครบ", "กรุณาเลือก Resource Type");
+      await popup.warning("Incomplete information", "Please select a Resource Type");
       return;
     }
 
@@ -142,6 +159,7 @@ export default function ProjectFormModal({
       const payload = {
         name,
         description: description || null,
+        type: form.type,
         resource_type_id: resourceTypeId,
         is_active: form.is_active,
       };
@@ -159,28 +177,28 @@ export default function ProjectFormModal({
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          isEdit ? "แก้ไขไม่สำเร็จ" : "สร้างไม่สำเร็จ",
+          isEdit ? "Update failed" : "Create failed",
           result?.errMessage ||
             result?.message ||
             (isEdit
-              ? "ไม่สามารถแก้ไข Project ได้"
-              : "ไม่สามารถสร้าง Project ได้")
+              ? "Unable to update Project"
+              : "Unable to create Project")
         );
         return;
       }
 
       saved = true;
-    }, isEdit ? "กำลังบันทึกการแก้ไข..." : "กำลังสร้าง Project...");
+    }, isEdit ? "Saving changes..." : "Creating Project...");
 
     if (!saved) return;
 
     onClose();
     onSaved();
     await popup.success(
-      isEdit ? "แก้ไขสำเร็จ" : "เพิ่มสำเร็จ",
+      isEdit ? "Updated successfully" : "Created successfully",
       isEdit
-        ? "บันทึกข้อมูล Project เรียบร้อยแล้ว"
-        : "สร้าง Project เรียบร้อยแล้ว"
+        ? "Saved successfully"
+        : "Created successfully"
     );
   };
 
@@ -193,7 +211,7 @@ export default function ProjectFormModal({
     <div className="fixed inset-0 z-[80] flex items-center justify-center overflow-hidden overscroll-none p-4">
       <button
         type="button"
-        aria-label="ปิดหน้าต่าง"
+        aria-label="Close dialog"
         className="absolute inset-0 bg-[#0f172a]/45"
         onClick={() => void handleRequestClose()}
       />
@@ -202,24 +220,24 @@ export default function ProjectFormModal({
         <div className="flex items-center justify-between border-b border-[#eef2ff] px-6 py-4">
           <div>
             <h2 className="text-[18px] font-bold text-[#1f2640]">
-              {isEdit ? "แก้ไข Project" : "เพิ่ม Project"}
+              {isEdit ? "Edit Project" : "Add Project"}
             </h2>
             <p className="text-[13px] text-[#7a849c]">
-              ระบุชื่อ project และประเภท resource
+              Enter name, type, and resource type
             </p>
           </div>
           <button
             type="button"
             onClick={() => void handleRequestClose()}
             className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-[#f8faff]"
-            aria-label="ปิด"
+            aria-label="Close"
           >
             <FiX className="h-4 w-4" />
           </button>
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto px-6 py-6">
-          <FilterField label="ชื่อ Project *" htmlFor="project-name">
+          <FilterField label="Name *" htmlFor="project-name">
             <input
               id="project-name"
               type="text"
@@ -233,10 +251,34 @@ export default function ProjectFormModal({
             />
           </FilterField>
 
-          <FilterField label="Resource Type *" htmlFor="project-type">
+          <FilterField label="Type *" htmlFor="project-kind">
             <div className="relative">
               <select
-                id="project-type"
+                id="project-kind"
+                value={form.type}
+                onChange={(e) => {
+                  clearFieldError("type");
+                  setForm((prev) => ({
+                    ...prev,
+                    type: e.target.value as ProjectType,
+                  }));
+                }}
+                className={`${filterSelectClass} cursor-pointer ${fieldErrors.type ? inputErrorClass : ""}`}
+              >
+                {PROJECT_TYPE_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+            </div>
+          </FilterField>
+
+          <FilterField label="Resource Type *" htmlFor="project-resource-type">
+            <div className="relative">
+              <select
+                id="project-resource-type"
                 value={form.resource_type_id}
                 onChange={(e) => {
                   clearFieldError("resource_type_id");
@@ -248,7 +290,7 @@ export default function ProjectFormModal({
                 className={`${filterSelectClass} cursor-pointer ${fieldErrors.resource_type_id ? inputErrorClass : ""}`}
               >
                 {resourceTypes.length === 0 ? (
-                  <option value="">ไม่มี Resource Type</option>
+                  <option value="">No resource types available</option>
                 ) : (
                   resourceTypes.map((type) => (
                     <option key={type.id} value={String(type.id)}>
@@ -261,7 +303,7 @@ export default function ProjectFormModal({
             </div>
           </FilterField>
 
-          <FilterField label="รายละเอียด" htmlFor="project-description">
+          <FilterField label="Description" htmlFor="project-description">
             <textarea
               id="project-description"
               rows={3}
@@ -279,9 +321,9 @@ export default function ProjectFormModal({
 
           <div className="flex items-center justify-between rounded-xl border border-[#e8ecf4] bg-[#f8faff] px-4 py-3">
             <div>
-              <p className="text-[14px] font-semibold text-[#1f2640]">สถานะ</p>
+              <p className="text-[14px] font-semibold text-[#1f2640]">Status</p>
               <p className="text-[12px] text-[#7a849c]">
-                {form.is_active ? "เปิดใช้งาน" : "ปิดใช้งาน"}
+                {form.is_active ? "Active" : "Inactive"}
               </p>
             </div>
             <button
@@ -310,14 +352,14 @@ export default function ProjectFormModal({
             onClick={() => void handleRequestClose()}
             className="inline-flex h-11 cursor-pointer items-center rounded-xl px-4 text-[14px] font-semibold text-[#5b657d] transition hover:bg-[#f3f5f9]"
           >
-            ยกเลิก
+            Cancel
           </button>
           <button
             type="button"
             onClick={() => void handleSave()}
             className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d44b5]"
           >
-            {isEdit ? "บันทึกการแก้ไข" : "สร้าง Project"}
+            {isEdit ? "Save changes" : "Create Project"}
           </button>
         </div>
       </div>

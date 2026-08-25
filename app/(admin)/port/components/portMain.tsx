@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import portAPI, { type PortItem } from "@/app/services/port/portAPI";
 import projectAPI, { type ProjectItem } from "@/app/services/project/projectAPI";
+import resourceTypeAPI, {
+  type ResourceTypeItem,
+} from "@/app/services/resourceType/resourceTypeAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
 import PortFilter from "./portFilter";
@@ -31,13 +34,27 @@ type ProjectListApiResult =
   | null
   | undefined;
 
+type ResourceTypeListApiResult =
+  | {
+      success?: boolean;
+      data?: ResourceTypeItem[];
+      status?: string;
+      errMessage?: string;
+      message?: string;
+    }
+  | null
+  | undefined;
+
 export default function PortMain() {
   const { withLoading } = useLoading();
   const [ports, setPorts] = useState<PortItem[]>([]);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [resourceTypes, setResourceTypes] = useState<ResourceTypeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [projectType, setProjectType] = useState("");
+  const [resourceTypeId, setResourceTypeId] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [editingPort, setEditingPort] = useState<PortItem | null>(null);
   const [togglingId, setTogglingId] = useState<number | null>(null);
@@ -51,15 +68,15 @@ export default function PortMain() {
         const message =
           result?.errMessage ||
           result?.message ||
-          "ไม่สามารถดึงข้อมูล Port ได้";
-        await popup.error("เกิดข้อผิดพลาด", message);
+          "Unable to fetch Ports";
+        await popup.error("Error", message);
         setPorts([]);
         return;
       }
 
       setPorts(Array.isArray(result.data) ? result.data : []);
     } catch {
-      await popup.error("เกิดข้อผิดพลาด", "ไม่สามารถดึงข้อมูล Port ได้");
+      await popup.error("Error", "Unable to fetch Ports");
       setPorts([]);
     } finally {
       setLoading(false);
@@ -81,14 +98,33 @@ export default function PortMain() {
     }
   }, []);
 
+  const fetchResourceTypes = useCallback(async () => {
+    try {
+      const result =
+        (await resourceTypeAPI.getResourceTypeAll()) as ResourceTypeListApiResult;
+
+      if (!result || result.status === "failed" || result.success === false) {
+        setResourceTypes([]);
+        return;
+      }
+
+      setResourceTypes(Array.isArray(result.data) ? result.data : []);
+    } catch {
+      setResourceTypes([]);
+    }
+  }, []);
+
   useEffect(() => {
     void fetchPorts();
     void fetchProjects();
-  }, [fetchPorts, fetchProjects]);
+    void fetchResourceTypes();
+  }, [fetchPorts, fetchProjects, fetchResourceTypes]);
 
   const filteredPorts = useMemo(() => {
     const keyword = search.trim().toLowerCase();
     const statusFilter = status.trim().toLowerCase();
+    const kindFilter = projectType.trim().toLowerCase();
+    const typeFilter = resourceTypeId.trim();
 
     return ports.filter((port) => {
       const matchesStatus =
@@ -96,23 +132,36 @@ export default function PortMain() {
         (statusFilter === "active" && port.is_active) ||
         (statusFilter === "inactive" && !port.is_active);
 
-      if (!keyword) return matchesStatus;
+      const matchesKind =
+        !kindFilter ||
+        String(port.project_type || "").trim().toLowerCase() === kindFilter;
+
+      const matchesType =
+        !typeFilter || String(port.resource_type_id) === typeFilter;
+
+      if (!keyword) return matchesStatus && matchesKind && matchesType;
 
       const projectName = String(port.project_name || "").toLowerCase();
       const description = String(port.description || "").toLowerCase();
+      const typeName = String(port.resource_type_name || "").toLowerCase();
+      const kind = String(port.project_type || "").toLowerCase();
       const portNumber = String(port.port_number);
       const matchesSearch =
         projectName.includes(keyword) ||
         description.includes(keyword) ||
+        typeName.includes(keyword) ||
+        kind.includes(keyword) ||
         portNumber.includes(keyword);
 
-      return matchesStatus && matchesSearch;
+      return matchesStatus && matchesKind && matchesType && matchesSearch;
     });
-  }, [ports, search, status]);
+  }, [ports, projectType, resourceTypeId, search, status]);
 
   const handleClearFilter = () => {
     setSearch("");
     setStatus("");
+    setProjectType("");
+    setResourceTypeId("");
   };
 
   const handleToggleActive = async (port: PortItem) => {
@@ -130,10 +179,10 @@ export default function PortMain() {
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          "เปลี่ยนสถานะไม่สำเร็จ",
+          "Status update failed",
           result?.errMessage ||
             result?.message ||
-            "ไม่สามารถเปลี่ยนสถานะ Port ได้"
+            "Unable to update Port status"
         );
         return;
       }
@@ -155,8 +204,8 @@ export default function PortMain() {
 
   const handleDeletePort = async (port: PortItem) => {
     const confirmed = await popup.confirmDelete({
-      title: "ยืนยันการลบ Port?",
-      text: `ต้องการลบ port ${port.port_number} (${port.project_name}) ใช่หรือไม่`,
+      title: "Delete this Port?",
+      text: `Delete port ${port.port_number} (${port.project_name})?`,
     });
     if (!confirmed) return;
 
@@ -172,25 +221,26 @@ export default function PortMain() {
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          "ลบไม่สำเร็จ",
-          result?.errMessage || result?.message || "ไม่สามารถลบ Port ได้"
+          "Delete failed",
+          result?.errMessage || result?.message || "Unable to delete Port"
         );
         return;
       }
 
       deleted = true;
-    }, "กำลังลบ Port...");
+    }, "Deleting Port...");
 
     if (!deleted) return;
 
     void fetchPorts();
-    await popup.success("ลบสำเร็จ", "ลบ Port เรียบร้อยแล้ว");
+    await popup.success("Deleted successfully", "Port deleted successfully");
   };
 
-  const usedProjects = useMemo(
+  const usedPairs = useMemo(
     () =>
       ports.map((item) => ({
         project_id: Number(item.project_id),
+        resource_type_id: Number(item.resource_type_id),
         port_number: Number(item.port_number),
       })),
     [ports]
@@ -201,8 +251,13 @@ export default function PortMain() {
       <PortFilter
         search={search}
         status={status}
+        projectType={projectType}
+        resourceTypeId={resourceTypeId}
+        resourceTypes={resourceTypes}
         onSearchChange={setSearch}
         onStatusChange={setStatus}
+        onProjectTypeChange={setProjectType}
+        onResourceTypeChange={setResourceTypeId}
         onClear={handleClearFilter}
         onAdd={() => setCreateOpen(true)}
       />
@@ -219,7 +274,8 @@ export default function PortMain() {
       <PortFormModal
         open={createOpen}
         projects={projects}
-        usedProjects={usedProjects}
+        resourceTypes={resourceTypes}
+        usedPairs={usedPairs}
         onClose={() => setCreateOpen(false)}
         onSaved={() => {
           void fetchPorts();
@@ -230,7 +286,8 @@ export default function PortMain() {
         open={editingPort != null}
         port={editingPort}
         projects={projects}
-        usedProjects={usedProjects}
+        resourceTypes={resourceTypes}
+        usedPairs={usedPairs}
         onClose={() => setEditingPort(null)}
         onSaved={() => {
           void fetchPorts();

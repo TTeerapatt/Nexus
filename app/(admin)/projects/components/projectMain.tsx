@@ -40,6 +40,7 @@ export default function ProjectMain() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [projectType, setProjectType] = useState("");
   const [resourceTypeId, setResourceTypeId] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectItem | null>(
@@ -56,15 +57,15 @@ export default function ProjectMain() {
         const message =
           result?.errMessage ||
           result?.message ||
-          "ไม่สามารถดึงข้อมูล Project ได้";
-        await popup.error("เกิดข้อผิดพลาด", message);
+          "Unable to fetch Projects";
+        await popup.error("Error", message);
         setProjects([]);
         return;
       }
 
       setProjects(Array.isArray(result.data) ? result.data : []);
     } catch {
-      await popup.error("เกิดข้อผิดพลาด", "ไม่สามารถดึงข้อมูล Project ได้");
+      await popup.error("Error", "Unable to fetch Projects");
       setProjects([]);
     } finally {
       setLoading(false);
@@ -95,6 +96,7 @@ export default function ProjectMain() {
   const filteredProjects = useMemo(() => {
     const keyword = search.trim().toLowerCase();
     const statusFilter = status.trim().toLowerCase();
+    const kindFilter = projectType.trim().toLowerCase();
     const typeFilter = resourceTypeId.trim();
 
     return projects.filter((project) => {
@@ -103,26 +105,33 @@ export default function ProjectMain() {
         (statusFilter === "active" && project.is_active) ||
         (statusFilter === "inactive" && !project.is_active);
 
+      const matchesKind =
+        !kindFilter ||
+        String(project.type || "").trim().toLowerCase() === kindFilter;
+
       const matchesType =
         !typeFilter || String(project.resource_type_id) === typeFilter;
 
-      if (!keyword) return matchesStatus && matchesType;
+      if (!keyword) return matchesStatus && matchesKind && matchesType;
 
       const name = String(project.name || "").toLowerCase();
       const description = String(project.description || "").toLowerCase();
       const typeName = String(project.resource_type_name || "").toLowerCase();
+      const kind = String(project.type || "").toLowerCase();
       const matchesSearch =
         name.includes(keyword) ||
         description.includes(keyword) ||
-        typeName.includes(keyword);
+        typeName.includes(keyword) ||
+        kind.includes(keyword);
 
-      return matchesStatus && matchesType && matchesSearch;
+      return matchesStatus && matchesKind && matchesType && matchesSearch;
     });
-  }, [projects, resourceTypeId, search, status]);
+  }, [projectType, projects, resourceTypeId, search, status]);
 
   const handleClearFilter = () => {
     setSearch("");
     setStatus("");
+    setProjectType("");
     setResourceTypeId("");
   };
 
@@ -144,10 +153,10 @@ export default function ProjectMain() {
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          "เปลี่ยนสถานะไม่สำเร็จ",
+          "Status update failed",
           result?.errMessage ||
             result?.message ||
-            "ไม่สามารถเปลี่ยนสถานะ Project ได้"
+            "Unable to update Project status"
         );
         return;
       }
@@ -169,8 +178,8 @@ export default function ProjectMain() {
 
   const handleDeleteProject = async (project: ProjectItem) => {
     const confirmed = await popup.confirmDelete({
-      title: "ยืนยันการลบ Project?",
-      text: `ต้องการลบ ${project.name} ใช่หรือไม่`,
+      title: "Delete this Project?",
+      text: `Delete ${project.name}?`,
     });
     if (!confirmed) return;
 
@@ -186,19 +195,19 @@ export default function ProjectMain() {
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          "ลบไม่สำเร็จ",
-          result?.errMessage || result?.message || "ไม่สามารถลบ Project ได้"
+          "Delete failed",
+          result?.errMessage || result?.message || "Unable to delete Project"
         );
         return;
       }
 
       deleted = true;
-    }, "กำลังลบ Project...");
+    }, "Deleting Project...");
 
     if (!deleted) return;
 
     void fetchProjects();
-    await popup.success("ลบสำเร็จ", "ลบ Project เรียบร้อยแล้ว");
+    await popup.success("Deleted successfully", "Project deleted successfully");
   };
 
   return (
@@ -206,10 +215,12 @@ export default function ProjectMain() {
       <ProjectFilter
         search={search}
         status={status}
+        projectType={projectType}
         resourceTypeId={resourceTypeId}
         resourceTypes={resourceTypes}
         onSearchChange={setSearch}
         onStatusChange={setStatus}
+        onProjectTypeChange={setProjectType}
         onResourceTypeChange={setResourceTypeId}
         onClear={handleClearFilter}
         onAdd={() => setCreateOpen(true)}

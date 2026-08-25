@@ -32,18 +32,18 @@ export function PasswordPolicyChecklist({
 
   return (
     <ul className="w-full space-y-1 rounded-lg border border-slate-200 bg-slate-50 p-3 font-normal">
-      <PolicyRow label="อย่างน้อย 12 ตัวอักษร" passed={result.minLength} />
-      <PolicyRow label="มีตัวเลขอย่างน้อย 1 ตัว" passed={result.hasNumber} />
+      <PolicyRow label="At least 12 characters" passed={result.minLength} />
+      <PolicyRow label="At least 1 number" passed={result.hasNumber} />
       <PolicyRow
-        label="มีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว"
+        label="At least 1 uppercase letter"
         passed={result.hasUppercase}
       />
       <PolicyRow
-        label="มีตัวพิมพ์เล็กอย่างน้อย 1 ตัว"
+        label="At least 1 lowercase letter"
         passed={result.hasLowercase}
       />
       <PolicyRow
-        label="มีอักขระพิเศษอย่างน้อย 1 ตัว"
+        label="At least 1 special character"
         passed={result.hasSpecial}
       />
     </ul>

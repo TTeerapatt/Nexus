@@ -4,7 +4,7 @@ import type { MenuTab } from "@/app/services/menu/menuAPI";
 
 export type AdminFormModalProps = {
   open: boolean;
-  /** ถ้ามีค่า = โหมดแก้ไข โหลดข้อมูลจาก `GET admins/:id/permissions` */
+  /** If set = edit mode; load from `GET admins/:id/permissions` */
   adminId?: number | null;
   onClose: () => void;
   onCreated: () => void;
@@ -30,10 +30,10 @@ export type AdminFormValues = {
 
 export function getSteps(isEdit: boolean) {
   return [
-    { id: 1, label: "เลือกบทบาท" },
-    { id: 2, label: "ข้อมูลผู้ใช้งาน" },
-    { id: 3, label: "ขอบเขตสิทธิ์" },
-    { id: 4, label: isEdit ? "ยืนยันการแก้ไข" : "ยืนยันการสร้าง" },
+    { id: 1, label: "Select role" },
+    { id: 2, label: "User details" },
+    { id: 3, label: "Permission scope" },
+    { id: 4, label: isEdit ? "Confirm update" : "Confirm create" },
   ] as const;
 }
 
@@ -47,22 +47,22 @@ export const ROLE_OPTIONS: Array<{
   {
     value: "owner",
     title: "Owner",
-    subtitle: "เจ้าของระบบ",
-    description: "สิทธิ์เต็มทุกเมนู และข้ามการตรวจ permission",
+    subtitle: "System owner",
+    description: "Full access to all menus; skips permission checks",
     Icon: MdAdminPanelSettings,
   },
   {
     value: "admin",
     title: "Admin",
-    subtitle: "ผู้ดูแลระบบ",
-    description: "จัดการข้อมูลหลักของร้านได้ตามสิทธิ์ที่กำหนด",
+    subtitle: "Administrator",
+    description: "Manage core data based on assigned permissions",
     Icon: MdManageAccounts,
   },
   {
     value: "staff",
     title: "Staff",
-    subtitle: "พนักงาน",
-    description: "ใช้งานตามขอบเขตเมนูที่ได้รับอนุญาต",
+    subtitle: "Staff",
+    description: "Access only allowed menu scopes",
     Icon: MdBadge,
   },
 ];

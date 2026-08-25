@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { FiChevronDown, FiX } from "react-icons/fi";
 import portAPI, { type PortItem } from "@/app/services/port/portAPI";
 import type { ProjectItem } from "@/app/services/project/projectAPI";
+import type { ResourceTypeItem } from "@/app/services/resourceType/resourceTypeAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
 import {
@@ -16,8 +17,13 @@ type PortFormModalProps = {
   open: boolean;
   port?: PortItem | null;
   projects: ProjectItem[];
-  /** project ที่ถูกใช้แล้วใน ports อื่น (สำหรับเตือนตอนสร้าง/แก้ไข) */
-  usedProjects?: Array<{ project_id: number; port_number: number }>;
+  resourceTypes: ResourceTypeItem[];
+  /** Used project + resource type pairs */
+  usedPairs?: Array<{
+    project_id: number;
+    resource_type_id: number;
+    port_number: number;
+  }>;
   onClose: () => void;
   onSaved: () => void;
 };
@@ -25,18 +31,25 @@ type PortFormModalProps = {
 type FormState = {
   port_number: string;
   project_id: string;
+  resource_type_id: string;
   description: string;
   is_active: boolean;
 };
 
 type FormField = keyof FormState;
 
-function emptyForm(projects: ProjectItem[]): FormState {
+function emptyForm(
+  projects: ProjectItem[],
+  resourceTypes: ResourceTypeItem[]
+): FormState {
   const activeProjects = projects.filter((item) => item.is_active);
+  const activeTypes = resourceTypes.filter((item) => item.is_active);
   return {
     port_number: "",
     project_id:
       activeProjects.length > 0 ? String(activeProjects[0].id) : "",
+    resource_type_id:
+      activeTypes.length > 0 ? String(activeTypes[0].id) : "",
     description: "",
     is_active: true,
   };
@@ -46,6 +59,7 @@ function formFromPort(port: PortItem): FormState {
   return {
     port_number: String(port.port_number),
     project_id: String(port.project_id || ""),
+    resource_type_id: String(port.resource_type_id || ""),
     description: port.description || "",
     is_active: Boolean(port.is_active),
   };
@@ -55,13 +69,16 @@ export default function PortFormModal({
   open,
   port = null,
   projects,
-  usedProjects = [],
+  resourceTypes,
+  usedPairs = [],
   onClose,
   onSaved,
 }: PortFormModalProps) {
   const { withLoading } = useLoading();
   const isEdit = port != null;
-  const [form, setForm] = useState<FormState>(() => emptyForm(projects));
+  const [form, setForm] = useState<FormState>(() =>
+    emptyForm(projects, resourceTypes)
+  );
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<FormField, boolean>>
   >({});
@@ -72,10 +89,18 @@ export default function PortFormModal({
     return false;
   });
 
+  const selectableResourceTypes = resourceTypes.filter((item) => {
+    if (item.is_active) return true;
+    if (isEdit && Number(item.id) === Number(port?.resource_type_id)) {
+      return true;
+    }
+    return false;
+  });
+
   const resetState = useCallback(() => {
-    setForm(port ? formFromPort(port) : emptyForm(projects));
+    setForm(port ? formFromPort(port) : emptyForm(projects, resourceTypes));
     setFieldErrors({});
-  }, [port, projects]);
+  }, [port, projects, resourceTypes]);
 
   useEffect(() => {
     if (!open) return;
@@ -120,10 +145,10 @@ export default function PortFormModal({
 
   const handleRequestClose = async () => {
     const confirmed = await popup.confirm({
-      title: "ต้องการออกจากหน้านี้หรือไม่?",
-      text: "ข้อมูลที่กรอกไว้จะไม่ถูกบันทึก",
-      confirmText: "ตกลง",
-      cancelText: "ยกเลิก",
+      title: "Leave this page?",
+      text: "Unsaved changes will be lost",
+      confirmText: "OK",
+      cancelText: "Cancel",
     });
     if (!confirmed) return;
     onClose();
@@ -132,34 +157,48 @@ export default function PortFormModal({
   const handleSave = async () => {
     const portNumber = Number(form.port_number.trim());
     const projectId = Number(form.project_id);
+    const resourceTypeId = Number(form.resource_type_id);
     const description = form.description.trim();
 
     if (!Number.isInteger(portNumber) || portNumber < 1 || portNumber > 65535) {
       setFieldErrors({ port_number: true });
       await popup.warning(
-        "ข้อมูลไม่ครบ",
-        "กรุณากรอกเลข Port เป็นตัวเลขระหว่าง 1–65535"
+        "Incomplete information",
+        "Please enter a port number between 1 and 65535"
       );
       return;
     }
 
     if (!Number.isInteger(projectId) || projectId <= 0) {
       setFieldErrors({ project_id: true });
-      await popup.warning("ข้อมูลไม่ครบ", "กรุณาเลือก Project");
+      await popup.warning("Incomplete information", "Please select a Project");
       return;
     }
 
-    const conflict = usedProjects.find((item) => {
+    if (!Number.isInteger(resourceTypeId) || resourceTypeId <= 0) {
+      setFieldErrors({ resource_type_id: true });
+      await popup.warning("Incomplete information", "Please select a Resource Type");
+      return;
+    }
+
+    const conflict = usedPairs.find((item) => {
       if (Number(item.project_id) !== projectId) return false;
-      if (isEdit && Number(port.project_id) === projectId) return false;
+      if (Number(item.resource_type_id) !== resourceTypeId) return false;
+      if (
+        isEdit &&
+        Number(port.project_id) === projectId &&
+        Number(port.resource_type_id) === resourceTypeId
+      ) {
+        return false;
+      }
       return true;
     });
 
     if (conflict) {
-      setFieldErrors({ project_id: true });
+      setFieldErrors({ project_id: true, resource_type_id: true });
       await popup.warning(
-        "ไม่สามารถบันทึกได้",
-        `Project นี้ถูกใช้กับ port ${conflict.port_number} แล้ว กรุณาเลือก Project อื่น`
+        "Unable to save",
+        `This Project + Resource Type is already used by port ${conflict.port_number}`
       );
       return;
     }
@@ -170,6 +209,7 @@ export default function PortFormModal({
       const payload = {
         port_number: portNumber,
         project_id: projectId,
+        resource_type_id: resourceTypeId,
         description: description || null,
         is_active: form.is_active,
       };
@@ -187,24 +227,24 @@ export default function PortFormModal({
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          isEdit ? "แก้ไขไม่สำเร็จ" : "สร้างไม่สำเร็จ",
+          isEdit ? "Update failed" : "Create failed",
           result?.errMessage ||
             result?.message ||
-            (isEdit ? "ไม่สามารถแก้ไข Port ได้" : "ไม่สามารถสร้าง Port ได้")
+            (isEdit ? "Unable to update Port" : "Unable to create Port")
         );
         return;
       }
 
       saved = true;
-    }, isEdit ? "กำลังบันทึกการแก้ไข..." : "กำลังสร้าง Port...");
+    }, isEdit ? "Saving changes..." : "Creating Port...");
 
     if (!saved) return;
 
     onClose();
     onSaved();
     await popup.success(
-      isEdit ? "แก้ไขสำเร็จ" : "เพิ่มสำเร็จ",
-      isEdit ? "บันทึกข้อมูล Port เรียบร้อยแล้ว" : "สร้าง Port เรียบร้อยแล้ว"
+      isEdit ? "Updated successfully" : "Created successfully",
+      isEdit ? "Port updated successfully" : "Port created successfully"
     );
   };
 
@@ -217,7 +257,7 @@ export default function PortFormModal({
     <div className="fixed inset-0 z-[80] flex items-center justify-center overflow-hidden overscroll-none p-4">
       <button
         type="button"
-        aria-label="ปิดหน้าต่าง"
+        aria-label="Close dialog"
         className="absolute inset-0 bg-[#0f172a]/45"
         onClick={() => void handleRequestClose()}
       />
@@ -226,17 +266,17 @@ export default function PortFormModal({
         <div className="flex items-center justify-between border-b border-[#eef2ff] px-6 py-4">
           <div>
             <h2 className="text-[18px] font-bold text-[#1f2640]">
-              {isEdit ? "แก้ไข Port" : "เพิ่ม Port"}
+              {isEdit ? "Edit Port" : "Add Port"}
             </h2>
             <p className="text-[13px] text-[#7a849c]">
-              ระบุเลข port และ project ที่ใช้งาน
+              Enter port number, project, and resource type
             </p>
           </div>
           <button
             type="button"
             onClick={() => void handleRequestClose()}
             className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-[#f8faff]"
-            aria-label="ปิด"
+            aria-label="Close"
           >
             <FiX className="h-4 w-4" />
           </button>
@@ -274,14 +314,14 @@ export default function PortFormModal({
                 className={`${filterSelectClass} cursor-pointer ${fieldErrors.project_id ? inputErrorClass : ""}`}
               >
                 {selectableProjects.length === 0 ? (
-                  <option value="">ไม่มี Project</option>
+                  <option value="">No projects available</option>
                 ) : (
                   selectableProjects.map((project) => (
                     <option key={project.id} value={String(project.id)}>
                       {project.name}
-                      {project.resource_type_name
-                        ? ` (${project.resource_type_name})`
-                        : ""}
+                      {/* {project.type === "service"
+                        ? " (Service)"
+                        : " (Project)"} */}
                     </option>
                   ))
                 )}
@@ -290,7 +330,35 @@ export default function PortFormModal({
             </div>
           </FilterField>
 
-          <FilterField label="รายละเอียด" htmlFor="port-description">
+          <FilterField label="Resource Type *" htmlFor="port-resource-type">
+            <div className="relative">
+              <select
+                id="port-resource-type"
+                value={form.resource_type_id}
+                onChange={(e) => {
+                  clearFieldError("resource_type_id");
+                  setForm((prev) => ({
+                    ...prev,
+                    resource_type_id: e.target.value,
+                  }));
+                }}
+                className={`${filterSelectClass} cursor-pointer ${fieldErrors.resource_type_id ? inputErrorClass : ""}`}
+              >
+                {selectableResourceTypes.length === 0 ? (
+                  <option value="">No resource types available</option>
+                ) : (
+                  selectableResourceTypes.map((type) => (
+                    <option key={type.id} value={String(type.id)}>
+                      {type.name}
+                    </option>
+                  ))
+                )}
+              </select>
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+            </div>
+          </FilterField>
+
+          <FilterField label="Description" htmlFor="port-description">
             <textarea
               id="port-description"
               rows={3}
@@ -308,9 +376,9 @@ export default function PortFormModal({
 
           <div className="flex items-center justify-between rounded-xl border border-[#e8ecf4] bg-[#f8faff] px-4 py-3">
             <div>
-              <p className="text-[14px] font-semibold text-[#1f2640]">สถานะ</p>
+              <p className="text-[14px] font-semibold text-[#1f2640]">Status</p>
               <p className="text-[12px] text-[#7a849c]">
-                {form.is_active ? "เปิดใช้งาน" : "ปิดใช้งาน"}
+                {form.is_active ? "Active" : "Inactive"}
               </p>
             </div>
             <button
@@ -339,14 +407,14 @@ export default function PortFormModal({
             onClick={() => void handleRequestClose()}
             className="inline-flex h-11 cursor-pointer items-center rounded-xl px-4 text-[14px] font-semibold text-[#5b657d] transition hover:bg-[#f3f5f9]"
           >
-            ยกเลิก
+            Cancel
           </button>
           <button
             type="button"
             onClick={() => void handleSave()}
             className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d44b5]"
           >
-            {isEdit ? "บันทึกการแก้ไข" : "สร้าง Port"}
+            {isEdit ? "Save changes" : "Create Port"}
           </button>
         </div>
       </div>

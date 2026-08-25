@@ -35,7 +35,7 @@ const resourceTypeAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error getResourceTypeAll:", err);
-        return failedResult(err, "การดึงข้อมูล Resource Type ล้มเหลว");
+        return failedResult(err, "Failed to fetch Resource Types");
       });
   },
 };

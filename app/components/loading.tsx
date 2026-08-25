@@ -32,7 +32,7 @@ function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 }
 
 export default function Loading({
-  message = "กำลังโหลด...",
+  message = "Loading...",
   variant = "inline",
   className = "",
 }: LoadingProps) {

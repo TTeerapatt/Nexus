@@ -161,10 +161,10 @@ export default function AdminCreateModal({
           menuResult.success === false
         ) {
           await popup.error(
-            "เกิดข้อผิดพลาด",
+            "Error",
             menuResult?.errMessage ||
               menuResult?.message ||
-              "ไม่สามารถดึงข้อมูลเมนูสิทธิ์ได้"
+              "Unable to fetch permission menus"
           );
           setLabels([]);
           setTabs([]);
@@ -189,10 +189,10 @@ export default function AdminCreateModal({
           !detailResult.data?.admin
         ) {
           await popup.error(
-            "เกิดข้อผิดพลาด",
+            "Error",
             detailResult?.errMessage ||
               detailResult?.message ||
-              "ไม่สามารถดึงข้อมูลผู้ดูแลระบบได้"
+              "Unable to fetch admins"
           );
           onClose();
           return;
@@ -228,10 +228,10 @@ export default function AdminCreateModal({
       } catch {
         if (!cancelled) {
           await popup.error(
-            "เกิดข้อผิดพลาด",
+            "Error",
             adminId != null
-              ? "ไม่สามารถดึงข้อมูลผู้ดูแลระบบได้"
-              : "ไม่สามารถดึงข้อมูลเมนูสิทธิ์ได้"
+              ? "Unable to fetch admins"
+              : "Unable to fetch permission menus"
           );
           setLabels([]);
           setTabs([]);
@@ -314,12 +314,12 @@ export default function AdminCreateModal({
 
     if (!displayName) {
       markFieldError("display_name");
-      await popup.warning("ข้อมูลไม่ครบถ้วน", "กรุณากรอกชื่อที่แสดง");
+      await popup.warning("Incomplete information", "Please enter a display name");
       return false;
     }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       markFieldError("email");
-      await popup.warning("ข้อมูลไม่ถูกต้อง", "กรุณากรอกอีเมลให้ถูกต้อง");
+      await popup.warning("Invalid information", "Please enter a valid email");
       return false;
     }
 
@@ -328,16 +328,16 @@ export default function AdminCreateModal({
       if (!evaluatePasswordPolicy(password).requiredPassed) {
         markFieldError("password");
         await popup.warning(
-          "รหัสผ่านไม่ผ่านเงื่อนไข",
+          "Password does not meet requirements",
           isEdit
-            ? "ถ้าต้องการเปลี่ยนรหัสผ่าน กรุณาตั้งตามเงื่อนไขที่กำหนด"
-            : "กรุณาตั้งรหัสผ่านตามเงื่อนไขที่กำหนด"
+            ? "If changing password, please follow the password policy"
+            : "Please set a password that meets the requirements"
         );
         return false;
       }
       if (password !== confirmPassword) {
         setFieldErrors({ confirmPassword: true, password: true });
-        await popup.warning("ข้อมูลไม่ถูกต้อง", "รหัสผ่านยืนยันไม่ตรงกัน");
+        await popup.warning("Invalid information", "Passwords do not match");
         return false;
       }
     }
@@ -349,7 +349,7 @@ export default function AdminCreateModal({
   const handleNext = async () => {
     if (step === 1) {
       if (!role) {
-        await popup.warning("ข้อมูลไม่ครบถ้วน", "กรุณาเลือกบทบาทผู้ใช้งาน");
+        await popup.warning("Incomplete information", "Please select a user role");
         return;
       }
       setFieldErrors({});
@@ -382,13 +382,13 @@ export default function AdminCreateModal({
 
     const confirmed = await popup.confirm({
       title: isEdit
-        ? "ยืนยันการแก้ไขผู้ดูแลระบบ?"
-        : "ยืนยันการสร้างผู้ดูแลระบบ?",
+        ? "Confirm admin update?"
+        : "Confirm admin create?",
       text: isEdit
-        ? `ต้องการบันทึกการแก้ไขบัญชี ${form.display_name.trim()} (${form.email.trim()}) ใช่หรือไม่`
-        : `ต้องการสร้างบัญชี ${form.display_name.trim()} (${form.email.trim()}) ในบทบาท ${role} ใช่หรือไม่`,
-      confirmText: "ตกลง",
-      cancelText: "ยกเลิก",
+        ? `Save changes for ${form.display_name.trim()} (${form.email.trim()})?`
+        : `Create account ${form.display_name.trim()} (${form.email.trim()}) with role ${role}?`,
+      confirmText: "OK",
+      cancelText: "Cancel",
     });
     if (!confirmed) return;
 
@@ -417,10 +417,10 @@ export default function AdminCreateModal({
 
         if (!result || result.status === "failed" || result.success === false) {
           await popup.error(
-            "แก้ไขไม่สำเร็จ",
+            "Update failed",
             result?.errMessage ||
               result?.message ||
-              "ไม่สามารถแก้ไขผู้ดูแลระบบได้"
+              "Unable to update admin"
           );
           return;
         }
@@ -446,16 +446,16 @@ export default function AdminCreateModal({
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          "สร้างไม่สำเร็จ",
+          "Create failed",
           result?.errMessage ||
             result?.message ||
-            "ไม่สามารถสร้างผู้ดูแลระบบได้"
+            "Unable to create admin"
         );
         return;
       }
 
       saved = true;
-    }, isEdit ? "กำลังบันทึกการแก้ไข..." : "กำลังสร้างผู้ดูแลระบบ...");
+    }, isEdit ? "Saving changes..." : "Creating admin...");
 
     if (!saved) return;
 
@@ -463,25 +463,25 @@ export default function AdminCreateModal({
     if (isEdit) {
       onUpdated?.();
       await popup.success(
-        "แก้ไขผู้ใช้งานสำเร็จแล้ว",
-        "บันทึกข้อมูลผู้ดูแลระบบเรียบร้อยแล้ว"
+        "User updated successfully",
+        "Admin saved successfully"
       );
       return;
     }
 
     onCreated();
     await popup.success(
-      "เพิ่มผู้ใช้งานสำเร็จแล้ว",
-      "สร้างบัญชีผู้ดูแลระบบเรียบร้อยแล้ว"
+      "User created successfully",
+      "Admin account created successfully"
     );
   };
 
   const handleRequestClose = async () => {
     const confirmed = await popup.confirm({
-      title: "ต้องการออกจากหน้านี้หรือไม่?",
-      text: "ข้อมูลที่กรอกไว้จะไม่ถูกบันทึก",
-      confirmText: "ตกลง",
-      cancelText: "ยกเลิก",
+      title: "Leave this page?",
+      text: "Unsaved changes will be lost",
+      confirmText: "OK",
+      cancelText: "Cancel",
     });
     if (!confirmed) return;
 
@@ -494,7 +494,7 @@ export default function AdminCreateModal({
     <div className="fixed inset-0 z-[80] flex items-center justify-center overflow-hidden overscroll-none p-4">
       <button
         type="button"
-        aria-label="ปิดหน้าต่าง"
+        aria-label="Close dialog"
         className="absolute inset-0 bg-[#0f172a]/45"
         onClick={() => void handleRequestClose()}
       />
@@ -503,17 +503,17 @@ export default function AdminCreateModal({
         <div className="flex items-center justify-between border-b border-[#eef2ff] px-6 py-4">
           <div>
             <h2 className="text-[18px] font-bold text-[#1f2640]">
-              {isEdit ? "แก้ไขผู้ดูแลระบบ" : "เพิ่มผู้ดูแลระบบ"}
+              {isEdit ? "Edit admin" : "Add admin"}
             </h2>
             {/* <p className="text-[13px] text-[#7a849c]">
-              สร้างบัญชีผู้ใช้งานทีละขั้นตอน
+              Create a user account step by step
             </p> */}
           </div>
           <button
             type="button"
             onClick={() => void handleRequestClose()}
             className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-[#f8faff]"
-            aria-label="ปิด"
+            aria-label="Close"
           >
             <FiX className="h-4 w-4" />
           </button>
@@ -524,7 +524,7 @@ export default function AdminCreateModal({
 
           {detailLoading ? (
             <p className="py-16 text-center text-[14px] text-[#7a849c]">
-              กำลังโหลดข้อมูลผู้ดูแลระบบ...
+              Loading admins...
             </p>
           ) : null}
 
@@ -585,7 +585,7 @@ export default function AdminCreateModal({
             className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-[14px] font-semibold text-[#5b657d] transition hover:bg-[#f3f5f9] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <FiArrowLeft className="h-4 w-4" />
-            {step === 1 ? "ยกเลิก" : "ย้อนกลับ"}
+            {step === 1 ? "Cancel" : "Back"}
           </button>
 
           {step < 4 ? (
@@ -595,7 +595,7 @@ export default function AdminCreateModal({
               disabled={detailLoading}
               className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d44b5] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              ถัดไป
+              Next
               <FiArrowRight className="h-4 w-4" />
             </button>
           ) : (
@@ -606,7 +606,7 @@ export default function AdminCreateModal({
               className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#16a34a] px-5 text-[14px] font-semibold text-white transition hover:bg-[#15803d] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <FiCheck className="h-4 w-4" />
-              {isEdit ? "ยืนยันการแก้ไข" : "ยืนยันการสร้าง"}
+              {isEdit ? "Confirm update" : "Confirm create"}
             </button>
           )}
         </div>

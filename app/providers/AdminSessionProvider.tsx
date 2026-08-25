@@ -72,8 +72,8 @@ export function AdminSessionProvider({
         setPermissionMenu([]);
         setMenuAll(null);
         await popup.error(
-          "เซสชันหมดอายุ",
-          "ไม่สามารถโหลดสิทธิ์การใช้งานได้ กรุณาเข้าสู่ระบบใหม่"
+          "Session expired",
+          "Unable to load permissions. Please sign in again"
         );
         router.replace("/login");
         return;
@@ -88,8 +88,8 @@ export function AdminSessionProvider({
         setPermissionMenu([]);
         setMenuAll(null);
         await popup.error(
-          "เซสชันไม่ถูกต้อง",
-          "ข้อมูลสิทธิ์ผู้ใช้งานไม่ครบถ้วนจากเซิร์ฟเวอร์"
+          "Invalid session",
+          "Incomplete user permission data from server"
         );
         router.replace("/login");
         return;
@@ -102,8 +102,8 @@ export function AdminSessionProvider({
       setPermissionMenu([]);
       setMenuAll(null);
       await popup.error(
-        "เซสชันหมดอายุ",
-        "ไม่สามารถโหลดสิทธิ์การใช้งานได้ กรุณาเข้าสู่ระบบใหม่"
+        "Session expired",
+        "Unable to load permissions. Please sign in again"
       );
       router.replace("/login");
     } finally {
@@ -126,7 +126,7 @@ export function AdminSessionProvider({
   );
 
   if (!ready) {
-    return <Loading variant="fullscreen" message="กำลังโหลดสิทธิ์เมนู..." />;
+    return <Loading variant="fullscreen" message="Loading menu permissions..." />;
   }
 
   return (

@@ -72,7 +72,7 @@ type MenuAllApiResult =
 function localizeLoginError(message: string): string {
   const normalized = message.trim().toLowerCase();
   if (normalized === "invalid email or password") {
-    return "อีเมล หรือ รหัสผ่าน ไม่ถูกต้อง";
+    return "Invalid email or password";
   }
   return message;
 }
@@ -108,8 +108,8 @@ export default function LoginMain() {
     const trimmedEmail = email.trim();
     if (!trimmedEmail || !password) {
       await popup.warning(
-        "ข้อมูลไม่ครบถ้วน",
-        "กรุณากรอกอีเมล และรหัสผ่าน"
+        "Incomplete information",
+        "Please enter email and password"
       );
       return;
     }
@@ -124,10 +124,10 @@ export default function LoginMain() {
 
       if (!result || result.status === "failed" || !result.success) {
         await popup.error(
-          "เข้าสู่ระบบไม่สำเร็จ",
+          "Sign in failed",
           getErrorMessage(
             result,
-            "การเข้าสู่ระบบล้มเหลว กรุณาตรวจสอบข้อมูล"
+            "Sign in failed. Please check your credentials"
           )
         );
         return;
@@ -137,8 +137,8 @@ export default function LoginMain() {
       const admin = result.data?.admin;
       if (!token) {
         await popup.error(
-          "เข้าสู่ระบบไม่สำเร็จ",
-          "ไม่พบ token จากเซิร์ฟเวอร์"
+          "Sign in failed",
+          "No token received from server"
         );
         return;
       }
@@ -157,10 +157,10 @@ export default function LoginMain() {
       if (isFailedResult(meResult) || isFailedResult(menuResult)) {
         const message = getErrorMessage(
           meResult as LoginApiResult,
-          "ไม่สามารถดึงข้อมูลสิทธิ์การใช้งานได้"
+          "Unable to fetch permissions"
         );
         clearAdminSession();
-        await popup.error("เข้าสู่ระบบไม่สำเร็จ", localizeLoginError(message));
+        await popup.error("Sign in failed", localizeLoginError(message));
         return;
       }
 
@@ -169,8 +169,8 @@ export default function LoginMain() {
       if (!mePayload?.menu || !menuAllPayload?.labels || !menuAllPayload?.tabs) {
         clearAdminSession();
         await popup.error(
-          "เข้าสู่ระบบไม่สำเร็จ",
-          "ข้อมูลสิทธิ์ผู้ใช้งานไม่ครบถ้วนจากเซิร์ฟเวอร์"
+          "Sign in failed",
+          "Incomplete user permission data from server"
         );
         return;
       }
@@ -178,21 +178,21 @@ export default function LoginMain() {
       if (mePayload.admin) {
         localStorage.setItem(ADMIN_PROFILE_KEY, JSON.stringify(mePayload.admin));
       }
-      // permission_menu + menu_all โหลดใหม่ใน AdminSessionProvider (memory) หลังเข้าหน้า admin
+      // permission_menu + menu_all reload in AdminSessionProvider (memory) after entering admin
 
       // Wait until success popup closes (timer bar finishes or user clicks OK), then redirect
       await popup.success(
-        "เข้าสู่ระบบสำเร็จ",
-        "ยินดีต้อนรับเข้าสู่ระบบผู้ดูแลระบบ"
+        "Signed in successfully",
+        "Welcome to the admin portal"
       );
       router.push("/");
     } catch (err: unknown) {
       const raw =
         err instanceof Error
-          ? err.message || "เกิดข้อผิดพลาดในการเชื่อมต่อระบบ"
-          : "เกิดข้อผิดพลาดในการเชื่อมต่อระบบ";
+          ? err.message || "Connection error"
+          : "Connection error";
 
-      await popup.error("เข้าสู่ระบบไม่สำเร็จ", localizeLoginError(raw));
+      await popup.error("Sign in failed", localizeLoginError(raw));
     } finally {
       setIsSubmitting(false);
     }
@@ -222,14 +222,14 @@ export default function LoginMain() {
               Nexus
             </p>
             <p className="text-center text-[14px] font-medium text-white/85">
-              ระบบจัดการร้านซักรีด
+              Laundry management system
             </p>
           </div>
 
           <div className="w-full rounded-2xl bg-white/10 px-5 py-6 text-center text-white/90 backdrop-blur-sm">
             <p className="text-[15px] font-semibold">Admin Panel</p>
             <p className="mt-2 text-[13px] leading-relaxed text-white/80">
-              จัดการออเดอร์ ลูกค้า และสถานะงานซักรีดได้ในที่เดียว
+              Manage orders, customers, and laundry status in one place
             </p>
           </div>
         </div>
@@ -243,7 +243,7 @@ export default function LoginMain() {
           </div>
 
           <h1 className="text-center text-[30px] font-bold leading-tight text-[#2553D8] sm:text-[34px]">
-            เข้าสู่ระบบ
+            Sign in
           </h1>
 
           <form className="mt-12 space-y-6" onSubmit={handleSubmit}>
@@ -252,7 +252,7 @@ export default function LoginMain() {
                 htmlFor="email"
                 className="mb-2 block text-[14px] font-semibold text-[#1f2640]"
               >
-                อีเมล
+                Email
               </label>
               <input
                 id="email"
@@ -272,7 +272,7 @@ export default function LoginMain() {
                 htmlFor="password"
                 className="mb-2 block text-[14px] font-semibold text-[#1f2640]"
               >
-                รหัสผ่าน
+                Password
               </label>
               <div className="relative">
                 <input
@@ -290,7 +290,7 @@ export default function LoginMain() {
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                   className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[#757d94] hover:text-[#1f2640]"
-                  aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                   aria-pressed={showPassword}
                 >
                   {showPassword ? (
@@ -305,13 +305,13 @@ export default function LoginMain() {
                   type="button"
                   onClick={() =>
                     popup.info(
-                      "ลืมรหัสผ่าน",
-                      "กรุณาติดต่อเจ้าของร้านเพื่อรีเซ็ตรหัสผ่าน"
+                      "Forgot password",
+                      "Please contact the owner to reset your password"
                     )
                   }
                   className="cursor-pointer text-[13px] font-medium text-[#2553D8] hover:underline"
                 >
-                  ลืมรหัสผ่าน?
+                  Forgot password?
                 </button>
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function LoginMain() {
               disabled={isSubmitting}
               className="mt-2 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#2553D8] text-[15px] font-semibold text-white transition hover:bg-[#1d44b5] focus:outline-none focus:ring-2 focus:ring-[#2553d8]/40 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
         </div>

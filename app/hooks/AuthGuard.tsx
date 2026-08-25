@@ -44,7 +44,7 @@ export default function AuthGuard({
     return (
       <Loading
         variant="fullscreen"
-        message="กำลังตรวจสอบสิทธิ์..."
+        message="Checking permissions..."
       />
     );
   }

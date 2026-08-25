@@ -39,10 +39,10 @@ type ConfirmPopupOptions = {
 const SUCCESS_TIMER_MS = 1000;
 
 export function showStatusPopup({
-  title = "สำเร็จ",
+  title = "Success",
   text,
   icon = "info",
-  confirmText = "ตกลง",
+  confirmText = "OK",
   timer,
   timerProgressBar = false,
 }: StatusPopupOptions = {}): Promise<SweetAlertResult> {
@@ -78,11 +78,11 @@ export function showStatusPopup({
 }
 
 export async function showConfirmPopup({
-  title = "ยืนยันการทำรายการ?",
+  title = "Confirm this action?",
   text,
   icon = "question",
-  confirmText = "ตกลง",
-  cancelText = "ยกเลิก",
+  confirmText = "OK",
+  cancelText = "Cancel",
 }: ConfirmPopupOptions = {}): Promise<boolean> {
   const result = await Swal.fire({
     title,
@@ -121,7 +121,7 @@ export async function showConfirmPopup({
 
 export const popup = {
   success: (
-    title = "สำเร็จ",
+    title = "Success",
     text?: string,
     options?: Pick<StatusPopupOptions, "confirmText" | "timer" | "timerProgressBar">
   ) =>
@@ -133,33 +133,33 @@ export const popup = {
       timerProgressBar: true,
       ...options,
     }),
-  error: (title = "เกิดข้อผิดพลาด", text?: string) =>
+  error: (title = "Error", text?: string) =>
     showStatusPopup({ title, text, icon: "error" }),
-  warning: (title = "คำเตือน", text?: string) =>
+  warning: (title = "Warning", text?: string) =>
     showStatusPopup({ title, text, icon: "warning" }),
-  info: (title = "แจ้งเตือน", text?: string) =>
+  info: (title = "Info", text?: string) =>
     showStatusPopup({ title, text, icon: "info" }),
   confirm: (options?: ConfirmPopupOptions) => showConfirmPopup(options),
   confirmDelete: (options?: ConfirmPopupOptions) =>
     showConfirmPopup({
-      title: "ยืนยันการลบ?",
-      text: "เมื่อลบแล้วจะไม่สามารถกู้คืนได้",
+      title: "Confirm delete?",
+      text: "This action cannot be undone",
       icon: "warning",
-      confirmText: "ตกลง",
-      cancelText: "ยกเลิก",
+      confirmText: "OK",
+      cancelText: "Cancel",
       ...options,
     }),
   logout: () =>
     showConfirmPopup({
-      title: "ยืนยันออกจากระบบ",
-      text: "คุณต้องการออกจากระบบหรือไม่?",
+      title: "Confirm logout",
+      text: "Do you want to log out?",
       icon: "question",
-      confirmText: "ตกลง",
-      cancelText: "ยกเลิก",
+      confirmText: "OK",
+      cancelText: "Cancel",
     }),
 };
 
-/** @deprecated ใช้ showStatusPopup หรือ popup.success แทน */
+/** @deprecated use showStatusPopup or popup.success instead */
 export function showAppPopupAnimation(
   options: StatusPopupOptions = {}
 ): Promise<SweetAlertResult> {

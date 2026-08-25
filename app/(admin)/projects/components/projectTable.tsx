@@ -26,6 +26,24 @@ function formatDateTime(value: string | null): string {
   }
 }
 
+function getProjectTypeBadgeClass(type: string): string {
+  const key = String(type || "").trim().toLowerCase();
+  if (key === "project") {
+    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/60";
+  }
+  if (key === "service") {
+    return "bg-[#f3e8ff] text-[#7e22ce] ring-1 ring-[#d8b4fe]/70";
+  }
+  return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
+}
+
+function getProjectTypeLabel(type: string): string {
+  const key = String(type || "").trim().toLowerCase();
+  if (key === "project") return "Project";
+  if (key === "service") return "Service";
+  return type || "-";
+}
+
 function getResourceTypeBadgeClass(code: string): string {
   const key = String(code || "").trim().toLowerCase();
   if (key === "frontend") {
@@ -57,8 +75,8 @@ function ProjectRowActions({
       <button
         type="button"
         onClick={() => onEdit?.(project)}
-        aria-label={`แก้ไข ${project.name}`}
-        title="แก้ไข"
+        aria-label={`Edit ${project.name}`}
+        title="Edit"
         className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#c7d7ff] bg-white text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
@@ -66,8 +84,8 @@ function ProjectRowActions({
       <button
         type="button"
         onClick={() => onDelete?.(project)}
-        aria-label={`ลบ ${project.name}`}
-        title="ลบ"
+        aria-label={`Delete ${project.name}`}
+        title="Delete"
         className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-white text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#fef2f2] hover:shadow-md active:scale-95"
       >
         <FiTrash2 className="h-4 w-4" />
@@ -88,23 +106,25 @@ export default function ProjectTable({
     () => [
       {
         key: "index",
-        title: "ลำดับ",
+        title: "No.",
         cellClassName: "font-medium text-[#5b657d]",
         render: (_project, index) => index + 1,
       },
       {
         key: "name",
-        title: "Project",
+        title: "Name",
         render: (project) => (
           <span className="font-semibold text-[#1f2640]">{project.name}</span>
         ),
       },
       {
-        key: "description",
-        title: "รายละเอียด",
+        key: "type",
+        title: "Type",
         render: (project) => (
-          <span className="text-[#5b657d]">
-            {project.description?.trim() ? project.description : "-"}
+          <span
+            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getProjectTypeBadgeClass(project.type)}`}
+          >
+            {getProjectTypeLabel(project.type)}
           </span>
         ),
       },
@@ -121,7 +141,7 @@ export default function ProjectTable({
       },
       {
         key: "is_active",
-        title: "สถานะ",
+        title: "Status",
         render: (project) => {
           const busy = togglingId === project.id;
           return (
@@ -129,7 +149,7 @@ export default function ProjectTable({
               type="button"
               disabled={busy}
               onClick={() => onToggleActive?.(project)}
-              title={project.is_active ? "ปิดใช้งาน" : "เปิดใช้งาน"}
+              title={project.is_active ? "Deactivate" : "Activate"}
               className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${
                 project.is_active
                   ? "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70 hover:bg-[#bbf7d0]"
@@ -143,17 +163,17 @@ export default function ProjectTable({
       },
       {
         key: "created_at",
-        title: "สร้างเมื่อ",
+        title: "Created at",
         render: (project) => formatDateTime(project.created_at),
       },
-      {
-        key: "updated_at",
-        title: "แก้ไขล่าสุด",
-        render: (project) => formatDateTime(project.updated_at),
-      },
+      // {
+      //   key: "updated_at",
+      //   title: "Updated at",
+      //   render: (project) => formatDateTime(project.updated_at),
+      // },
       {
         key: "actions",
-        title: "การใช้งาน",
+        title: "Actions",
         headerClassName: "text-right",
         cellClassName: "text-right",
         render: (project) => (
@@ -174,10 +194,8 @@ export default function ProjectTable({
       data={projects}
       loading={loading}
       getRowKey={(project) => project.id}
-      emptyText="ไม่พบข้อมูล Project"
-      loadingText="กำลังโหลดข้อมูล Project..."
-      title="รายการ Project"
-      count={projects.length}
+      emptyText="No projects found"
+      loadingText="Loading projects..."
     />
   );
 }

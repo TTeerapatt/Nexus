@@ -67,7 +67,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การดึงข้อมูลผู้ดูแลระบบล้มเหลว",
+            "Failed to fetch admins",
           error: err,
         };
       });
@@ -90,7 +90,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การดึงข้อมูลผู้ดูแลระบบล้มเหลว",
+            "Failed to fetch admins",
           error: err,
         };
       });
@@ -113,7 +113,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การดึงข้อมูลสิทธิ์ผู้ดูแลระบบล้มเหลว",
+            "Failed to fetch admin permissions",
           error: err,
         };
       });
@@ -136,7 +136,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การสร้างผู้ดูแลระบบล้มเหลว",
+            "Failed to create admin",
           error: err,
         };
       });
@@ -159,7 +159,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การแก้ไขผู้ดูแลระบบล้มเหลว",
+            "Failed to update admin",
           error: err,
         };
       });
@@ -182,7 +182,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การลบผู้ดูแลระบบล้มเหลว",
+            "Failed to delete admin",
           error: err,
         };
       });
@@ -205,7 +205,7 @@ const adminAPI = {
             err?.message ||
             err?.errMessage ||
             (typeof err === "string" ? err : null) ||
-            "การลบผู้ดูแลระบบถาวรล้มเหลว",
+            "Failed to permanently delete admin",
           error: err,
         };
       });

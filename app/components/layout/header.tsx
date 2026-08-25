@@ -44,8 +44,8 @@ export default function Header() {
 
     await withLoading(async () => {
       clearAdminSession();
-    }, "กำลังออกจากระบบ...");
-    await popup.success("ออกจากระบบสำเร็จ", "คุณได้ออกจากระบบแล้ว");
+    }, "Signing out...");
+    await popup.success("Signed out successfully", "You have been signed out");
     router.replace("/login");
   };
 
@@ -79,7 +79,7 @@ export default function Header() {
           type="button"
           onClick={handleLogout}
           className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/35 bg-white/10 px-3.5 py-2 text-[13px] font-semibold text-white transition hover:border-red-400/60 hover:bg-red-500 hover:text-white"
-          aria-label="ออกจากระบบ"
+          aria-label="Sign out"
         >
           <FiLogOut className="h-4 w-4" />
           {/* Logout */}

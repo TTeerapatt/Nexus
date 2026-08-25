@@ -1,10 +1,13 @@
 import apiServices from "../apiServices";
 import { validateOrThrowApiResponse } from "../response-validator";
 
+export type ProjectType = "project" | "service";
+
 export type ProjectItem = {
   id: number;
   name: string;
   description: string | null;
+  type: ProjectType;
   resource_type_id: number;
   resource_type_code: string;
   resource_type_name: string;
@@ -16,6 +19,7 @@ export type ProjectItem = {
 export type CreateProjectPayload = {
   name: string;
   description?: string | null;
+  type: ProjectType;
   resource_type_id: number;
   is_active?: boolean;
 };
@@ -23,6 +27,7 @@ export type CreateProjectPayload = {
 export type UpdateProjectPayload = {
   name?: string;
   description?: string | null;
+  type?: ProjectType;
   resource_type_id?: number;
   is_active?: boolean;
 };
@@ -30,6 +35,7 @@ export type UpdateProjectPayload = {
 export type ProjectListParams = {
   is_active?: boolean;
   name?: string;
+  type?: ProjectType;
   resource_type_id?: number;
   resource_type_code?: string;
 };
@@ -59,7 +65,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error getProjectAll:", err);
-        return failedResult(err, "การดึงข้อมูล Project ล้มเหลว");
+        return failedResult(err, "Failed to fetch Projects");
       });
   },
 
@@ -74,7 +80,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error getProjectById:", err);
-        return failedResult(err, "การดึงข้อมูล Project ล้มเหลว");
+        return failedResult(err, "Failed to fetch Projects");
       });
   },
 
@@ -89,7 +95,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error createProject:", err);
-        return failedResult(err, "การสร้าง Project ล้มเหลว");
+        return failedResult(err, "Failed to create Project");
       });
   },
 
@@ -104,7 +110,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error updateProject:", err);
-        return failedResult(err, "การแก้ไข Project ล้มเหลว");
+        return failedResult(err, "Failed to update Project");
       });
   },
 
@@ -123,7 +129,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error patchProjectIsActive:", err);
-        return failedResult(err, "การเปลี่ยนสถานะ Project ล้มเหลว");
+        return failedResult(err, "Failed to update Project status");
       });
   },
 
@@ -138,7 +144,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error softDeleteProject:", err);
-        return failedResult(err, "การลบ Project ล้มเหลว");
+        return failedResult(err, "Failed to delete Project");
       });
   },
 
@@ -153,7 +159,7 @@ const projectAPI = {
       .then((res) => validateOrThrowApiResponse(res))
       .catch((err) => {
         console.log("Error hardDeleteProject:", err);
-        return failedResult(err, "การลบ Project ถาวรล้มเหลว");
+        return failedResult(err, "Failed to permanently delete Project");
       });
   },
 };

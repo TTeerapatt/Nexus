@@ -157,7 +157,7 @@ export function AdminPermissionTable({
       <table className="min-w-full border-collapse">
         <thead>
           <tr className="bg-[#f8faff] text-left text-[12px] font-semibold text-[#5b657d]">
-            <th className="px-4 py-3">หมวดหมู่ / เมนูระบบ</th>
+            <th className="px-4 py-3">Category / System menu</th>
             {actionColumns.map((code) => (
               <th key={code} className="px-3 py-3 text-center capitalize">
                 {code}
@@ -194,10 +194,10 @@ export function AdminRoleStep({
   return (
     <div>
       <h3 className="text-[22px] font-bold text-[#1f2640]">
-        เลือกบทบาทผู้ใช้งาน
+        Select user role
       </h3>
       {/* <p className="mt-1 text-[14px] text-[#7a849c]">
-        เลือกบทบาทที่ตรงกับหน้าที่การทำงาน เพื่อกำหนดสิทธิ์การใช้งานที่เหมาะสม
+        Choose a role that matches the job to set the right permissions
       </p> */}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -264,16 +264,16 @@ export function AdminProfileStep({
   return (
     <div>
       <h3 className="text-[22px] font-bold text-[#1f2640]">
-        กรอกข้อมูลผู้ใช้งาน
+        Enter user details
       </h3>
       {/* <p className="mt-1 text-[14px] text-[#7a849c]">
-        กรอกข้อมูลตามที่ระบบต้องการเพื่อสร้างบัญชีผู้ดูแลระบบ
+        Fill in the required details to create an admin account
       </p> */}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block sm:col-span-2">
           <span className="mb-2 block text-[13px] font-semibold text-[#1f2640]">
-            ชื่อที่แสดง
+            Display name
           </span>
           <div className="relative">
             <FiUser className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8b93a7]" />
@@ -294,7 +294,7 @@ export function AdminProfileStep({
 
         <label className="block sm:col-span-2">
           <span className="mb-2 block text-[13px] font-semibold text-[#1f2640]">
-            อีเมล
+            Email
           </span>
           <input
             type="email"
@@ -309,7 +309,7 @@ export function AdminProfileStep({
 
         <label className="block sm:col-span-2">
           <span className="mb-2 block text-[13px] font-semibold text-[#1f2640]">
-            {isEdit ? "รหัสผ่านใหม่ (ไม่บังคับ)" : "รหัสผ่าน"}
+            {isEdit ? "New password (optional)" : "Password"}
           </span>
           <div className="relative">
             <input
@@ -329,7 +329,7 @@ export function AdminProfileStep({
               type="button"
               onClick={onToggleShowPassword}
               className="absolute inset-y-0 right-0 z-10 flex cursor-pointer items-center pr-3.5 text-[#8b93a7] hover:text-[#1f2640]"
-              aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+              aria-label={showPassword ? "Hide password" : "Show password"}
               aria-pressed={showPassword}
             >
               {showPassword ? (
@@ -344,7 +344,7 @@ export function AdminProfileStep({
               <PasswordPolicyChecklist password={form.password} />
             ) : (
               <p className="text-[12px] text-[#7a849c]">
-                เว้นว่างไว้หากไม่ต้องการเปลี่ยนรหัสผ่าน
+                Leave blank to keep the current password
               </p>
             )}
           </div>
@@ -352,7 +352,7 @@ export function AdminProfileStep({
 
         <label className="block sm:col-span-2">
           <span className="mb-2 block text-[13px] font-semibold text-[#1f2640]">
-            {isEdit ? "ยืนยันรหัสผ่านใหม่" : "ยืนยันรหัสผ่าน"}
+            {isEdit ? "Confirm new password" : "Confirm password"}
           </span>
           <div className="relative">
             <input
@@ -373,7 +373,7 @@ export function AdminProfileStep({
               onClick={onToggleShowConfirmPassword}
               className="absolute inset-y-0 right-0 z-10 flex cursor-pointer items-center pr-3.5 text-[#8b93a7] hover:text-[#1f2640]"
               aria-label={
-                showConfirmPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"
+                showConfirmPassword ? "Hide password" : "Show password"
               }
               aria-pressed={showConfirmPassword}
             >
@@ -412,12 +412,12 @@ export function AdminPermissionStep({
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h3 className="text-[22px] font-bold text-[#1f2640]">
-            กำหนดขอบเขตสิทธิ์
+            Set permission scope
           </h3>
           {/* <p className="mt-1 text-[14px] text-[#7a849c]">
-            ติ๊กสิทธิ์ตามเมนูจากระบบ (ดึงจาก getMenuAll)
+            Check permissions by menu (from getMenuAll)
             {role === "owner"
-              ? " — Owner มีสิทธิ์เต็มโดยอัตโนมัติ"
+              ? " — Owner has full access automatically"
               : ""}
           </p> */}
         </div>
@@ -429,7 +429,7 @@ export function AdminPermissionStep({
 
       {menuLoading ? (
         <p className="py-10 text-center text-[14px] text-[#7a849c]">
-          กำลังโหลดเมนูสิทธิ์...
+          Loading permission menus...
         </p>
       ) : (
         <AdminPermissionTable
@@ -464,27 +464,27 @@ export function AdminConfirmStep({
   return (
     <div>
       <h3 className="text-[22px] font-bold text-[#1f2640]">
-        {isEdit ? "ตรวจสอบและยืนยันการแก้ไข" : "ตรวจสอบและยืนยันการสร้าง"}
+        {isEdit ? "Review and confirm update" : "Review and confirm create"}
       </h3>
       {/* <p className="mt-1 text-[14px] text-[#7a849c]">
-        ตรวจทานข้อมูลก่อนสร้างบัญชีผู้ดูแลระบบ
+        Review details before creating the admin account
       </p> */}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-[#e8ecf4] bg-[#f8faff] px-4 py-3">
-          <p className="text-[12px] font-semibold text-[#7a849c]">ชื่อบทบาท</p>
+          <p className="text-[12px] font-semibold text-[#7a849c]">Role name</p>
           <p className="mt-1 text-[15px] font-bold text-[#1f2640]">
             {selectedRoleTitle} ({selectedRoleSubtitle})
           </p>
         </div>
         <div className="rounded-2xl border border-[#e8ecf4] bg-[#f8faff] px-4 py-3">
-          <p className="text-[12px] font-semibold text-[#7a849c]">ชื่อที่แสดง</p>
+          <p className="text-[12px] font-semibold text-[#7a849c]">Display name</p>
           <p className="mt-1 text-[15px] font-bold text-[#1f2640]">
             {form.display_name.trim() || "-"}
           </p>
         </div>
         <div className="rounded-2xl border border-[#e8ecf4] bg-[#f8faff] px-4 py-3 sm:col-span-2">
-          <p className="text-[12px] font-semibold text-[#7a849c]">อีเมล</p>
+          <p className="text-[12px] font-semibold text-[#7a849c]">Email</p>
           <p className="mt-1 text-[15px] font-bold text-[#1f2640]">
             {form.email.trim() || "-"}
           </p>
@@ -494,14 +494,14 @@ export function AdminConfirmStep({
       <div className="mt-6">
         <div className="mb-3 flex items-center justify-between">
           <h4 className="text-[15px] font-bold text-[#1f2640]">
-            สิทธิ์การเข้าถึงเมนู (สรุป)
+            Menu access summary
           </h4>
           {/* <button
             type="button"
             onClick={() => setStep(3)}
             className="cursor-pointer text-[13px] font-semibold text-[#2553D8] hover:underline"
           >
-            แก้ไข →
+            Edit →
           </button> */}
         </div>
 

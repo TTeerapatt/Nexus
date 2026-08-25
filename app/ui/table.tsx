@@ -50,13 +50,13 @@ export default function DataTable<T>({
   columns,
   data,
   loading = false,
-  emptyText = "ไม่พบข้อมูล",
-  loadingText = "กำลังโหลดข้อมูล...",
+  emptyText = "No data found",
+  loadingText = "Loading...",
   getRowKey,
   title,
   subtitle,
   count,
-  countLabel = "รายการ",
+  countLabel = "items",
 }: DataTableProps<T>) {
   const showHeader = Boolean(title || subtitle || typeof count === "number");
 

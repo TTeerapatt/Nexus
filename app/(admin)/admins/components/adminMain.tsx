@@ -38,15 +38,15 @@ export default function AdminMain() {
         const message =
           result?.errMessage ||
           result?.message ||
-          "ไม่สามารถดึงข้อมูลผู้ดูแลระบบได้";
-        await popup.error("เกิดข้อผิดพลาด", message);
+          "Unable to fetch admins";
+        await popup.error("Error", message);
         setAdmins([]);
         return;
       }
 
       setAdmins(Array.isArray(result.data) ? result.data : []);
     } catch {
-      await popup.error("เกิดข้อผิดพลาด", "ไม่สามารถดึงข้อมูลผู้ดูแลระบบได้");
+      await popup.error("Error", "Unable to fetch admins");
       setAdmins([]);
     } finally {
       setLoading(false);
@@ -95,15 +95,15 @@ export default function AdminMain() {
       String(currentAdmin.id) === String(admin.id)
     ) {
       await popup.warning(
-        "ลบไม่ได้",
-        "ไม่สามารถลบบัญชีของตัวเองได้"
+        "Cannot delete",
+        "You cannot delete your own account"
       );
       return;
     }
 
     const confirmed = await popup.confirmDelete({
-      title: "ยืนยันการลบผู้ดูแลระบบ?",
-      text: `ต้องการลบ ${admin.display_name} (${admin.email}) ใช่หรือไม่`,
+      title: "Delete this admin?",
+      text: `Delete ${admin.display_name} (${admin.email})?`,
     });
     if (!confirmed) return;
 
@@ -119,19 +119,19 @@ export default function AdminMain() {
 
       if (!result || result.status === "failed" || result.success === false) {
         await popup.error(
-          "ลบไม่สำเร็จ",
-          result?.errMessage || result?.message || "ไม่สามารถลบผู้ดูแลระบบได้"
+          "Delete failed",
+          result?.errMessage || result?.message || "Unable to delete admin"
         );
         return;
       }
 
       deleted = true;
-    }, "กำลังลบผู้ดูแลระบบ...");
+    }, "Deleting admin...");
 
     if (!deleted) return;
 
     void fetchAdmins();
-    await popup.success("ลบสำเร็จ", "ลบผู้ดูแลระบบเรียบร้อยแล้ว");
+    await popup.success("Deleted successfully", "Admin deleted successfully");
   };
 
   return (
