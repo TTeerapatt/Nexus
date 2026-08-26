@@ -1,6 +1,6 @@
 "use client";
 
-import { MdLocalLaundryService } from "react-icons/md";
+import { IoCodeSlashOutline } from "react-icons/io5";
 
 export type LoadingProps = {
   message?: string;
@@ -23,7 +23,7 @@ function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
       <div className="absolute inset-0 rounded-full border-[3px] border-[#dbe4ff]" />
       <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-[#2553D8] border-r-[#4C7DFF]" />
       <div className="absolute inset-[18%] flex items-center justify-center rounded-full bg-[#eef3ff] shadow-inner">
-        <MdLocalLaundryService
+        <IoCodeSlashOutline
           className={`${iconClass} text-[#2553D8] animate-pulse`}
         />
       </div>
