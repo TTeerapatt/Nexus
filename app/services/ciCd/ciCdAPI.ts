@@ -24,6 +24,14 @@ export type CiCdStageItem = {
   durationMillis: number | null;
 };
 
+export type CiCdBuildItem = {
+  number: number;
+  url: string;
+  result: string | null;
+  status: JenkinsJobStatus;
+  building: boolean;
+};
+
 export type CiCdJobDetail = {
   name: string;
   url: string;
@@ -31,6 +39,15 @@ export type CiCdJobDetail = {
   status: JenkinsJobStatus;
   healthScore: number | null;
   lastBuildNumber: number | null;
+  selectedBuildNumber: number | null;
+  builds: CiCdBuildItem[];
+  stages: CiCdStageItem[];
+  stagesMessage?: string;
+};
+
+export type CiCdBuildStages = {
+  jobName: string;
+  buildNumber: number;
   stages: CiCdStageItem[];
   stagesMessage?: string;
 };
@@ -63,9 +80,15 @@ const ciCdAPI = {
       });
   },
 
-  getJobByName(jobName: string) {
+  getJobByName(jobName: string, buildNumber?: number) {
     return apiServices
       .get(`ci-cd/jobs/${encodeURIComponent(jobName)}`, {
+        params:
+          buildNumber != null
+            ? {
+                buildNumber,
+              }
+            : undefined,
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -75,6 +98,24 @@ const ciCdAPI = {
       .catch((err) => {
         console.log("Error getJobByName:", err);
         return failedResult(err, "Failed to fetch CI-CD job detail");
+      });
+  },
+
+  getBuildStages(jobName: string, buildNumber: number) {
+    return apiServices
+      .get(
+        `ci-cd/jobs/${encodeURIComponent(jobName)}/builds/${buildNumber}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      )
+      .then((res) => validateOrThrowApiResponse(res))
+      .catch((err) => {
+        console.log("Error getBuildStages:", err);
+        return failedResult(err, "Failed to fetch build stages");
       });
   },
 };

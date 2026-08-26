@@ -6,12 +6,14 @@ import {
   FiChevronDown,
   FiExternalLink,
   FiHeart,
-  FiHash,
 } from "react-icons/fi";
 import { GoWorkflow } from "react-icons/go";
 import ciCdAPI, {
+  type CiCdBuildItem,
+  type CiCdBuildStages,
   type CiCdJobDetail,
   type CiCdJobItem,
+  type CiCdStageItem,
   type JenkinsJobStatus,
 } from "@/app/services/ciCd/ciCdAPI";
 import { popup } from "@/app/ui/popUp";
@@ -80,6 +82,24 @@ function healthBarClass(score: number): string {
   return "bg-[#ef4444]";
 }
 
+function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {
+  if (selected) {
+    return "bg-[#2553D8] text-white ring-[#2553D8]";
+  }
+  switch (status) {
+    case "success":
+      return "bg-white text-[#15803d] ring-[#86efac] hover:bg-[#ecfdf5]";
+    case "failed":
+      return "bg-white text-[#b91c1c] ring-[#fecaca] hover:bg-[#fef2f2]";
+    case "unstable":
+      return "bg-white text-[#a16207] ring-[#fde68a] hover:bg-[#fefce8]";
+    case "running":
+      return "bg-white text-[#1d4ed8] ring-[#93c5fd] hover:bg-[#eff6ff]";
+    default:
+      return "bg-white text-[#5b657d] ring-[#e4eaf6] hover:bg-[#f8faff]";
+  }
+}
+
 type DetailApiResult =
   | {
       success?: boolean;
@@ -91,6 +111,22 @@ type DetailApiResult =
   | null
   | undefined;
 
+type BuildStagesApiResult =
+  | {
+      success?: boolean;
+      data?: CiCdBuildStages;
+      status?: string;
+      errMessage?: string;
+      message?: string;
+    }
+  | null
+  | undefined;
+
+type StagesCache = Record<
+  number,
+  { stages: CiCdStageItem[]; stagesMessage?: string }
+>;
+
 type CiCdAccordionItemProps = {
   job: CiCdJobItem;
 };
@@ -98,8 +134,36 @@ type CiCdAccordionItemProps = {
 export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
   const [open, setOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [loadingBuild, setLoadingBuild] = useState(false);
   const [detail, setDetail] = useState<CiCdJobDetail | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [selectedBuildNumber, setSelectedBuildNumber] = useState<number | null>(
+    null
+  );
+  const [pendingBuildNumber, setPendingBuildNumber] = useState<number | null>(
+    null
+  );
+  const [stages, setStages] = useState<CiCdStageItem[]>([]);
+  const [stagesMessage, setStagesMessage] = useState<string | undefined>();
+  const [stagesCache, setStagesCache] = useState<StagesCache>({});
+
+  const applyStages = (
+    buildNumber: number,
+    nextStages: CiCdStageItem[],
+    nextMessage?: string
+  ) => {
+    setSelectedBuildNumber(buildNumber);
+    setPendingBuildNumber(null);
+    setStages(nextStages);
+    setStagesMessage(nextMessage);
+    setStagesCache((prev) => ({
+      ...prev,
+      [buildNumber]: {
+        stages: nextStages,
+        ...(nextMessage ? { stagesMessage: nextMessage } : {}),
+      },
+    }));
+  };
 
   const loadDetail = async () => {
     if (loaded || loadingDetail) return;
@@ -118,13 +182,73 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         return;
       }
 
-      setDetail(result.data ?? null);
+      const data = result.data ?? null;
+      setDetail(data);
       setLoaded(true);
+
+      if (data?.selectedBuildNumber != null) {
+        applyStages(
+          data.selectedBuildNumber,
+          data.stages || [],
+          data.stagesMessage
+        );
+      } else {
+        setSelectedBuildNumber(null);
+        setPendingBuildNumber(null);
+        setStages([]);
+        setStagesMessage(data?.stagesMessage);
+      }
     } catch {
       await popup.error("Error", "Unable to fetch job pipeline");
       setDetail(null);
     } finally {
       setLoadingDetail(false);
+    }
+  };
+
+  const handleSelectBuild = async (build: CiCdBuildItem) => {
+    if (loadingBuild) return;
+    if (
+      selectedBuildNumber === build.number &&
+      pendingBuildNumber == null
+    ) {
+      return;
+    }
+
+    const cached = stagesCache[build.number];
+    if (cached) {
+      applyStages(build.number, cached.stages, cached.stagesMessage);
+      return;
+    }
+
+    setPendingBuildNumber(build.number);
+    setLoadingBuild(true);
+    try {
+      const result = (await ciCdAPI.getBuildStages(
+        job.name,
+        build.number
+      )) as BuildStagesApiResult;
+
+      if (!result || result.status === "failed" || result.success === false) {
+        const message =
+          result?.errMessage ||
+          result?.message ||
+          "Unable to fetch build stages";
+        setPendingBuildNumber(null);
+        await popup.error("Error", message);
+        return;
+      }
+
+      applyStages(
+        build.number,
+        result.data?.stages || [],
+        result.data?.stagesMessage
+      );
+    } catch {
+      setPendingBuildNumber(null);
+      await popup.error("Error", "Unable to fetch build stages");
+    } finally {
+      setLoadingBuild(false);
     }
   };
 
@@ -135,6 +259,8 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
       await loadDetail();
     }
   };
+
+  const builds: CiCdBuildItem[] = detail?.builds || [];
 
   return (
     <div
@@ -201,13 +327,6 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
             ) : detail ? (
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  {detail.lastBuildNumber != null ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1f2640] ring-1 ring-[#e4eaf6]">
-                      <FiHash className="h-3.5 w-3.5 text-[#2553D8]" />
-                      Build {detail.lastBuildNumber}
-                    </span>
-                  ) : null}
-
                   {detail.healthScore != null ? (
                     <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1f2640] ring-1 ring-[#e4eaf6]">
                       <FiHeart className="h-3.5 w-3.5 text-[#ef4444]" />
@@ -225,7 +344,10 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
 
                   <span className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#5b657d] ring-1 ring-[#e4eaf6]">
                     <FiActivity className="h-3.5 w-3.5 text-[#2553D8]" />
-                    {detail.stages.length} stages
+                    {stages.length} stages
+                    {(pendingBuildNumber ?? selectedBuildNumber) != null
+                      ? ` · #${pendingBuildNumber ?? selectedBuildNumber}`
+                      : ""}
                   </span>
 
                   {job.url ? (
@@ -242,10 +364,70 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                   ) : null}
                 </div>
 
-                <CiCdPipeline
-                  stages={detail.stages}
-                  emptyMessage={detail.stagesMessage}
-                />
+                {builds.length > 0 ? (
+                  <div className="space-y-2">
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+                      Build history
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {builds.map((build) => {
+                        const activeNumber =
+                          pendingBuildNumber ?? selectedBuildNumber;
+                        const selected = activeNumber === build.number;
+                        return (
+                          <button
+                            key={build.number}
+                            type="button"
+                            onClick={() => void handleSelectBuild(build)}
+                            disabled={loadingBuild}
+                            className={`inline-flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 text-[12px] font-semibold ring-1 transition disabled:cursor-not-allowed disabled:opacity-60 ${buildPillClass(build.status, selected)}`}
+                            title={`${statusLabel(build.status)}${build.building ? " (running)" : ""}`}
+                          >
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${
+                                selected
+                                  ? "bg-white"
+                                  : statusDotClass(build.status).split(" ")[0]
+                              }`}
+                            />
+                            #{build.number}
+                            {loadingBuild && pendingBuildNumber === build.number ? (
+                              <span className="ml-0.5 h-3 w-3 animate-spin rounded-full border border-white/40 border-t-white" />
+                            ) : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+
+                <div className="relative">
+                  <div
+                    className={
+                      loadingBuild
+                        ? "pointer-events-none opacity-40 transition-opacity"
+                        : "transition-opacity"
+                    }
+                  >
+                    <CiCdPipeline
+                      stages={stages}
+                      emptyMessage={stagesMessage}
+                    />
+                  </div>
+
+                  {loadingBuild ? (
+                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/70 backdrop-blur-[1px]">
+                      <div className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[13px] font-medium text-[#5b657d] ring-1 ring-[#e4eaf6]">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#2553D8]/20 border-t-[#2553D8]" />
+                        Loading build
+                        {pendingBuildNumber != null
+                          ? ` #${pendingBuildNumber}`
+                          : ""}
+                        …
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-[#d8e0f0] bg-white/70 px-4 py-8 text-center text-[13px] text-[#7a849c]">

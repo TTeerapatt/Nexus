@@ -35,42 +35,42 @@ function stageStyles(kind: StageKind) {
     case "success":
       return {
         node: "border-[#16a34a] bg-white text-[#16a34a]",
-        rail: "from-[#86efac] to-[#4ade80]",
+        rail: "bg-[#16a34a]",
         chip: "bg-[#ecfdf5] text-[#15803d] ring-[#bbf7d0]",
         title: "text-[#14532d]",
       };
     case "failed":
       return {
         node: "border-[#dc2626] bg-white text-[#dc2626]",
-        rail: "from-[#fecaca] to-[#f87171]",
+        rail: "bg-[#dc2626]",
         chip: "bg-[#fef2f2] text-[#b91c1c] ring-[#fecaca]",
         title: "text-[#7f1d1d]",
       };
     case "running":
       return {
         node: "border-[#2553D8] bg-white text-[#2553D8] animate-pulse",
-        rail: "from-[#bfdbfe] to-[#60a5fa]",
+        rail: "bg-[#2553D8]",
         chip: "bg-[#eff6ff] text-[#1d4ed8] ring-[#bfdbfe]",
         title: "text-[#1e3a8a]",
       };
     case "unstable":
       return {
         node: "border-[#ca8a04] bg-white text-[#ca8a04]",
-        rail: "from-[#fde68a] to-[#facc15]",
+        rail: "bg-[#ca8a04]",
         chip: "bg-[#fefce8] text-[#a16207] ring-[#fde68a]",
         title: "text-[#713f12]",
       };
     case "aborted":
       return {
         node: "border-[#6b7280] bg-white text-[#6b7280]",
-        rail: "from-[#e5e7eb] to-[#d1d5db]",
+        rail: "bg-[#6b7280]",
         chip: "bg-[#f9fafb] text-[#4b5563] ring-[#e5e7eb]",
         title: "text-[#374151]",
       };
     default:
       return {
         node: "border-[#d1d5db] bg-white text-[#9ca3af]",
-        rail: "from-[#e5e7eb] to-[#e5e7eb]",
+        rail: "bg-[#d1d5db]",
         chip: "bg-[#f9fafb] text-[#9ca3af] ring-[#e5e7eb]",
         title: "text-[#6b7280]",
       };
@@ -185,7 +185,7 @@ export default function CiCdPipeline({
                   aria-hidden
                 >
                   <div
-                    className={`h-[2px] w-full rounded-full bg-gradient-to-r ${styles.rail}`}
+                    className={`h-[2px] w-full rounded-full ${styles.rail}`}
                   />
                 </div>
               ) : null}
