@@ -15,7 +15,9 @@ type StageKind =
 function stageKind(status: string): StageKind {
   const value = status.trim().toUpperCase();
   if (value === "SUCCESS") return "success";
-  if (value === "FAILED" || value === "FAILURE") return "failed";
+  if (value === "FAILED" || value === "FAILURE" || value === "ERROR") {
+    return "failed";
+  }
   if (
     value === "IN_PROGRESS" ||
     value === "RUNNING" ||
@@ -32,42 +34,42 @@ function stageStyles(kind: StageKind) {
   switch (kind) {
     case "success":
       return {
-        node: "border-[#22c55e] bg-gradient-to-br from-[#22c55e] to-[#16a34a] text-white shadow-[0_6px_16px_rgba(34,197,94,0.35)]",
+        node: "border-[#16a34a] bg-white text-[#16a34a]",
         rail: "from-[#86efac] to-[#4ade80]",
         chip: "bg-[#ecfdf5] text-[#15803d] ring-[#bbf7d0]",
         title: "text-[#14532d]",
       };
     case "failed":
       return {
-        node: "border-[#ef4444] bg-gradient-to-br from-[#f87171] to-[#dc2626] text-white shadow-[0_6px_16px_rgba(239,68,68,0.35)]",
+        node: "border-[#dc2626] bg-white text-[#dc2626]",
         rail: "from-[#fecaca] to-[#f87171]",
         chip: "bg-[#fef2f2] text-[#b91c1c] ring-[#fecaca]",
         title: "text-[#7f1d1d]",
       };
     case "running":
       return {
-        node: "border-[#2553D8] bg-gradient-to-br from-[#4f7cff] to-[#2553D8] text-white shadow-[0_6px_16px_rgba(37,83,216,0.35)] animate-pulse",
+        node: "border-[#2553D8] bg-white text-[#2553D8] animate-pulse",
         rail: "from-[#bfdbfe] to-[#60a5fa]",
         chip: "bg-[#eff6ff] text-[#1d4ed8] ring-[#bfdbfe]",
         title: "text-[#1e3a8a]",
       };
     case "unstable":
       return {
-        node: "border-[#eab308] bg-gradient-to-br from-[#facc15] to-[#ca8a04] text-white shadow-[0_6px_16px_rgba(234,179,8,0.3)]",
+        node: "border-[#ca8a04] bg-white text-[#ca8a04]",
         rail: "from-[#fde68a] to-[#facc15]",
         chip: "bg-[#fefce8] text-[#a16207] ring-[#fde68a]",
         title: "text-[#713f12]",
       };
     case "aborted":
       return {
-        node: "border-[#9ca3af] bg-gradient-to-br from-[#d1d5db] to-[#6b7280] text-white shadow-sm",
+        node: "border-[#6b7280] bg-white text-[#6b7280]",
         rail: "from-[#e5e7eb] to-[#d1d5db]",
         chip: "bg-[#f9fafb] text-[#4b5563] ring-[#e5e7eb]",
         title: "text-[#374151]",
       };
     default:
       return {
-        node: "border-[#e5e7eb] bg-white text-[#9ca3af] shadow-sm",
+        node: "border-[#d1d5db] bg-white text-[#9ca3af]",
         rail: "from-[#e5e7eb] to-[#e5e7eb]",
         chip: "bg-[#f9fafb] text-[#9ca3af] ring-[#e5e7eb]",
         title: "text-[#6b7280]",
@@ -101,7 +103,9 @@ function formatDuration(ms: number | null): string | null {
 function statusLabel(status: string): string {
   const value = status.trim().toUpperCase();
   if (value === "SUCCESS") return "Success";
-  if (value === "FAILED" || value === "FAILURE") return "Failed";
+  if (value === "FAILED" || value === "FAILURE" || value === "ERROR") {
+    return "Failed";
+  }
   if (value === "IN_PROGRESS" || value === "RUNNING") return "Running";
   if (value === "NOT_EXECUTED") return "Skipped";
   if (value === "PAUSED_PENDING_INPUT") return "Paused";
@@ -177,9 +181,13 @@ export default function CiCdPipeline({
 
               {!isLast ? (
                 <div
-                  className={`mt-[20px] h-[3px] w-8 shrink-0 rounded-full bg-gradient-to-r ${styles.rail}`}
+                  className="mt-[20px] flex w-18 shrink-0 items-center self-start px-1"
                   aria-hidden
-                />
+                >
+                  <div
+                    className={`h-[2px] w-full rounded-full bg-gradient-to-r ${styles.rail}`}
+                  />
+                </div>
               ) : null}
             </li>
           );
