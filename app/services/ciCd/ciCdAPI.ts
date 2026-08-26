@@ -19,6 +19,7 @@ export type CiCdJobItem = {
 };
 
 export type CiCdStageItem = {
+  id: string;
   name: string;
   status: string;
   durationMillis: number | null;
@@ -50,6 +51,15 @@ export type CiCdBuildStages = {
   buildNumber: number;
   stages: CiCdStageItem[];
   stagesMessage?: string;
+};
+
+export type CiCdStageLog = {
+  jobName: string;
+  buildNumber: number;
+  stageId: string;
+  text: string;
+  hasMore: boolean;
+  consoleUrl: string | null;
 };
 
 function failedResult(err: unknown, fallback: string) {
@@ -116,6 +126,24 @@ const ciCdAPI = {
       .catch((err) => {
         console.log("Error getBuildStages:", err);
         return failedResult(err, "Failed to fetch build stages");
+      });
+  },
+
+  getStageLog(jobName: string, buildNumber: number, stageId: string) {
+    return apiServices
+      .get(
+        `ci-cd/jobs/${encodeURIComponent(jobName)}/builds/${buildNumber}/stages/${encodeURIComponent(stageId)}/log`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      )
+      .then((res) => validateOrThrowApiResponse(res))
+      .catch((err) => {
+        console.log("Error getStageLog:", err);
+        return failedResult(err, "Failed to fetch stage log");
       });
   },
 };

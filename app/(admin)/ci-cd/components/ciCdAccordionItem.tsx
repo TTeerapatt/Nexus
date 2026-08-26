@@ -14,10 +14,12 @@ import ciCdAPI, {
   type CiCdJobDetail,
   type CiCdJobItem,
   type CiCdStageItem,
+  type CiCdStageLog,
   type JenkinsJobStatus,
 } from "@/app/services/ciCd/ciCdAPI";
 import { popup } from "@/app/ui/popUp";
 import CiCdPipeline from "./ciCdPipeline";
+import CiCdStageLogPanel from "./ciCdStageLogPanel";
 
 function statusBadgeClass(status: JenkinsJobStatus): string {
   switch (status) {
@@ -122,10 +124,30 @@ type BuildStagesApiResult =
   | null
   | undefined;
 
+type StageLogApiResult =
+  | {
+      success?: boolean;
+      data?: CiCdStageLog;
+      status?: string;
+      errMessage?: string;
+      message?: string;
+    }
+  | null
+  | undefined;
+
 type StagesCache = Record<
   number,
   { stages: CiCdStageItem[]; stagesMessage?: string }
 >;
+
+type StageLogCache = Record<
+  string,
+  { text: string; consoleUrl: string | null }
+>;
+
+function stageCacheKey(buildNumber: number, stageId: string) {
+  return `${buildNumber}:${stageId}`;
+}
 
 type CiCdAccordionItemProps = {
   job: CiCdJobItem;
@@ -146,6 +168,22 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
   const [stages, setStages] = useState<CiCdStageItem[]>([]);
   const [stagesMessage, setStagesMessage] = useState<string | undefined>();
   const [stagesCache, setStagesCache] = useState<StagesCache>({});
+  const [selectedStage, setSelectedStage] = useState<CiCdStageItem | null>(
+    null
+  );
+  const [loadingStageId, setLoadingStageId] = useState<string | null>(null);
+  const [stageLogText, setStageLogText] = useState("");
+  const [stageLogError, setStageLogError] = useState<string | undefined>();
+  const [stageConsoleUrl, setStageConsoleUrl] = useState<string | null>(null);
+  const [stageLogCache, setStageLogCache] = useState<StageLogCache>({});
+
+  const clearStageLog = () => {
+    setSelectedStage(null);
+    setLoadingStageId(null);
+    setStageLogText("");
+    setStageLogError(undefined);
+    setStageConsoleUrl(null);
+  };
 
   const applyStages = (
     buildNumber: number,
@@ -163,6 +201,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         ...(nextMessage ? { stagesMessage: nextMessage } : {}),
       },
     }));
+    clearStageLog();
   };
 
   const loadDetail = async () => {
@@ -197,6 +236,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         setPendingBuildNumber(null);
         setStages([]);
         setStagesMessage(data?.stagesMessage);
+        clearStageLog();
       }
     } catch {
       await popup.error("Error", "Unable to fetch job pipeline");
@@ -207,7 +247,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
   };
 
   const handleSelectBuild = async (build: CiCdBuildItem) => {
-    if (loadingBuild) return;
+    if (loadingBuild || loadingStageId) return;
     if (
       selectedBuildNumber === build.number &&
       pendingBuildNumber == null
@@ -223,6 +263,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
 
     setPendingBuildNumber(build.number);
     setLoadingBuild(true);
+    clearStageLog();
     try {
       const result = (await ciCdAPI.getBuildStages(
         job.name,
@@ -249,6 +290,70 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
       await popup.error("Error", "Unable to fetch build stages");
     } finally {
       setLoadingBuild(false);
+    }
+  };
+
+  const handleStageClick = async (stage: CiCdStageItem) => {
+    if (loadingBuild || loadingStageId) return;
+    if (selectedBuildNumber == null) return;
+
+    const stageId = String(stage.id || "").trim();
+    if (!stageId) {
+      await popup.error("Error", "Stage id is missing");
+      return;
+    }
+
+    if (selectedStage?.id === stageId && !loadingStageId) {
+      clearStageLog();
+      return;
+    }
+
+    setSelectedStage(stage);
+    setStageLogError(undefined);
+
+    const cacheKey = stageCacheKey(selectedBuildNumber, stageId);
+    const cached = stageLogCache[cacheKey];
+    if (cached) {
+      setStageLogText(cached.text);
+      setStageConsoleUrl(cached.consoleUrl);
+      setLoadingStageId(null);
+      return;
+    }
+
+    setLoadingStageId(stageId);
+    setStageLogText("");
+    setStageConsoleUrl(null);
+
+    try {
+      const result = (await ciCdAPI.getStageLog(
+        job.name,
+        selectedBuildNumber,
+        stageId
+      )) as StageLogApiResult;
+
+      if (!result || result.status === "failed" || result.success === false) {
+        const message =
+          result?.errMessage ||
+          result?.message ||
+          "Unable to fetch stage log";
+        setStageLogError(message);
+        return;
+      }
+
+      const text = result.data?.text || "";
+      const consoleUrl = result.data?.consoleUrl || null;
+      setStageLogText(text);
+      setStageConsoleUrl(consoleUrl);
+      if (text.trim()) {
+        setStageLogCache((prev) => ({
+          ...prev,
+          [cacheKey]: { text, consoleUrl },
+        }));
+      }
+    } catch {
+      setStageLogError("Unable to fetch stage log");
+    } finally {
+      setLoadingStageId(null);
     }
   };
 
@@ -412,6 +517,9 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                     <CiCdPipeline
                       stages={stages}
                       emptyMessage={stagesMessage}
+                      selectedStageId={selectedStage?.id ?? null}
+                      loadingStageId={loadingStageId}
+                      onStageClick={(stage) => void handleStageClick(stage)}
                     />
                   </div>
 
@@ -428,6 +536,18 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                     </div>
                   ) : null}
                 </div>
+
+                {selectedStage ? (
+                  <CiCdStageLogPanel
+                    stage={selectedStage}
+                    buildNumber={selectedBuildNumber}
+                    loading={loadingStageId === selectedStage.id}
+                    text={stageLogText}
+                    errorMessage={stageLogError}
+                    consoleUrl={stageConsoleUrl}
+                    onClose={clearStageLog}
+                  />
+                ) : null}
               </div>
             ) : (
               <div className="rounded-2xl border border-dashed border-[#d8e0f0] bg-white/70 px-4 py-8 text-center text-[13px] text-[#7a849c]">

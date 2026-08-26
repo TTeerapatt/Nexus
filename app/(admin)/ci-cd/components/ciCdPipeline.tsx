@@ -38,6 +38,7 @@ function stageStyles(kind: StageKind) {
         rail: "bg-[#16a34a]",
         chip: "bg-[#ecfdf5] text-[#15803d] ring-[#bbf7d0]",
         title: "text-[#14532d]",
+        selectedRing: "ring-[#16a34a]/35",
       };
     case "failed":
       return {
@@ -45,6 +46,7 @@ function stageStyles(kind: StageKind) {
         rail: "bg-[#dc2626]",
         chip: "bg-[#fef2f2] text-[#b91c1c] ring-[#fecaca]",
         title: "text-[#7f1d1d]",
+        selectedRing: "ring-[#dc2626]/30",
       };
     case "running":
       return {
@@ -52,6 +54,7 @@ function stageStyles(kind: StageKind) {
         rail: "bg-[#2553D8]",
         chip: "bg-[#eff6ff] text-[#1d4ed8] ring-[#bfdbfe]",
         title: "text-[#1e3a8a]",
+        selectedRing: "ring-[#2553D8]/30",
       };
     case "unstable":
       return {
@@ -59,6 +62,7 @@ function stageStyles(kind: StageKind) {
         rail: "bg-[#ca8a04]",
         chip: "bg-[#fefce8] text-[#a16207] ring-[#fde68a]",
         title: "text-[#713f12]",
+        selectedRing: "ring-[#ca8a04]/30",
       };
     case "aborted":
       return {
@@ -66,6 +70,7 @@ function stageStyles(kind: StageKind) {
         rail: "bg-[#6b7280]",
         chip: "bg-[#f9fafb] text-[#4b5563] ring-[#e5e7eb]",
         title: "text-[#374151]",
+        selectedRing: "ring-[#6b7280]/25",
       };
     default:
       return {
@@ -73,6 +78,7 @@ function stageStyles(kind: StageKind) {
         rail: "bg-[#d1d5db]",
         chip: "bg-[#f9fafb] text-[#9ca3af] ring-[#e5e7eb]",
         title: "text-[#6b7280]",
+        selectedRing: "ring-[#d1d5db]/40",
       };
   }
 }
@@ -117,11 +123,17 @@ function statusLabel(status: string): string {
 type CiCdPipelineProps = {
   stages: CiCdStageItem[];
   emptyMessage?: string;
+  selectedStageId?: string | null;
+  loadingStageId?: string | null;
+  onStageClick?: (stage: CiCdStageItem) => void;
 };
 
 export default function CiCdPipeline({
   stages,
   emptyMessage,
+  selectedStageId,
+  loadingStageId,
+  onStageClick,
 }: CiCdPipelineProps) {
   if (!stages.length) {
     return (
@@ -142,20 +154,44 @@ export default function CiCdPipeline({
           const duration = formatDuration(stage.durationMillis);
           const isLast = index === stages.length - 1;
           const displayName = prettyStageName(stage.name);
+          const stageKey = stage.id || `${stage.name}-${index}`;
+          const selected = selectedStageId === stageKey;
+          const loading = loadingStageId === stageKey;
+          const clickable = typeof onStageClick === "function";
 
           return (
             <li
-              key={`${stage.name}-${index}`}
+              key={stageKey}
               className="flex items-start"
               style={{ animationDelay: `${index * 40}ms` }}
             >
-              <div className="group flex w-[138px] flex-col items-center text-center">
-
+              <button
+                type="button"
+                disabled={!clickable}
+                onClick={() => onStageClick?.(stage)}
+                className={`group flex w-[138px] flex-col items-center rounded-2xl px-1 py-1 text-center transition ${
+                  clickable
+                    ? "cursor-pointer hover:bg-[#f5f8ff]"
+                    : "cursor-default"
+                } ${
+                  selected
+                    ? `bg-[#f5f8ff] ring-2 ${styles.selectedRing}`
+                    : ""
+                }`}
+                title={
+                  clickable
+                    ? `View log · ${displayName}`
+                    : `${displayName} · ${stage.status}`
+                }
+              >
                 <span
                   className={`relative z-[1] flex h-11 w-11 items-center justify-center rounded-full border-2 transition duration-200 group-hover:scale-105 ${styles.node}`}
-                  title={stage.status}
                 >
-                  <StageIcon kind={kind} />
+                  {loading ? (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  ) : (
+                    <StageIcon kind={kind} />
+                  )}
                 </span>
 
                 <p
@@ -177,7 +213,7 @@ export default function CiCdPipeline({
                     {duration}
                   </span>
                 ) : null}
-              </div>
+              </button>
 
               {!isLast ? (
                 <div
