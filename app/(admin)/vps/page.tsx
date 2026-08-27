@@ -1,3 +1,5 @@
+import VpsMain from "./components/vpsMain";
+
 export default function VpsPage() {
-  return null;
+  return <VpsMain />;
 }
