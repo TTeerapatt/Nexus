@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FiChevronDown,
   FiCpu,
@@ -275,9 +275,14 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
   const [metrics, setMetrics] = useState<VpsMetrics | null>(null);
   const [metricsLoading, setMetricsLoading] = useState(false);
   const [actionBusy, setActionBusy] = useState(false);
+  const hasMetricsCacheRef = useRef(false);
+  const metricsRequestIdRef = useRef(0);
 
-  const loadMetrics = useCallback(async () => {
-    setMetricsLoading(true);
+  const loadMetrics = useCallback(async (soft = false) => {
+    const requestId = ++metricsRequestIdRef.current;
+    if (!soft) {
+      setMetricsLoading(true);
+    }
     try {
       const result = (await vpsAPI.getVpsMetrics(vm.id)) as {
         success?: boolean;
@@ -287,26 +292,45 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
         message?: string;
       };
 
+      if (requestId !== metricsRequestIdRef.current) return;
+
       if (!result || result.status === "failed" || result.success === false) {
-        setMetrics(null);
+        if (!soft) setMetrics(null);
         return;
       }
 
       setMetrics(result.data ?? null);
+      hasMetricsCacheRef.current = true;
     } catch {
-      setMetrics(null);
+      if (requestId !== metricsRequestIdRef.current) return;
+      if (!soft) setMetrics(null);
     } finally {
-      setMetricsLoading(false);
+      if (requestId === metricsRequestIdRef.current) {
+        setMetricsLoading(false);
+      }
     }
   }, [vm.id]);
 
   useEffect(() => {
     if (!open) return;
-    void loadMetrics();
+    void loadMetrics(hasMetricsCacheRef.current);
+    return () => {
+      metricsRequestIdRef.current += 1;
+    };
   }, [loadMetrics, open]);
 
   const handleToggle = () => {
-    setOpen((prev) => !prev);
+    setOpen((prev) => {
+      const next = !prev;
+      if (next && !hasMetricsCacheRef.current) {
+        setMetricsLoading(true);
+      }
+      if (!next) {
+        metricsRequestIdRef.current += 1;
+        setMetricsLoading(false);
+      }
+      return next;
+    });
   };
 
   const handlePower = async (action: VpsPowerAction) => {
@@ -356,7 +380,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
       "Hostinger is processing the action"
     );
     onChanged();
-    if (open) void loadMetrics();
+    if (open) void loadMetrics(true);
   };
 
   const state = String(vm.state || "unknown");
@@ -496,7 +520,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
               <button
                 type="button"
                 disabled={metricsLoading}
-                onClick={() => void loadMetrics()}
+                onClick={() => void loadMetrics(false)}
                 className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-[#c7d7ff] bg-white px-4 text-[13px] font-semibold text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#eef3ff] text-[#2553D8] transition group-hover:bg-[#dbe7ff]">
@@ -523,7 +547,13 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                 Loading metrics…
               </div>
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="relative grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {metricsLoading ? (
+                  <div className="absolute right-0 top-[-1.75rem] flex items-center gap-1.5 text-[11px] text-[#7a849c]">
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-[#2553D8]/20 border-t-[#2553D8]" />
+                    Refreshing…
+                  </div>
+                ) : null}
                 {[
                   {
                     label: "CPU",
