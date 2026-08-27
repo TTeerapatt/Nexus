@@ -36,6 +36,7 @@ export const TAB_CODE_TO_HREF: Record<string, string> = {
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Overview", icon: MdDashboard },
   { href: "/admins", label: "Admins", icon: MdAdminPanelSettings },
+  { href: "/logs", label: "Logs", icon: MdHistory },
 ];
 
 const TAB_CODE_TO_ICON: Record<string, IconType> = {
