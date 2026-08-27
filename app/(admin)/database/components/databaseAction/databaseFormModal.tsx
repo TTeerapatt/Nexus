@@ -6,6 +6,7 @@ import databaseAPI, {
   type DatabaseItem,
 } from "@/app/services/database/databaseAPI";
 import type { AllDatabaseItem } from "@/app/services/allDatabase/allDatabaseAPI";
+import type { ProjectItem } from "@/app/services/project/projectAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
 import {
@@ -17,6 +18,7 @@ import {
 type DatabaseFormModalProps = {
   open: boolean;
   database?: DatabaseItem | null;
+  projects: ProjectItem[];
   allDatabases: AllDatabaseItem[];
   onClose: () => void;
   onSaved: () => void;
@@ -25,16 +27,21 @@ type DatabaseFormModalProps = {
 type FormState = {
   name: string;
   description: string;
+  project_id: string;
   all_database_id: string;
   is_active: boolean;
 };
 
 type FormField = keyof FormState;
 
-function emptyForm(allDatabases: AllDatabaseItem[]): FormState {
+function emptyForm(
+  projects: ProjectItem[],
+  allDatabases: AllDatabaseItem[]
+): FormState {
   return {
     name: "",
     description: "",
+    project_id: projects.length > 0 ? String(projects[0].id) : "",
     all_database_id:
       allDatabases.length > 0 ? String(allDatabases[0].id) : "",
     is_active: true,
@@ -45,6 +52,7 @@ function formFromDatabase(database: DatabaseItem): FormState {
   return {
     name: database.name || "",
     description: database.description || "",
+    project_id: String(database.project_id || ""),
     all_database_id: String(database.all_database_id || ""),
     is_active: Boolean(database.is_active),
   };
@@ -53,23 +61,28 @@ function formFromDatabase(database: DatabaseItem): FormState {
 export default function DatabaseFormModal({
   open,
   database = null,
+  projects,
   allDatabases,
   onClose,
   onSaved,
 }: DatabaseFormModalProps) {
   const { withLoading } = useLoading();
   const isEdit = database != null;
-  const [form, setForm] = useState<FormState>(() => emptyForm(allDatabases));
+  const [form, setForm] = useState<FormState>(() =>
+    emptyForm(projects, allDatabases)
+  );
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<FormField, boolean>>
   >({});
 
   const resetState = useCallback(() => {
     setForm(
-      database ? formFromDatabase(database) : emptyForm(allDatabases)
+      database
+        ? formFromDatabase(database)
+        : emptyForm(projects, allDatabases)
     );
     setFieldErrors({});
-  }, [allDatabases, database]);
+  }, [allDatabases, database, projects]);
 
   useEffect(() => {
     if (!open) return;
@@ -126,11 +139,18 @@ export default function DatabaseFormModal({
   const handleSave = async () => {
     const name = form.name.trim();
     const description = form.description.trim();
+    const projectId = Number(form.project_id);
     const allDatabaseId = Number(form.all_database_id);
 
     if (!name) {
       setFieldErrors({ name: true });
       await popup.warning("Incomplete information", "Please enter a name");
+      return;
+    }
+
+    if (!Number.isInteger(projectId) || projectId <= 0) {
+      setFieldErrors({ project_id: true });
+      await popup.warning("Incomplete information", "Please select a Project");
       return;
     }
 
@@ -149,6 +169,7 @@ export default function DatabaseFormModal({
       const payload = {
         name,
         description: description || null,
+        project_id: projectId,
         all_database_id: allDatabaseId,
         is_active: form.is_active,
       };
@@ -210,7 +231,7 @@ export default function DatabaseFormModal({
               {isEdit ? "Edit Database" : "Add Database"}
             </h2>
             <p className="text-[13px] text-[#7a849c]">
-              Enter name and database type
+              Enter name, project, and database type
             </p>
           </div>
           <button
@@ -236,6 +257,34 @@ export default function DatabaseFormModal({
               placeholder=""
               className={`${filterInputClass} ${fieldErrors.name ? inputErrorClass : ""}`}
             />
+          </FilterField>
+
+          <FilterField label="Project *" htmlFor="database-project">
+            <div className="relative">
+              <select
+                id="database-project"
+                value={form.project_id}
+                onChange={(e) => {
+                  clearFieldError("project_id");
+                  setForm((prev) => ({
+                    ...prev,
+                    project_id: e.target.value,
+                  }));
+                }}
+                className={`${filterSelectClass} cursor-pointer ${fieldErrors.project_id ? inputErrorClass : ""}`}
+              >
+                {projects.length === 0 ? (
+                  <option value="">No projects available</option>
+                ) : (
+                  projects.map((project) => (
+                    <option key={project.id} value={String(project.id)}>
+                      {project.name}
+                    </option>
+                  ))
+                )}
+              </select>
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+            </div>
           </FilterField>
 
           <FilterField label="Database Type *" htmlFor="database-type">

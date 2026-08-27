@@ -2,6 +2,7 @@
 
 import { FiChevronDown, FiPlus, FiSearch, FiXCircle } from "react-icons/fi";
 import type { AllDatabaseItem } from "@/app/services/allDatabase/allDatabaseAPI";
+import type { ProjectItem } from "@/app/services/project/projectAPI";
 import FilterPanel, {
   FilterField,
   filterInputClass,
@@ -11,10 +12,13 @@ import FilterPanel, {
 type DatabaseFilterProps = {
   search: string;
   status: string;
+  projectId: string;
   allDatabaseId: string;
+  projects: ProjectItem[];
   allDatabases: AllDatabaseItem[];
   onSearchChange: (value: string) => void;
   onStatusChange: (value: string) => void;
+  onProjectChange: (value: string) => void;
   onAllDatabaseChange: (value: string) => void;
   onClear: () => void;
   onAdd?: () => void;
@@ -29,10 +33,13 @@ const STATUS_OPTIONS = [
 export default function DatabaseFilter({
   search,
   status,
+  projectId,
   allDatabaseId,
+  projects,
   allDatabases,
   onSearchChange,
   onStatusChange,
+  onProjectChange,
   onAllDatabaseChange,
   onClear,
   onAdd,
@@ -56,6 +63,29 @@ export default function DatabaseFilter({
                 placeholder="Search by name or description"
                 className={`${filterInputClass} pl-10`}
               />
+            </div>
+          </FilterField>
+
+          <FilterField
+            label="Project"
+            htmlFor="database-project-filter"
+            className="w-full sm:w-[180px]"
+          >
+            <div className="relative">
+              <select
+                id="database-project-filter"
+                value={projectId}
+                onChange={(e) => onProjectChange(e.target.value)}
+                className={`${filterSelectClass} cursor-pointer hover:border-[#2553d8]/40`}
+              >
+                <option value="">All</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={String(project.id)}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
             </div>
           </FilterField>
 

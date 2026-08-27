@@ -4,6 +4,9 @@ import { validateOrThrowApiResponse } from "../response-validator";
 export type DatabaseItem = {
   id: number;
   name: string;
+  project_id: number;
+  project_name: string;
+  project_type: "project" | "service";
   all_database_id: number;
   all_database_code: string;
   all_database_name: string;
@@ -15,6 +18,7 @@ export type DatabaseItem = {
 
 export type CreateDatabasePayload = {
   name: string;
+  project_id: number;
   all_database_id: number;
   description?: string | null;
   is_active?: boolean;
@@ -22,6 +26,7 @@ export type CreateDatabasePayload = {
 
 export type UpdateDatabasePayload = {
   name?: string;
+  project_id?: number;
   all_database_id?: number;
   description?: string | null;
   is_active?: boolean;
@@ -30,6 +35,8 @@ export type UpdateDatabasePayload = {
 export type DatabaseListParams = {
   is_active?: boolean;
   name?: string;
+  project_id?: number;
+  project_name?: string;
   all_database_id?: number;
   all_database_code?: string;
 };

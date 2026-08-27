@@ -103,6 +103,15 @@ export default function DatabaseTable({
         ),
       },
       {
+        key: "project",
+        title: "Project",
+        render: (database) => (
+          <span className="font-medium text-[#1f2640]">
+            {database.project_name || "-"}
+          </span>
+        ),
+      },
+      {
         key: "all_database",
         title: "Database Type",
         render: (database) => (

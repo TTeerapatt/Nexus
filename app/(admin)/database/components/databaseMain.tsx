@@ -7,6 +7,9 @@ import databaseAPI, {
 import allDatabaseAPI, {
   type AllDatabaseItem,
 } from "@/app/services/allDatabase/allDatabaseAPI";
+import projectAPI, {
+  type ProjectItem,
+} from "@/app/services/project/projectAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
 import DatabaseFilter from "./databaseFilter";
@@ -35,13 +38,26 @@ type AllDatabaseListApiResult =
   | null
   | undefined;
 
+type ProjectListApiResult =
+  | {
+      success?: boolean;
+      data?: ProjectItem[];
+      status?: string;
+      errMessage?: string;
+      message?: string;
+    }
+  | null
+  | undefined;
+
 export default function DatabaseMain() {
   const { withLoading } = useLoading();
   const [databases, setDatabases] = useState<DatabaseItem[]>([]);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [allDatabases, setAllDatabases] = useState<AllDatabaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
+  const [projectId, setProjectId] = useState("");
   const [allDatabaseId, setAllDatabaseId] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [editingDatabase, setEditingDatabase] = useState<DatabaseItem | null>(
@@ -74,6 +90,23 @@ export default function DatabaseMain() {
     }
   }, []);
 
+  const fetchProjects = useCallback(async () => {
+    try {
+      const result = (await projectAPI.getProjectAll({
+        is_active: true,
+      })) as ProjectListApiResult;
+
+      if (!result || result.status === "failed" || result.success === false) {
+        setProjects([]);
+        return;
+      }
+
+      setProjects(Array.isArray(result.data) ? result.data : []);
+    } catch {
+      setProjects([]);
+    }
+  }, []);
+
   const fetchAllDatabases = useCallback(async () => {
     try {
       const result =
@@ -92,12 +125,14 @@ export default function DatabaseMain() {
 
   useEffect(() => {
     void fetchDatabases();
+    void fetchProjects();
     void fetchAllDatabases();
-  }, [fetchAllDatabases, fetchDatabases]);
+  }, [fetchAllDatabases, fetchDatabases, fetchProjects]);
 
   const filteredDatabases = useMemo(() => {
     const keyword = search.trim().toLowerCase();
     const statusFilter = status.trim().toLowerCase();
+    const projectFilter = projectId.trim();
     const typeFilter = allDatabaseId.trim();
 
     return databases.filter((database) => {
@@ -106,28 +141,34 @@ export default function DatabaseMain() {
         (statusFilter === "active" && database.is_active) ||
         (statusFilter === "inactive" && !database.is_active);
 
+      const matchesProject =
+        !projectFilter || String(database.project_id) === projectFilter;
+
       const matchesType =
         !typeFilter || String(database.all_database_id) === typeFilter;
 
-      if (!keyword) return matchesStatus && matchesType;
+      if (!keyword) return matchesStatus && matchesProject && matchesType;
 
       const name = String(database.name || "").toLowerCase();
       const description = String(database.description || "").toLowerCase();
+      const projectName = String(database.project_name || "").toLowerCase();
       const typeName = String(database.all_database_name || "").toLowerCase();
       const typeCode = String(database.all_database_code || "").toLowerCase();
       const matchesSearch =
         name.includes(keyword) ||
         description.includes(keyword) ||
+        projectName.includes(keyword) ||
         typeName.includes(keyword) ||
         typeCode.includes(keyword);
 
-      return matchesStatus && matchesType && matchesSearch;
+      return matchesStatus && matchesProject && matchesType && matchesSearch;
     });
-  }, [allDatabaseId, databases, search, status]);
+  }, [allDatabaseId, databases, projectId, search, status]);
 
   const handleClearFilter = () => {
     setSearch("");
     setStatus("");
+    setProjectId("");
     setAllDatabaseId("");
   };
 
@@ -214,10 +255,13 @@ export default function DatabaseMain() {
       <DatabaseFilter
         search={search}
         status={status}
+        projectId={projectId}
         allDatabaseId={allDatabaseId}
+        projects={projects}
         allDatabases={allDatabases}
         onSearchChange={setSearch}
         onStatusChange={setStatus}
+        onProjectChange={setProjectId}
         onAllDatabaseChange={setAllDatabaseId}
         onClear={handleClearFilter}
         onAdd={() => setCreateOpen(true)}
@@ -234,6 +278,7 @@ export default function DatabaseMain() {
 
       <DatabaseFormModal
         open={createOpen}
+        projects={projects}
         allDatabases={allDatabases}
         onClose={() => setCreateOpen(false)}
         onSaved={() => {
@@ -244,6 +289,7 @@ export default function DatabaseMain() {
       <DatabaseFormModal
         open={editingDatabase != null}
         database={editingDatabase}
+        projects={projects}
         allDatabases={allDatabases}
         onClose={() => setEditingDatabase(null)}
         onSaved={() => {
