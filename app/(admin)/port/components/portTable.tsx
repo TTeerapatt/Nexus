@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FaNetworkWired } from "react-icons/fa";
 import { type PortItem } from "@/app/services/port/portAPI";
 import DataTable, { type TableColumn } from "@/app/ui/table";
 
@@ -61,6 +62,45 @@ function getResourceTypeBadgeClass(code: string): string {
   return "bg-[#64748b] text-white ring-1 ring-[#475569]/40";
 }
 
+function getPortBadgeClass(resourceTypeCode: string): string {
+  const key = String(resourceTypeCode || "").trim().toLowerCase();
+  if (key === "frontend") {
+    return "border-[#bfdbfe] bg-[#eff6ff] text-[#1d4ed8]";
+  }
+  if (key === "backend") {
+    return "border-[#fde68a] bg-[#fffbeb] text-[#b45309]";
+  }
+  if (key === "database") {
+    return "border-[#bbf7d0] bg-[#f0fdf4] text-[#15803d]";
+  }
+  if (key === "services") {
+    return "border-[#ddd6fe] bg-[#f5f3ff] text-[#6d28d9]";
+  }
+  return "border-[#c7d7ff] bg-[#eef3ff] text-[#2553D8]";
+}
+
+function PortNumberBadge({
+  portNumber,
+  resourceTypeCode,
+}: {
+  portNumber: number;
+  resourceTypeCode: string;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 shadow-sm ${getPortBadgeClass(resourceTypeCode)}`}
+      title={`Port ${portNumber}`}
+    >
+      <span className="text-[11px] font-semibold uppercase tracking-wide opacity-55">
+      <FaNetworkWired className="h-4 w-4" />
+      </span>
+      <span className="font-mono text-[14px] font-bold tabular-nums tracking-wide">
+        {portNumber}
+      </span>
+    </span>
+  );
+}
+
 function PortRowActions({
   port,
   onEdit,
@@ -114,9 +154,10 @@ export default function PortTable({
         key: "port_number",
         title: "Port",
         render: (port) => (
-          <span className="font-semibold tabular-nums text-[#1f2640]">
-            {port.port_number}
-          </span>
+          <PortNumberBadge
+            portNumber={port.port_number}
+            resourceTypeCode={port.resource_type_code}
+          />
         ),
       },
       {
