@@ -2,8 +2,8 @@
 
 import Swal, { type SweetAlertIcon, type SweetAlertResult } from "sweetalert2";
 
-const BLUE = "#2553D8";
-const TEXT = "#163a7f";
+const BLUE = "#242E42";
+const TEXT = "#242E42";
 const CANCEL_BG = "#e5e7eb";
 
 const LAYOUT = {

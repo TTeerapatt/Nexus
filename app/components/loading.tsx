@@ -20,11 +20,11 @@ function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 
   return (
     <div className={`relative ${sizeClass}`}>
-      <div className="absolute inset-0 rounded-full border-[3px] border-[#dbe4ff]" />
-      <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-[#2553D8] border-r-[#4C7DFF]" />
-      <div className="absolute inset-[18%] flex items-center justify-center rounded-full bg-[#eef3ff] shadow-inner">
+      <div className="absolute inset-0 rounded-full border-[3px] border-[#e2e5eb]" />
+      <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-[#242E42] border-r-[#242E42]" />
+      <div className="absolute inset-[18%] flex items-center justify-center rounded-full bg-white shadow-inner">
         <IoCodeSlashOutline
-          className={`${iconClass} text-[#2553D8] animate-pulse`}
+          className={`${iconClass} text-[#242E42] animate-pulse`}
         />
       </div>
     </div>
@@ -52,7 +52,7 @@ export default function Loading({
       <div
         className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#f4f6fb]/95 backdrop-blur-sm ${className}`}
       >
-        <div className="rounded-[24px] border border-[#dbe4ff] bg-white px-10 py-8 shadow-[0_20px_50px_rgba(37,83,216,0.12)]">
+        <div className="rounded-[24px] border border-[#e2e5eb] bg-white px-10 py-8 shadow-md">
           {content}
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function Loading({
       <div
         className={`absolute inset-0 z-40 flex items-center justify-center bg-white/75 backdrop-blur-[2px] ${className}`}
       >
-        <div className="rounded-[22px] border border-[#dbe4ff] bg-white px-8 py-7 shadow-[0_16px_40px_rgba(37,83,216,0.1)]">
+        <div className="rounded-[22px] border border-[#e2e5eb] bg-white px-8 py-7 shadow-md">
           {content}
         </div>
       </div>

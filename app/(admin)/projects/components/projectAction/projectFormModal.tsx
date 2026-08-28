@@ -217,9 +217,9 @@ export default function ProjectFormModal({
       />
 
       <div className="relative z-10 flex max-h-[92vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[24px] border border-[#e8ecf4] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
-        <div className="flex items-center justify-between border-b border-[#eef2ff] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-[#edf8eb] px-6 py-4">
           <div>
-            <h2 className="text-[18px] font-bold text-[#1f2640]">
+            <h2 className="text-[18px] font-bold text-[#242E42]">
               {isEdit ? "Edit Project" : "Add Project"}
             </h2>
             <p className="text-[13px] text-[#7a849c]">
@@ -229,7 +229,7 @@ export default function ProjectFormModal({
           <button
             type="button"
             onClick={() => void handleRequestClose()}
-            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-[#f8faff]"
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-white"
             aria-label="Close"
           >
             <FiX className="h-4 w-4" />
@@ -319,9 +319,9 @@ export default function ProjectFormModal({
             />
           </FilterField>
 
-          <div className="flex items-center justify-between rounded-xl border border-[#e8ecf4] bg-[#f8faff] px-4 py-3">
+          <div className="flex items-center justify-between rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
             <div>
-              <p className="text-[14px] font-semibold text-[#1f2640]">Status</p>
+              <p className="text-[14px] font-semibold text-[#242E42]">Status</p>
               <p className="text-[12px] text-[#7a849c]">
                 {form.is_active ? "Active" : "Inactive"}
               </p>
@@ -334,7 +334,7 @@ export default function ProjectFormModal({
                 setForm((prev) => ({ ...prev, is_active: !prev.is_active }))
               }
               className={`relative h-7 w-12 cursor-pointer rounded-full transition ${
-                form.is_active ? "bg-[#2553D8]" : "bg-[#cbd5e1]"
+                form.is_active ? "bg-[#242E42]" : "bg-[#cbd5e1]"
               }`}
             >
               <span
@@ -346,7 +346,7 @@ export default function ProjectFormModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-[#eef2ff] px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-[#edf8eb] px-6 py-4">
           <button
             type="button"
             onClick={() => void handleRequestClose()}
@@ -357,7 +357,7 @@ export default function ProjectFormModal({
           <button
             type="button"
             onClick={() => void handleSave()}
-            className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d44b5]"
+            className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[#242E42] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1b2333]"
           >
             {isEdit ? "Save changes" : "Create Project"}
           </button>

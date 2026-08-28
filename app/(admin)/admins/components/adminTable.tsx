@@ -35,7 +35,7 @@ function getRoleLabel(role: string): string {
 function getRoleBadgeClass(role: string): string {
   const key = String(role || "").trim().toLowerCase();
   if (key === "owner") {
-    return "bg-[#2553D8]/12 text-[#2553D8] ring-1 ring-[#2553D8]/20";
+    return "bg-white text-[#242E42] ring-1 ring-[#242E42]/20";
   }
   if (key === "admin") {
     return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/60";
@@ -62,7 +62,7 @@ function AdminRowActions({
         onClick={() => onEdit?.(admin)}
         aria-label={`Edit ${admin.display_name}`}
         title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#c7d7ff] bg-white text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-white text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[#eff6ff] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
       </button>
@@ -97,7 +97,7 @@ export default function AdminTable({
         key: "display_name",
         title: "Name",
         render: (admin) => (
-          <span className="font-semibold text-[#1f2640]">{admin.display_name}</span>
+          <span className="font-semibold text-[#242E42]">{admin.display_name}</span>
         ),
       },
       {

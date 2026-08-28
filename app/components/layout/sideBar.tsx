@@ -65,11 +65,11 @@ export default function SideBar() {
     <aside className="flex h-screen w-[250px] shrink-0 flex-col border-r border-[#e8ecf4] bg-white">
       <div className="flex h-[88px] items-center justify-center border-b border-[#eef1f7] px-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#2553D8]/10">
-            <MdAdminPanelSettings className="h-10 w-10 text-[#2553D8]" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white">
+            <MdAdminPanelSettings className="h-10 w-10 text-[#242E42]" />
           </div>
           <div className="leading-tight">
-            <p className="text-[15px] font-bold text-[#1f2640]">Nexus Admin</p>
+            <p className="text-[15px] font-bold text-[#242E42]">Nexus Admin</p>
             <p className="text-[11px] font-medium text-[#7a849c]">Admin Panel</p>
           </div>
         </div>
@@ -96,8 +96,8 @@ export default function SideBar() {
                       href={href}
                       className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-[14px] font-semibold transition ${
                         isActive
-                          ? "bg-gradient-to-r from-[#4C7DFF] to-[#2553D8] text-white shadow-[0_8px_18px_rgba(37,83,216,0.28)]"
-                          : "bg-[#f3f5f9] text-[#2b3348] hover:bg-[#e9edf5]"
+                          ? "bg-[#242E42] text-white shadow-md"
+                          : "bg-[#f3f5f9] text-[#242E42] hover:bg-[#e9edf5]"
                       }`}
                     >
                       <Icon
@@ -124,8 +124,8 @@ export default function SideBar() {
                   href={item.href}
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-[14px] font-semibold transition ${
                     isActive
-                      ? "bg-gradient-to-r from-[#4C7DFF] to-[#2553D8] text-white shadow-[0_8px_18px_rgba(37,83,216,0.28)]"
-                      : "bg-[#f3f5f9] text-[#2b3348] hover:bg-[#e9edf5]"
+                      ? "bg-[#242E42] text-white shadow-md"
+                      : "bg-[#f3f5f9] text-[#242E42] hover:bg-[#e9edf5]"
                   }`}
                 >
                   <Icon

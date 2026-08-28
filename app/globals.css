@@ -2,7 +2,9 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #242E42;
+  --brand-primary: #242E42;
+  --brand-secondary: #242E42;
 }
 
 @theme inline {
@@ -39,7 +41,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 .app-swal-timer-bar {
-  background: #2553d8 !important;
+  background: #242e42 !important;
   height: 4px !important;
 }
 
@@ -52,19 +54,19 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   overflow: hidden !important;
   border-bottom-left-radius: 24px !important;
   border-bottom-right-radius: 24px !important;
-  background: rgba(37, 83, 216, 0.12) !important;
+  background: rgba(36, 46, 66, 0.12) !important;
 }
 
 .app-swal-icon {
   margin: 0.15rem auto 0.85rem !important;
-  border-color: #2553d8 !important;
-  color: #2553d8 !important;
+  border-color: #242e42 !important;
+  color: #242e42 !important;
 }
 
 .app-swal-title {
   font-size: 1.05rem !important;
   font-weight: 700 !important;
-  color: #163a7f !important;
+  color: #242E42 !important;
   line-height: 1.4 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -73,7 +75,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .app-swal-text {
   font-size: 0.92rem !important;
   font-weight: 400 !important;
-  color: #3b5b98 !important;
+  color: #242E42 !important;
   line-height: 1.45 !important;
   margin: 0.45rem 0 0 !important;
   padding: 0 !important;
@@ -112,12 +114,12 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 .app-swal-confirm-btn {
-  background: #2553d8 !important;
+  background: #242e42 !important;
   color: #ffffff !important;
 }
 
 .app-swal-confirm-btn:focus {
-  box-shadow: 0 0 0 3px rgba(37, 83, 216, 0.28) !important;
+  box-shadow: 0 0 0 3px rgba(36, 46, 66, 0.28) !important;
 }
 
 .app-swal-cancel-btn {

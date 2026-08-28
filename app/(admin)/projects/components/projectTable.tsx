@@ -77,7 +77,7 @@ function ProjectRowActions({
         onClick={() => onEdit?.(project)}
         aria-label={`Edit ${project.name}`}
         title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#c7d7ff] bg-white text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-white text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[#eff6ff] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
       </button>
@@ -114,7 +114,7 @@ export default function ProjectTable({
         key: "name",
         title: "Name",
         render: (project) => (
-          <span className="font-semibold text-[#1f2640]">{project.name}</span>
+          <span className="font-semibold text-[#242E42]">{project.name}</span>
         ),
       },
       {

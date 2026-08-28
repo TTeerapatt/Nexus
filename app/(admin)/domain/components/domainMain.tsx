@@ -71,17 +71,15 @@ export default function DomainMain() {
 
   return (
     <div className="space-y-5">
-      <div className="relative overflow-hidden rounded-3xl border border-[#dbe5ff] bg-gradient-to-br from-[#ffffff] via-[#f7f9ff] to-[#eef3ff] px-6 py-5 shadow-[0_8px_24px_rgba(37,83,216,0.06)]">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-[#2553D8]/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-12 left-20 h-28 w-28 rounded-full bg-[#60a5fa]/15 blur-2xl" />
+      <div className="relative overflow-hidden rounded-3xl border border-[#e2e5eb] bg-white px-6 py-5 shadow-[0_8px_24px_rgba(36,46,66,0.08)]">
 
         <div className="relative flex flex-wrap items-end justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#2553D8] text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#242E42] text-white">
               <FiGlobe className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-[24px] font-bold tracking-tight text-[#1f2640]">
+              <h1 className="text-[24px] font-bold tracking-tight text-[#242E42]">
                 Hostinger Domains
               </h1>
               <p className="mt-1 text-[14px] text-[#7a849c]">
@@ -94,7 +92,7 @@ export default function DomainMain() {
             type="button"
             onClick={() => void fetchDomains(true)}
             disabled={loading || refreshing}
-            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#2553D8] px-4 text-[13px] font-semibold text-white shadow-[0_4px_14px_rgba(37,83,216,0.28)] transition hover:bg-[#1d44b5] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#242E42] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[#1b2333] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
           >
             <FiRefreshCw
               className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
@@ -106,7 +104,7 @@ export default function DomainMain() {
         {!loading && domains.length > 0 ? (
           <div className="relative mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: "Total", value: summary.total, tone: "text-[#1f2640]" },
+              { label: "Total", value: summary.total, tone: "text-[#242E42]" },
               {
                 label: "Active",
                 value: summary.active,
@@ -125,7 +123,7 @@ export default function DomainMain() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-2xl bg-white/70 px-4 py-3 backdrop-blur-sm shadow-[0_4px_14px_rgba(37,83,216,0.12)]"
+                className="rounded-2xl bg-white px-4 py-3 shadow-sm"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
                   {item.label}
@@ -141,17 +139,17 @@ export default function DomainMain() {
 
       {loading ? (
         <div className="flex items-center justify-center gap-3 rounded-2xl border border-[#e4e9f4] bg-white px-5 py-14">
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#2553D8]/20 border-t-[#2553D8]" />
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
           <p className="text-[14px] font-medium text-[#7a849c]">
             Loading Hostinger domains…
           </p>
         </div>
       ) : domains.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-[#d8e0f0] bg-white px-5 py-14 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f3f6fc] text-[#2553D8]">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f3f6fc] text-[#242E42]">
             <FiGlobe className="h-6 w-6" />
           </div>
-          <p className="text-[15px] font-semibold text-[#1f2640]">
+          <p className="text-[15px] font-semibold text-[#242E42]">
             No domains found
           </p>
           <p className="mt-1 text-[13px] text-[#7a849c]">

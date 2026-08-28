@@ -54,7 +54,7 @@ function getActionBadgeClass(action: string): string {
   ) {
     return "bg-[#fee2e2] text-[#b91c1c] ring-1 ring-[#fecaca]/70";
   }
-  return "bg-[#eef2ff] text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
+  return "bg-white text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
 }
 
 export default function LogsTable({ logs, loading = false }: LogsTableProps) {
@@ -80,7 +80,7 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
         headerClassName: "w-[180px]",
         cellClassName: "w-[180px]",
         render: (log) => (
-          <span className="font-semibold text-[#1f2640]">
+          <span className="font-semibold text-[#242E42]">
             {log.admin_display_name?.trim() || `Admin #${log.admin_id}`}
           </span>
         ),

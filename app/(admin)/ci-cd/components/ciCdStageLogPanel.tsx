@@ -132,7 +132,7 @@ export default function CiCdStageLogPanel({
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0f172a]/75 backdrop-blur-[1px]">
             <div className="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-3 py-2 text-[13px] font-medium text-[#cbd5e1] ring-1 ring-white/10">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#2553D8]/30 border-t-[#93c5fd]" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#242E42]/30 border-t-[#93c5fd]" />
               Loading stage log…
             </div>
           </div>

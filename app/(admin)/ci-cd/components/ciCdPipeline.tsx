@@ -50,11 +50,11 @@ function stageStyles(kind: StageKind) {
       };
     case "running":
       return {
-        node: "border-[#2553D8] bg-white text-[#2553D8] animate-pulse",
-        rail: "bg-[#2553D8]",
+        node: "border-[#242E42] bg-white text-[#242E42] animate-pulse",
+        rail: "bg-[#242E42]",
         chip: "bg-[#eff6ff] text-[#1d4ed8] ring-[#bfdbfe]",
         title: "text-[#1e3a8a]",
-        selectedRing: "ring-[#2553D8]/30",
+        selectedRing: "ring-[#242E42]/30",
       };
     case "unstable":
       return {

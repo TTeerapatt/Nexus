@@ -51,7 +51,7 @@ function statusDotClass(status: JenkinsJobStatus): string {
     case "unstable":
       return "bg-[#eab308] shadow-[0_0_0_4px_rgba(234,179,8,0.18)]";
     case "running":
-      return "bg-[#2553D8] shadow-[0_0_0_4px_rgba(37,83,216,0.18)] animate-pulse";
+      return "bg-[#242E42] animate-pulse";
     default:
       return "bg-[#9ca3af] shadow-[0_0_0_4px_rgba(156,163,175,0.16)]";
   }
@@ -86,7 +86,7 @@ function healthBarClass(score: number): string {
 
 function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {
   if (selected) {
-    return "bg-[#2553D8] text-white ring-[#2553D8]";
+    return "bg-[#242E42] text-white ring-[#242E42]";
   }
   switch (status) {
     case "success":
@@ -98,7 +98,7 @@ function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {
     case "running":
       return "bg-white text-[#1d4ed8] ring-[#93c5fd] hover:bg-[#eff6ff]";
     default:
-      return "bg-white text-[#5b657d] ring-[#e4eaf6] hover:bg-[#f8faff]";
+      return "bg-white text-[#5b657d] ring-[#e4eaf6] hover:bg-white";
   }
 }
 
@@ -371,17 +371,17 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
     <div
       className={`overflow-hidden rounded-2xl border bg-white transition duration-300 ${
         open
-          ? "border-[#c7d7ff] shadow-[0_12px_32px_rgba(37,83,216,0.10)]"
+          ? "border-[#e2e5eb] shadow-md"
           : "border-[#e4e9f4] shadow-[0_2px_8px_rgba(31,38,64,0.04)] hover:border-[#d4def5] hover:shadow-[0_8px_20px_rgba(31,38,64,0.06)]"
       }`}
     >
       <button
         type="button"
         onClick={() => void handleToggle()}
-        className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left transition hover:bg-[#f8faff]/80"
+        className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left transition hover:bg-white/80"
         aria-expanded={open}
       >
-        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#2553D8]/10 text-[#2553D8]">
+        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#242E42]">
           <GoWorkflow className="h-5 w-5" />
           <span
             className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ${statusDotClass(job.status)}`}
@@ -389,7 +389,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] font-bold tracking-tight text-[#1f2640]">
+          <p className="truncate text-[15px] font-bold tracking-tight text-[#242E42]">
             {job.name}
           </p>
           {job.url ? (
@@ -407,7 +407,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
           </span>
           <span
             className={`flex h-8 w-8 items-center justify-center rounded-xl bg-[#f3f6fc] text-[#5b657d] transition-transform duration-300 ${
-              open ? "rotate-180 bg-[#eef3ff] text-[#2553D8]" : ""
+              open ? "rotate-180 bg-white text-[#242E42]" : ""
             }`}
           >
             <FiChevronDown className="h-4 w-4" />
@@ -421,10 +421,10 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="border-t border-[#eef1f7] bg-gradient-to-b from-[#f7f9ff] to-[#fbfcff] px-5 py-5">
+          <div className="border-t border-[#eef1f7] bg-white px-5 py-5">
             {loadingDetail ? (
               <div className="flex items-center gap-3 rounded-2xl border border-[#e4eaf6] bg-white px-4 py-6">
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#2553D8]/20 border-t-[#2553D8]" />
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
                 <p className="text-[13px] font-medium text-[#7a849c]">
                   Loading pipeline stages…
                 </p>
@@ -433,7 +433,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
                   {detail.healthScore != null ? (
-                    <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#1f2640] ring-1 ring-[#e4eaf6]">
+                    <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#242E42] ring-1 ring-[#e4eaf6]">
                       <FiHeart className="h-3.5 w-3.5 text-[#ef4444]" />
                       Health {detail.healthScore}%
                       <span className="ml-1 h-1.5 w-16 overflow-hidden rounded-full bg-[#eef1f7]">
@@ -448,7 +448,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                   ) : null}
 
                   <span className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#5b657d] ring-1 ring-[#e4eaf6]">
-                    <FiActivity className="h-3.5 w-3.5 text-[#2553D8]" />
+                    <FiActivity className="h-3.5 w-3.5 text-[#242E42]" />
                     {stages.length} stages
                     {(pendingBuildNumber ?? selectedBuildNumber) != null
                       ? ` · #${pendingBuildNumber ?? selectedBuildNumber}`
@@ -461,7 +461,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#2553D8]/8 px-3 py-1.5 text-[12px] font-semibold text-[#2553D8] ring-1 ring-[#2553D8]/15 transition hover:bg-[#2553D8]/15"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#242E42] ring-1 ring-[#242E42]/15 transition hover:bg-white"
                     >
                       Open Jenkins
                       <FiExternalLink className="h-3.5 w-3.5" />
@@ -526,7 +526,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                   {loadingBuild ? (
                     <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/70 backdrop-blur-[1px]">
                       <div className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[13px] font-medium text-[#5b657d] ring-1 ring-[#e4eaf6]">
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#2553D8]/20 border-t-[#2553D8]" />
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
                         Loading build
                         {pendingBuildNumber != null
                           ? ` #${pendingBuildNumber}`

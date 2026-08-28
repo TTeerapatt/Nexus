@@ -59,7 +59,7 @@ export default function LogsFilter({
               id="logs-action"
               value={action}
               onChange={(e) => onActionChange(e.target.value)}
-              className={`${filterSelectClass} cursor-pointer hover:border-[#2553d8]/40`}
+              className={`${filterSelectClass} cursor-pointer hover:border-[#242e42]/40`}
             >
               <option value="">All</option>
               {actionOptions.map((value) => (
@@ -82,14 +82,14 @@ export default function LogsFilter({
             type="datetime-local"
             value={datetime}
             onChange={(e) => onDatetimeChange(e.target.value)}
-            className={`${filterInputClass} cursor-pointer hover:border-[#2553d8]/40`}
+            className={`${filterInputClass} cursor-pointer hover:border-[#242e42]/40`}
           />
         </FilterField>
 
         <button
           type="button"
           onClick={onClear}
-          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#b8c9ff] bg-[#f8faff] px-4 text-[13px] font-semibold text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-[0.98]"
+          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e5eb] bg-white px-4 text-[13px] font-semibold text-[#242E42] shadow-sm transition hover:border-[#242E42] hover:bg-white hover:shadow-md active:scale-[0.98]"
         >
           <FiXCircle className="h-4 w-4" />
           Clear

@@ -79,9 +79,9 @@ export function emptyForm(): AdminFormValues {
 }
 
 const inputBaseClass =
-  "h-11 w-full rounded-xl border bg-white text-[14px] text-[#1f2640] outline-none transition";
+  "h-11 w-full rounded-xl border bg-white text-[14px] text-[#242E42] outline-none transition";
 const inputNormalClass =
-  "border-[#d7dce7] focus:border-[#2553D8] focus:ring-2 focus:ring-[#2553d8]/15";
+  "border-[#d7dce7] focus:border-[#242E42] focus:ring-2 focus:ring-[#242e42]/15";
 const inputErrorClass =
   "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
 

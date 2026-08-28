@@ -200,19 +200,12 @@ export default function LoginMain() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-6 lg:px-8"
-      style={{
-        backgroundImage: "linear-gradient(180deg, #6B8CFF 0%, #2553D8 100%)",
-      }}
+      className="flex min-h-screen items-center justify-center bg-[#242E42] px-4 py-8 sm:px-6 lg:px-8"
     >
-      <div className="flex min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[32px] bg-white shadow-[0_20px_60px_rgba(31,41,87,0.18)]">
+      <div className="flex min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[32px] bg-white shadow-[0_20px_60px_rgba(36,46,66,0.18)]">
         {/* Left brand panel */}
         <div
-          className="relative hidden w-[40%] flex-col items-center justify-between px-8 pb-10 pt-12 md:flex"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg, #4C7DFF 0%, #2553D8 100%)",
-          }}
+          className="relative hidden w-[40%] flex-col items-center justify-between bg-[#242E42] px-8 pb-10 pt-12 md:flex"
         >
           <div className="flex flex-col items-center gap-3 text-white">
             <div className="flex h-[120px] w-[120px] items-center justify-center rounded-3xl bg-white/15 backdrop-blur-sm">
@@ -237,12 +230,12 @@ export default function LoginMain() {
         {/* Right form panel */}
         <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 md:w-[60%] md:px-16 md:py-14">
           <div className="mb-6 flex justify-center md:hidden">
-            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl bg-[#2553D8]/10">
-              <MdLocalLaundryService className="h-12 w-12 text-[#2553D8]" />
+            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl bg-white">
+              <MdLocalLaundryService className="h-12 w-12 text-[#242E42]" />
             </div>
           </div>
 
-          <h1 className="text-center text-[30px] font-bold leading-tight text-[#2553D8] sm:text-[34px]">
+          <h1 className="text-center text-[30px] font-bold leading-tight text-[#242E42] sm:text-[34px]">
             Sign in
           </h1>
 
@@ -250,7 +243,7 @@ export default function LoginMain() {
             <div>
               <label
                 htmlFor="email"
-                className="mb-2 block text-[14px] font-semibold text-[#1f2640]"
+                className="mb-2 block text-[14px] font-semibold text-[#242E42]"
               >
                 Email
               </label>
@@ -263,14 +256,14 @@ export default function LoginMain() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@nexus.com"
-                className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 text-[14px] text-[#1f2640] placeholder-[#adb2ba] outline-none transition focus:border-[#2553d8] focus:ring-2 focus:ring-[#2553d8]/15"
+                className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="mb-2 block text-[14px] font-semibold text-[#1f2640]"
+                className="mb-2 block text-[14px] font-semibold text-[#242E42]"
               >
                 Password
               </label>
@@ -284,12 +277,12 @@ export default function LoginMain() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pr-11 text-[14px] text-[#1f2640] placeholder-[#adb2ba] outline-none transition focus:border-[#2553d8] focus:ring-2 focus:ring-[#2553d8]/15"
+                  className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pr-11 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[#757d94] hover:text-[#1f2640]"
+                  className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[#757d94] hover:text-[#242E42]"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   aria-pressed={showPassword}
                 >
@@ -309,7 +302,7 @@ export default function LoginMain() {
                       "Please contact the owner to reset your password"
                     )
                   }
-                  className="cursor-pointer text-[13px] font-medium text-[#2553D8] hover:underline"
+                  className="cursor-pointer text-[13px] font-medium text-[#242E42] hover:underline"
                 >
                   Forgot password?
                 </button>
@@ -319,7 +312,7 @@ export default function LoginMain() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-2 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#2553D8] text-[15px] font-semibold text-white transition hover:bg-[#1d44b5] focus:outline-none focus:ring-2 focus:ring-[#2553d8]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-2 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#242E42] text-[15px] font-semibold text-white transition hover:bg-[#1b2333] focus:outline-none focus:ring-2 focus:ring-[#242e42]/40 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? "Signing in..." : "Sign in"}
             </button>

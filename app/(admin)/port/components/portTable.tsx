@@ -76,7 +76,7 @@ function getPortBadgeClass(resourceTypeCode: string): string {
   if (key === "services") {
     return "border-[#ddd6fe] bg-[#f5f3ff] text-[#6d28d9]";
   }
-  return "border-[#c7d7ff] bg-[#eef3ff] text-[#2553D8]";
+  return "border-[#e2e5eb] bg-white text-[#242E42]";
 }
 
 function PortNumberBadge({
@@ -117,7 +117,7 @@ function PortRowActions({
         onClick={() => onEdit?.(port)}
         aria-label={`Edit port ${port.port_number}`}
         title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#c7d7ff] bg-white text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-white text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[#eff6ff] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
       </button>
@@ -164,7 +164,7 @@ export default function PortTable({
         key: "project_name",
         title: "Project",
         render: (port) => (
-          <span className="font-semibold text-[#1f2640]">
+          <span className="font-semibold text-[#242E42]">
             {port.project_name}
           </span>
         ),

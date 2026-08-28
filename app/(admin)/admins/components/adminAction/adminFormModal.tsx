@@ -500,9 +500,9 @@ export default function AdminCreateModal({
       />
 
       <div className="relative z-10 flex max-h-[92vh] w-full max-w-[980px] flex-col overflow-hidden rounded-[24px] border border-[#e8ecf4] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
-        <div className="flex items-center justify-between border-b border-[#eef2ff] px-6 py-4">
+        <div className="flex items-center justify-between border-b border-[#edf8eb] px-6 py-4">
           <div>
-            <h2 className="text-[18px] font-bold text-[#1f2640]">
+            <h2 className="text-[18px] font-bold text-[#242E42]">
               {isEdit ? "Edit admin" : "Add admin"}
             </h2>
             {/* <p className="text-[13px] text-[#7a849c]">
@@ -512,7 +512,7 @@ export default function AdminCreateModal({
           <button
             type="button"
             onClick={() => void handleRequestClose()}
-            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-[#f8faff]"
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-white"
             aria-label="Close"
           >
             <FiX className="h-4 w-4" />
@@ -575,7 +575,7 @@ export default function AdminCreateModal({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-between border-t border-[#eef2ff] px-6 py-4">
+        <div className="flex items-center justify-between border-t border-[#edf8eb] px-6 py-4">
           <button
             type="button"
             onClick={
@@ -593,7 +593,7 @@ export default function AdminCreateModal({
               type="button"
               onClick={() => void handleNext()}
               disabled={detailLoading}
-              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1d44b5] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#242E42] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1b2333] disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
               <FiArrowRight className="h-4 w-4" />

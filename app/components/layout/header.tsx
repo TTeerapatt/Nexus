@@ -51,16 +51,13 @@ export default function Header() {
 
   return (
     <header
-      className="flex h-[72px] w-full items-center justify-between px-6 text-white shadow-[0_6px_18px_rgba(31,41,87,0.18)]"
-      style={{
-        backgroundImage: "linear-gradient(180deg, #4C7DFF 0%, #2553D8 100%)",
-      }}
+      className="flex h-[72px] w-full items-center justify-between bg-[#242E42] px-6 text-white shadow-[0_6px_18px_rgba(36,46,66,0.18)]"
     >
       <h1 className="text-[22px] font-bold tracking-wide">{title}</h1>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#dbe4ff] text-[13px] font-bold text-[#2553D8]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[13px] font-bold text-[#242E42]">
             {initials}
           </div>
           <div className="min-w-0 leading-tight">

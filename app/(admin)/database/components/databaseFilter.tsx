@@ -76,7 +76,7 @@ export default function DatabaseFilter({
                 id="database-project-filter"
                 value={projectId}
                 onChange={(e) => onProjectChange(e.target.value)}
-                className={`${filterSelectClass} cursor-pointer hover:border-[#2553d8]/40`}
+                className={`${filterSelectClass} cursor-pointer hover:border-[#242e42]/40`}
               >
                 <option value="">All</option>
                 {projects.map((project) => (
@@ -99,7 +99,7 @@ export default function DatabaseFilter({
                 id="database-type-filter"
                 value={allDatabaseId}
                 onChange={(e) => onAllDatabaseChange(e.target.value)}
-                className={`${filterSelectClass} cursor-pointer hover:border-[#2553d8]/40`}
+                className={`${filterSelectClass} cursor-pointer hover:border-[#242e42]/40`}
               >
                 <option value="">All</option>
                 {allDatabases.map((type) => (
@@ -122,7 +122,7 @@ export default function DatabaseFilter({
                 id="database-status"
                 value={status}
                 onChange={(e) => onStatusChange(e.target.value)}
-                className={`${filterSelectClass} cursor-pointer hover:border-[#2553d8]/40`}
+                className={`${filterSelectClass} cursor-pointer hover:border-[#242e42]/40`}
               >
                 {STATUS_OPTIONS.map((option) => (
                   <option key={option.value || "all"} value={option.value}>
@@ -137,7 +137,7 @@ export default function DatabaseFilter({
           <button
             type="button"
             onClick={onClear}
-            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#b8c9ff] bg-[#f8faff] px-4 text-[13px] font-semibold text-[#2553D8] shadow-sm transition hover:border-[#2553D8] hover:bg-[#eef3ff] hover:shadow-md active:scale-[0.98]"
+            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e5eb] bg-white px-4 text-[13px] font-semibold text-[#242E42] shadow-sm transition hover:border-[#242E42] hover:bg-white hover:shadow-md active:scale-[0.98]"
           >
             <FiXCircle className="h-4 w-4" />
             Clear filters
@@ -147,7 +147,7 @@ export default function DatabaseFilter({
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#2553D8] px-5 text-[14px] font-semibold text-white shadow-[0_4px_14px_rgba(37,83,216,0.28)] transition hover:bg-[#1d44b5] hover:shadow-[0_6px_18px_rgba(37,83,216,0.36)] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#2553d8]/40"
+          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#242E42] px-5 text-[14px] font-semibold text-white shadow-sm transition hover:bg-[#1b2333] hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#242e42]/40"
         >
           <FiPlus className="h-4 w-4" />
           Add Database
