@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+  FiCheck,
   FiChevronDown,
+  FiCopy,
   FiCpu,
   FiHardDrive,
   FiPlay,
@@ -256,6 +258,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
   const [metrics, setMetrics] = useState<VpsMetrics | null>(null);
   const [metricsLoading, setMetricsLoading] = useState(false);
   const [actionBusy, setActionBusy] = useState(false);
+  const [copiedIpv4, setCopiedIpv4] = useState(false);
   const hasMetricsCacheRef = useRef(false);
   const metricsRequestIdRef = useRef(0);
 
@@ -312,6 +315,19 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
       }
       return next;
     });
+  };
+
+  const ipv4Value = vm.ipv4.map((ip) => ip.address).join(", ");
+  const handleCopyIpv4 = async () => {
+    if (!ipv4Value || !navigator.clipboard) return;
+
+    try {
+      await navigator.clipboard.writeText(ipv4Value);
+      setCopiedIpv4(true);
+      window.setTimeout(() => setCopiedIpv4(false), 1600);
+    } catch {
+      setCopiedIpv4(false);
+    }
   };
 
   const handlePower = async (action: VpsPowerAction) => {
@@ -413,11 +429,27 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
         <div className="space-y-4 border-t border-[#edf8eb] px-5 py-5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
-                IPv4
-              </p>
-              <p className="mt-1 font-mono text-[13px] font-semibold text-[#242E42]">
-                {vm.ipv4.map((ip) => ip.address).join(", ") || "-"}
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+                  IPv4
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void handleCopyIpv4()}
+                  disabled={!ipv4Value}
+                  title={copiedIpv4 ? "Copied" : "Copy IPv4"}
+                  aria-label={copiedIpv4 ? "IPv4 copied" : "Copy IPv4"}
+                  className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-[#e2e5eb] bg-white text-[#242E42] transition hover:border-[#242E42] hover:bg-[#f7f7f7] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {copiedIpv4 ? (
+                    <FiCheck className="h-3.5 w-3.5" />
+                  ) : (
+                    <FiCopy className="h-3.5 w-3.5" />
+                  )}
+                </button>
+              </div>
+              <p className="mt-1 break-all font-mono text-[13px] font-semibold text-[#242E42]">
+                {ipv4Value || "-"}
               </p>
             </div>
             <div className="rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">

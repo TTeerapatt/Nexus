@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FiEye, FiEyeOff } from "react-icons/fi";
-import { MdLocalLaundryService } from "react-icons/md";
+import { FiCode, FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
+import { MdCloud } from "react-icons/md";
 import authAPI from "@/app/services/auth/authAPI";
 import menuAPI from "@/app/services/menu/menuAPI";
 import {
@@ -202,121 +202,149 @@ export default function LoginMain() {
     <div
       className="flex min-h-screen items-center justify-center bg-[#242E42] px-4 py-8 sm:px-6 lg:px-8"
     >
-      <div className="flex min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[32px] bg-white shadow-[0_20px_60px_rgba(36,46,66,0.18)]">
+      <div className="flex min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[32px] border border-white/10 bg-white shadow-[0_20px_60px_rgba(36,46,66,0.28)]">
         {/* Left brand panel */}
         <div
-          className="relative hidden w-[40%] flex-col items-center justify-between bg-[#242E42] px-8 pb-10 pt-12 md:flex"
+          className="relative hidden w-[40%] flex-col items-center justify-between border-r border-white/10 bg-[#242E42] px-8 pb-10 pt-12 md:flex"
         >
-          <div className="flex flex-col items-center gap-3 text-white">
-            <div className="flex h-[120px] w-[120px] items-center justify-center rounded-3xl bg-white/15 backdrop-blur-sm">
-              <MdLocalLaundryService className="h-16 w-16 text-white" />
+          <div className="flex flex-col items-center gap-4 text-white">
+            <div className="flex h-[112px] w-[112px] items-center justify-center rounded-[28px] bg-white shadow-md">
+              <MdCloud className="h-16 w-16 text-[#242E42]" />
             </div>
-            <p className="text-center text-[22px] font-bold tracking-wide">
-              Nexus
-            </p>
-            <p className="text-center text-[14px] font-medium text-white/85">
-              Laundry management system
-            </p>
+            <div className="text-center">
+              <p className="text-[24px] font-bold uppercase tracking-[0.18em]">
+                Nexus
+              </p>
+              <p className="mt-2 text-[13px] font-medium text-white/70">
+                Server management system
+              </p>
+            </div>
           </div>
 
-          <div className="w-full rounded-2xl bg-white/10 px-5 py-6 text-center text-white/90 backdrop-blur-sm">
-            <p className="text-[15px] font-semibold">Admin Panel</p>
-            <p className="mt-2 text-[13px] leading-relaxed text-white/80">
-              Manage orders, customers, and laundry status in one place
+          <div className="w-full rounded-2xl border border-white/15 bg-white/10 px-5 py-5 text-center text-white">
+            <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-white text-[#242E42] shadow-sm">
+              <FiCode className="h-4 w-4" />
+            </div>
+            <p className="mt-3 text-[12px] font-medium text-white/65">
+              This system was created by
             </p>
+            <p className="mt-1 text-[15px] font-semibold tracking-wide">
+              Teerapat Sommaloun
+            </p>
+            <a
+              href="mailto:rznot778@gmail.com"
+              className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-white/70 transition hover:text-white hover:underline"
+            >
+              <FiMail className="h-3.5 w-3.5" />
+              rznot778@gmail.com
+            </a>
           </div>
         </div>
 
         {/* Right form panel */}
-        <div className="flex w-full flex-col justify-center px-8 py-12 sm:px-12 md:w-[60%] md:px-16 md:py-14">
-          <div className="mb-6 flex justify-center md:hidden">
-            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl bg-white">
-              <MdLocalLaundryService className="h-12 w-12 text-[#242E42]" />
+        <div className="flex w-full flex-col items-center justify-center px-8 py-12 sm:px-12 md:w-[60%] md:px-16 md:py-14">
+          <div className="w-full max-w-[430px]">
+            <div className="mb-8 flex justify-center md:hidden">
+              <div className="flex h-[76px] w-[76px] items-center justify-center rounded-2xl bg-[#242E42] shadow-md">
+                <MdCloud className="h-10 w-10 text-white" />
+              </div>
             </div>
+
+            <div className="text-center">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#242E42]/55">
+                Nexus admin
+              </p>
+              <h1 className="mt-2 text-center text-[30px] font-bold leading-tight text-[#242E42] sm:text-[34px]">
+                Welcome back
+              </h1>
+              <p className="mt-3 text-[14px] text-[#5b657d]">
+                Sign in to continue to your workspace
+              </p>
+            </div>
+
+            <form className="mt-10 space-y-5" onSubmit={handleSubmit}>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-[14px] font-semibold text-[#242E42]"
+                >
+                  Email address
+                </label>
+                <div className="relative">
+                  <FiMail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@nexus.com"
+                    className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pl-11 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-[14px] font-semibold text-[#242E42]"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <FiLock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pl-11 pr-11 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[#757d94] transition hover:text-[#242E42]"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                  >
+                    {showPassword ? (
+                      <FiEyeOff className="h-5 w-5" aria-hidden />
+                    ) : (
+                      <FiEye className="h-5 w-5" aria-hidden />
+                    )}
+                  </button>
+                </div>
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      popup.info(
+                        "Forgot password",
+                        "Please contact the owner to reset your password"
+                      )
+                    }
+                    className="cursor-pointer text-[13px] font-medium text-[#242E42] hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#242E42] text-[15px] font-semibold text-white transition hover:bg-[#1b2333] focus:outline-none focus:ring-2 focus:ring-[#242e42]/40 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? "Signing in..." : "Sign in"}
+              </button>
+            </form>
           </div>
-
-          <h1 className="text-center text-[30px] font-bold leading-tight text-[#242E42] sm:text-[34px]">
-            Sign in
-          </h1>
-
-          <form className="mt-12 space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block text-[14px] font-semibold text-[#242E42]"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@nexus.com"
-                className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-2 block text-[14px] font-semibold text-[#242E42]"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pr-11 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[#757d94] hover:text-[#242E42]"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  aria-pressed={showPassword}
-                >
-                  {showPassword ? (
-                    <FiEyeOff className="h-5 w-5" aria-hidden />
-                  ) : (
-                    <FiEye className="h-5 w-5" aria-hidden />
-                  )}
-                </button>
-              </div>
-              <div className="mt-2 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() =>
-                    popup.info(
-                      "Forgot password",
-                      "Please contact the owner to reset your password"
-                    )
-                  }
-                  className="cursor-pointer text-[13px] font-medium text-[#242E42] hover:underline"
-                >
-                  Forgot password?
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-2 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#242E42] text-[15px] font-semibold text-white transition hover:bg-[#1b2333] focus:outline-none focus:ring-2 focus:ring-[#242e42]/40 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting ? "Signing in..." : "Sign in"}
-            </button>
-          </form>
         </div>
       </div>
     </div>
