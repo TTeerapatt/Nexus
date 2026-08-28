@@ -6,6 +6,7 @@ import {
   FiChevronDown,
   FiExternalLink,
   FiHeart,
+  FiLoader,
 } from "react-icons/fi";
 import { GoWorkflow } from "react-icons/go";
 import ciCdAPI, {
@@ -40,6 +41,10 @@ function statusBadgeClass(status: JenkinsJobStatus): string {
     default:
       return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
   }
+}
+
+function isRunningStatus(status: JenkinsJobStatus): boolean {
+  return status === "running";
 }
 
 function statusDotClass(status: JenkinsJobStatus): string {
@@ -154,6 +159,7 @@ type CiCdAccordionItemProps = {
 };
 
 export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
+  const isRunning = isRunningStatus(job.status);
   const [open, setOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingBuild, setLoadingBuild] = useState(false);
@@ -370,6 +376,8 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
   return (
     <div
       className={`overflow-hidden rounded-2xl border bg-white transition duration-300 ${
+        isRunning ? "ci-cd-running-card" : ""
+      } ${
         open
           ? "border-[#e2e5eb] shadow-md"
           : "border-[#e4e9f4] shadow-[0_2px_8px_rgba(31,38,64,0.04)] hover:border-[#d4def5] hover:shadow-[0_8px_20px_rgba(31,38,64,0.06)]"
@@ -382,6 +390,9 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         aria-expanded={open}
       >
         <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#242E42]">
+          {isRunning ? (
+            <span className="absolute inset-0 rounded-2xl border border-[#242E42]/30 ci-cd-running-icon-ring" />
+          ) : null}
           <GoWorkflow className="h-5 w-5" />
           <span
             className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ${statusDotClass(job.status)}`}
@@ -403,6 +414,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
           <span
             className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold ${statusBadgeClass(job.status)}`}
           >
+            {isRunning ? <FiLoader className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
             {statusLabel(job.status)}
           </span>
           <span
@@ -479,6 +491,8 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                         const activeNumber =
                           pendingBuildNumber ?? selectedBuildNumber;
                         const selected = activeNumber === build.number;
+                        const buildRunning =
+                          build.building || isRunningStatus(build.status);
                         return (
                           <button
                             key={build.number}
@@ -496,6 +510,9 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                               }`}
                             />
                             #{build.number}
+                            {buildRunning ? (
+                              <FiLoader className="ml-0.5 h-3 w-3 animate-spin" />
+                            ) : null}
                             {loadingBuild && pendingBuildNumber === build.number ? (
                               <span className="ml-0.5 h-3 w-3 animate-spin rounded-full border border-white/40 border-t-white" />
                             ) : null}

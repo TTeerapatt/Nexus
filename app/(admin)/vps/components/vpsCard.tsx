@@ -70,6 +70,32 @@ function formatMetric(value: number | null, unit: string | null): string {
   return `${value.toFixed(1)}${unit ? ` ${unit}` : ""}`;
 }
 
+function getLatestMetricTimestamp(metrics: VpsMetrics | null): number | null {
+  if (!metrics) return null;
+
+  const timestamps = Object.values(metrics).flatMap((series) =>
+    series?.points
+      .map((point) => point.timestamp)
+      .filter((timestamp) => Number.isFinite(timestamp)) ?? []
+  );
+
+  return timestamps.length > 0 ? Math.max(...timestamps) : null;
+}
+
+function formatMetricTimestamp(timestamp: number | null): string | null {
+  if (timestamp == null || !Number.isFinite(timestamp)) return null;
+
+  // Hostinger metric timestamps are normally Unix seconds; support milliseconds too.
+  const milliseconds = timestamp < 1_000_000_000_000 ? timestamp * 1000 : timestamp;
+  const date = new Date(milliseconds);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
 type MetricTone = {
   stroke: string;
   fillFrom: string;
@@ -384,6 +410,9 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
   const canStart = state === "stopped" || state === "off";
   const canStop = state === "running";
   const canRestart = state === "running";
+  const metricsUpdatedAt = formatMetricTimestamp(
+    getLatestMetricTimestamp(metrics)
+  );
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#e4e9f4] bg-white shadow-md">
@@ -547,11 +576,18 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
           </div>
 
           <div>
-            <div className="mb-2 flex items-center gap-2">
-              <FiHardDrive className="h-4 w-4 text-[#242E42]" />
-              <h4 className="text-[14px] font-bold text-[#242E42]">
-                Metrics (last 24h)
-              </h4>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <FiHardDrive className="h-4 w-4 shrink-0 text-[#242E42]" />
+                <h4 className="text-[14px] font-bold text-[#242E42]">
+                  Metrics (last 24h)
+                </h4>
+              </div>
+              {metricsUpdatedAt ? (
+                <span className="shrink-0 text-[11px] font-medium text-[#7a849c]">
+                  Updated {metricsUpdatedAt}
+                </span>
+              ) : null}
             </div>
 
             {metricsLoading && !metrics ? (

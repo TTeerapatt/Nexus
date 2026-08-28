@@ -27,6 +27,36 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@keyframes ci-cd-deploy-pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 8px rgba(36, 46, 66, 0.05);
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(36, 46, 66, 0.16);
+  }
+}
+
+@keyframes ci-cd-running-ring {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.92);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+.ci-cd-running-card {
+  animation: ci-cd-deploy-pulse 2s ease-in-out infinite;
+}
+
+.ci-cd-running-icon-ring {
+  animation: ci-cd-running-ring 1.8s ease-out infinite;
+}
+
 /* Hide browser native password reveal so custom toggle is the only control */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear,
