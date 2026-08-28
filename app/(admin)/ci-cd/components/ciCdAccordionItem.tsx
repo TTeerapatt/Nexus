@@ -56,7 +56,7 @@ function statusDotClass(status: JenkinsJobStatus): string {
     case "unstable":
       return "bg-[#eab308] shadow-[0_0_0_4px_rgba(234,179,8,0.18)]";
     case "running":
-      return "bg-[#242E42] animate-pulse";
+      return "bg-[#2563eb] animate-pulse";
     default:
       return "bg-[#9ca3af] shadow-[0_0_0_4px_rgba(156,163,175,0.16)]";
   }
@@ -375,7 +375,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
 
   return (
     <div
-      className={`overflow-hidden rounded-2xl border bg-white transition duration-300 ${
+      className={`relative overflow-hidden rounded-2xl border bg-white transition duration-300 ${
         isRunning ? "ci-cd-running-card" : ""
       } ${
         open
@@ -383,6 +383,12 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
           : "border-[#e4e9f4] shadow-[0_2px_8px_rgba(31,38,64,0.04)] hover:border-[#d4def5] hover:shadow-[0_8px_20px_rgba(31,38,64,0.06)]"
       }`}
     >
+      {isRunning ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-20 rounded-2xl ci-cd-running-border"
+        />
+      ) : null}
       <button
         type="button"
         onClick={() => void handleToggle()}
@@ -391,7 +397,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
       >
         <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#242E42]">
           {isRunning ? (
-            <span className="absolute inset-0 rounded-2xl border border-[#242E42]/30 ci-cd-running-icon-ring" />
+            <span className="absolute inset-0 rounded-2xl border border-[#2563eb]/35 ci-cd-running-icon-ring" />
           ) : null}
           <GoWorkflow className="h-5 w-5" />
           <span

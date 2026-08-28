@@ -27,13 +27,21 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@keyframes ci-cd-deploy-pulse {
-  0%,
-  100% {
-    box-shadow: 0 2px 8px rgba(36, 46, 66, 0.05);
+@keyframes ci-cd-border-run {
+  0% {
+    clip-path: inset(0 0 94% 0 round 16px);
+  }
+  25% {
+    clip-path: inset(0 0 0 94% round 16px);
   }
   50% {
-    box-shadow: 0 8px 24px rgba(36, 46, 66, 0.16);
+    clip-path: inset(94% 0 0 0 round 16px);
+  }
+  75% {
+    clip-path: inset(0 94% 0 0 round 16px);
+  }
+  100% {
+    clip-path: inset(0 0 94% 0 round 16px);
   }
 }
 
@@ -50,7 +58,13 @@ body {
 }
 
 .ci-cd-running-card {
-  animation: ci-cd-deploy-pulse 2s ease-in-out infinite;
+  box-shadow: none !important;
+}
+
+.ci-cd-running-border {
+  border: 2px solid #2563eb;
+  animation: ci-cd-border-run 1.6s linear infinite;
+  will-change: clip-path;
 }
 
 .ci-cd-running-icon-ring {
