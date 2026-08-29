@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # browser เรียก API ผ่าน host VPS — ไม่ใช้ชื่อ service ใน Docker network
-        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://187.52.125.210:3003/nexus/api/}
+        # The browser reaches the API through the public domain.
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-https://trpgls.com/nexus/api/}
     image: nexus-admin:latest
     container_name: nexus-admin
     restart: unless-stopped

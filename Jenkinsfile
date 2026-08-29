@@ -15,8 +15,8 @@ pipeline {
     )
     string(
       name: 'NEXT_PUBLIC_BACKEND_URL',
-      defaultValue: 'http://187.52.125.210:3003/nexus/api/',
-      description: 'Backend URL ที่ browser เรียก (bake เข้า Next.js ตอน build)'
+      defaultValue: 'https://trpgls.com/nexus/api/',
+      description: 'Backend URL used by the browser (baked into Next.js at build time)'
     )
     string(
       name: 'NEXUS_PORT',
@@ -93,7 +93,7 @@ pipeline {
 
   post {
     success {
-      echo "nexus #${env.BUILD_NUMBER} succeeded → http://187.52.125.210:${params.NEXUS_PORT}/nexus"
+      echo "nexus #${env.BUILD_NUMBER} succeeded → https://trpgls.com/nexus"
     }
     failure {
       echo "nexus #${env.BUILD_NUMBER} failed"
