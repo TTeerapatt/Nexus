@@ -88,7 +88,7 @@ export default function VpsMain() {
             </div>
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => void fetchVms(true)}
             disabled={loading || refreshing}
@@ -98,7 +98,7 @@ export default function VpsMain() {
               className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
             />
             Refresh
-          </button>
+          </button> */}
         </div>
 
         {!loading && vms.length > 0 ? (

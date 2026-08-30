@@ -81,7 +81,7 @@ export default function CiCdMain() {
             </div>
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => void fetchJobs(true)}
             disabled={loading || refreshing}
@@ -91,7 +91,7 @@ export default function CiCdMain() {
               className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
             />
             Refresh
-          </button>
+          </button> */}
         </div>
 
         {!loading && jobs.length > 0 ? (

@@ -88,7 +88,7 @@ export default function DomainMain() {
             </div>
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => void fetchDomains(true)}
             disabled={loading || refreshing}
@@ -98,7 +98,7 @@ export default function DomainMain() {
               className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
             />
             Refresh
-          </button>
+          </button> */}
         </div>
 
         {!loading && domains.length > 0 ? (
