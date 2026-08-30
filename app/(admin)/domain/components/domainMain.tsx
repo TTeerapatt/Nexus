@@ -82,9 +82,9 @@ export default function DomainMain() {
               <h1 className="text-[24px] font-bold tracking-tight text-[#242E42]">
                 Hostinger Domains
               </h1>
-              <p className="mt-1 text-[14px] text-[#7a849c]">
+              {/* <p className="mt-1 text-[14px] text-[#7a849c]">
                 Portfolio domains and DNS zone records
-              </p>
+              </p> */}
             </div>
           </div>
 
