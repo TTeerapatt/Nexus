@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiActivity, FiDatabase, FiFolder, FiServer } from "react-icons/fi";
+import Loading from "@/app/components/loading";
 import adminAPI, { type AdminItem } from "@/app/services/admin/adminAPI";
 import ciCdAPI, { type CiCdJobItem } from "@/app/services/ciCd/ciCdAPI";
 import databaseAPI, {
@@ -135,6 +136,10 @@ export default function OverviewPage() {
         color: colors[index % colors.length],
       }));
   }, [overview.ports]);
+
+  if (loading) {
+    return <Loading variant="page" message="Loading overview..." />;
+  }
 
   return (
     <div className="space-y-5">
