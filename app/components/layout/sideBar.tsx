@@ -91,17 +91,17 @@ export default function SideBar() {
   const hasDynamicMenu = groups.length > 0;
 
   return (
-    <aside className="flex h-screen w-[250px] shrink-0 flex-col overflow-hidden border-r border-[#e8ecf4] bg-white">
-      <div className="flex h-[76px] shrink-0 items-center border-b border-[#eef1f7] px-5">
+    <aside className="flex h-screen w-[250px] shrink-0 flex-col overflow-hidden border-r border-[var(--border)] bg-[var(--surface)]">
+      <div className="flex h-[76px] shrink-0 items-center border-b border-[var(--border)] px-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#242E42] shadow-[0_6px_14px_rgba(36,46,66,0.18)] ring-1 ring-[#242E42]/10">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[var(--surface-raised)] shadow-[0_6px_14px_rgba(36,46,66,0.18)] ring-1 ring-[var(--brand-primary)]/10">
             <MdAdminPanelSettings className="h-7 w-7 text-white" />
           </div>
           <div className="min-w-0 leading-tight">
-            <p className="text-[16px] font-extrabold tracking-[-0.01em] text-[#242E42]">
+            <p className="text-[16px] font-extrabold tracking-[-0.01em] text-[var(--text-primary)]">
               Nexus Admin
             </p>
-            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#7a849c]">
+            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
               Admin Panel
             </p>
           </div>
@@ -112,7 +112,7 @@ export default function SideBar() {
         {hasDynamicMenu
           ? groups.map((group) => (
               <div key={group.label.code} className="space-y-1.5">
-                <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-[#8893ad]">
+                <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                   {group.label.name}
                 </p>
                 {group.tabs.map((tab) => {
@@ -129,13 +129,13 @@ export default function SideBar() {
                       href={href}
                       className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition ${
                         isActive
-                          ? "bg-[#242E42] text-white shadow-md"
-                          : "bg-[#f3f5f9] text-[#242E42] hover:bg-[#e9edf5]"
+                          ? "bg-[var(--surface-raised)] text-white shadow-md"
+                          : "bg-[var(--surface-muted)] text-[var(--text-primary)] hover:bg-[var(--surface-soft)]"
                       }`}
                     >
                       <Icon
                         className={`h-5 w-5 shrink-0 ${
-                          isActive ? "text-white" : "text-[#5b657d]"
+                          isActive ? "text-white" : "text-[var(--text-secondary)]"
                         }`}
                       />
                       <span>{tab.name}</span>
@@ -157,13 +157,13 @@ export default function SideBar() {
                   href={item.href}
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition ${
                     isActive
-                      ? "bg-[#242E42] text-white shadow-md"
-                      : "bg-[#f3f5f9] text-[#242E42] hover:bg-[#e9edf5]"
+                      ? "bg-[var(--surface-raised)] text-white shadow-md"
+                      : "bg-[var(--surface-muted)] text-[var(--text-primary)] hover:bg-[var(--surface-soft)]"
                   }`}
                 >
                   <Icon
                     className={`h-5 w-5 shrink-0 ${
-                      isActive ? "text-white" : "text-[#5b657d]"
+                      isActive ? "text-white" : "text-[var(--text-secondary)]"
                     }`}
                   />
                   <span>{item.label}</span>
@@ -172,10 +172,10 @@ export default function SideBar() {
             })}
       </nav>
 
-      <div className="shrink-0 border-t border-[#eef1f7] p-2.5">
-        <div className="rounded-2xl border border-[#e8ecf4] bg-[#f8f9fc] p-2.5">
+      <div className="shrink-0 border-t border-[var(--border)] p-2.5">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-2.5">
           <div className="flex min-w-0 items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#242E42] text-[12px] font-bold text-white">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-raised)] text-[12px] font-bold text-white">
               {(admin?.display_name || "Admin")
                 .split(/[\s_]+/)
                 .filter(Boolean)
@@ -184,10 +184,10 @@ export default function SideBar() {
                 .join("") || "A"}
             </div>
             <div className="min-w-0 leading-tight">
-              <p className="truncate text-[13px] font-semibold text-[#242E42]">
+              <p className="truncate text-[13px] font-semibold text-[var(--text-primary)]">
                 {admin?.display_name?.trim() || "Admin"}
               </p>
-              <p className="truncate text-[11px] text-[#7a849c]">
+              <p className="truncate text-[11px] text-[var(--text-muted)]">
                 {admin?.email?.trim() || "Administrator"}
               </p>
             </div>
@@ -195,7 +195,7 @@ export default function SideBar() {
             <button
               type="button"
               onClick={() => void handleLogout()}
-              className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-[#242E42] transition hover:scale-110 hover:text-[#dc2626] focus:outline-none focus:ring-2 focus:ring-[#dc2626]/25"
+              className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-[var(--text-primary)] transition hover:scale-110 hover:text-[#dc2626] focus:outline-none focus:ring-2 focus:ring-[#dc2626]/25"
               aria-label="Sign out"
               title="Sign out"
             >

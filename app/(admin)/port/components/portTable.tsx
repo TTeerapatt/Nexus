@@ -76,7 +76,7 @@ function getPortBadgeClass(resourceTypeCode: string): string {
   if (key === "services") {
     return "border-[#ddd6fe] bg-[#f5f3ff] text-[#6d28d9]";
   }
-  return "border-[#e2e5eb] bg-white text-[#242E42]";
+  return "border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)]";
 }
 
 function PortNumberBadge({
@@ -117,7 +117,7 @@ function PortRowActions({
         onClick={() => onEdit?.(port)}
         aria-label={`Edit port ${port.port_number}`}
         title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-white text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[#eff6ff] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-[var(--surface)] text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
       </button>
@@ -126,7 +126,7 @@ function PortRowActions({
         onClick={() => onDelete?.(port)}
         aria-label={`Delete port ${port.port_number}`}
         title="Delete"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-white text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#fef2f2] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-[var(--surface)] text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#4c1d2a] hover:shadow-md active:scale-95"
       >
         <FiTrash2 className="h-4 w-4" />
       </button>
@@ -147,7 +147,7 @@ export default function PortTable({
       {
         key: "index",
         title: "No.",
-        cellClassName: "font-medium text-[#5b657d]",
+        cellClassName: "font-medium text-[var(--text-secondary)]",
         render: (_port, index) => index + 1,
       },
       {
@@ -164,7 +164,7 @@ export default function PortTable({
         key: "project_name",
         title: "Project",
         render: (port) => (
-          <span className="font-semibold text-[#242E42]">
+          <span className="font-semibold text-[var(--text-primary)]">
             {port.project_name}
           </span>
         ),
@@ -195,7 +195,7 @@ export default function PortTable({
       //   key: "description",
       //   title: "Description",
       //   render: (port) => (
-      //     <span className="text-[#5b657d]">
+      //     <span className="text-[var(--text-secondary)]">
       //       {port.description?.trim() ? port.description : "-"}
       //     </span>
       //   ),
@@ -214,7 +214,7 @@ export default function PortTable({
               className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${
                 port.is_active
                   ? "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70 hover:bg-[#bbf7d0]"
-                  : "bg-[#f3f4f6] text-[#6b7280] ring-1 ring-[#e5e7eb] hover:bg-[#e5e7eb]"
+                  : "bg-[#f3f4f6] text-[#6b7280] ring-1 ring-[#e5e7eb] hover:bg-[var(--surface-soft)]"
               }`}
             >
               {busy ? "..." : port.is_active ? "Active" : "Inactive"}

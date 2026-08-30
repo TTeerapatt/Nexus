@@ -499,20 +499,20 @@ export default function AdminCreateModal({
         onClick={() => void handleRequestClose()}
       />
 
-      <div className="relative z-10 flex max-h-[92vh] w-full max-w-[980px] flex-col overflow-hidden rounded-[24px] border border-[#e8ecf4] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
-        <div className="flex items-center justify-between border-b border-[#edf8eb] px-6 py-4">
+      <div className="relative z-10 flex max-h-[92vh] w-full max-w-[980px] flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+        <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
           <div>
-            <h2 className="text-[18px] font-bold text-[#242E42]">
+            <h2 className="text-[18px] font-bold text-[var(--text-primary)]">
               {isEdit ? "Edit admin" : "Add admin"}
             </h2>
-            {/* <p className="text-[13px] text-[#7a849c]">
+            {/* <p className="text-[13px] text-[var(--text-muted)]">
               Create a user account step by step
             </p> */}
           </div>
           <button
             type="button"
             onClick={() => void handleRequestClose()}
-            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-white"
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] text-[var(--text-secondary)] transition hover:bg-[var(--surface)]"
             aria-label="Close"
           >
             <FiX className="h-4 w-4" />
@@ -523,7 +523,7 @@ export default function AdminCreateModal({
           <AdminFormStepper currentStep={step} isEdit={isEdit} />
 
           {detailLoading ? (
-            <p className="py-16 text-center text-[14px] text-[#7a849c]">
+            <p className="py-16 text-center text-[14px] text-[var(--text-muted)]">
               Loading admins...
             </p>
           ) : null}
@@ -575,14 +575,14 @@ export default function AdminCreateModal({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-between border-t border-[#edf8eb] px-6 py-4">
+        <div className="flex items-center justify-between border-t border-[var(--border)] px-6 py-4">
           <button
             type="button"
             onClick={
               step === 1 ? () => void handleRequestClose() : handleBack
             }
             disabled={detailLoading}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-[14px] font-semibold text-[#5b657d] transition hover:bg-[#f3f5f9] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 text-[14px] font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             <FiArrowLeft className="h-4 w-4" />
             {step === 1 ? "Cancel" : "Back"}
@@ -593,7 +593,7 @@ export default function AdminCreateModal({
               type="button"
               onClick={() => void handleNext()}
               disabled={detailLoading}
-              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#242E42] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1b2333] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[var(--surface-raised)] px-5 text-[14px] font-semibold text-white transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
               <FiArrowRight className="h-4 w-4" />

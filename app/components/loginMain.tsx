@@ -201,16 +201,16 @@ export default function LoginMain() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-[#242E42] px-4 py-8 sm:px-6 lg:px-8"
+      className="flex min-h-screen items-center justify-center bg-[var(--surface-raised)] px-4 py-8 sm:px-6 lg:px-8"
     >
-      <div className="flex min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[32px] border border-white/10 bg-white shadow-[0_20px_60px_rgba(36,46,66,0.28)]">
+      <div className="flex min-h-[700px] w-full max-w-[980px] overflow-hidden rounded-[32px] border border-white/10 bg-[var(--surface)] shadow-[0_20px_60px_rgba(36,46,66,0.28)]">
         {/* Left brand panel */}
         <div
-          className="relative hidden w-[40%] flex-col items-center justify-between border-r border-white/10 bg-[#242E42] px-8 pb-10 pt-12 md:flex"
+          className="relative hidden w-[40%] flex-col items-center justify-between border-r border-white/10 bg-[var(--surface-raised)] px-8 pb-10 pt-12 md:flex"
         >
           <div className="flex flex-col items-center gap-4 text-white">
-            <div className="flex h-[112px] w-[112px] items-center justify-center rounded-[28px] bg-white shadow-md">
-              <MdAdminPanelSettings className="h-16 w-16 text-[#242E42]" />
+            <div className="flex h-[112px] w-[112px] items-center justify-center rounded-[28px] bg-[var(--surface)] shadow-md">
+              <MdAdminPanelSettings className="h-16 w-16 text-[var(--text-primary)]" />
             </div>
             <div className="text-center">
               <p className="text-[24px] font-bold uppercase tracking-[0.18em]">
@@ -222,8 +222,8 @@ export default function LoginMain() {
             </div>
           </div>
 
-          <div className="w-full rounded-2xl border border-white/15 bg-white/10 px-5 py-5 text-center text-white">
-            <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-white text-[#242E42] shadow-sm">
+          <div className="w-full rounded-2xl border border-white/15 bg-[var(--surface)]/10 px-5 py-5 text-center text-white">
+            <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface)] text-[var(--text-primary)] shadow-sm">
               <FiCode className="h-4 w-4" />
             </div>
             <p className="mt-3 text-[12px] font-medium text-white/65">
@@ -246,19 +246,19 @@ export default function LoginMain() {
         <div className="flex w-full flex-col items-center justify-center px-8 py-12 sm:px-12 md:w-[60%] md:px-16 md:py-14">
           <div className="w-full max-w-[430px]">
             <div className="mb-8 flex justify-center md:hidden">
-              <div className="flex h-[76px] w-[76px] items-center justify-center rounded-2xl bg-[#242E42] shadow-md">
+              <div className="flex h-[76px] w-[76px] items-center justify-center rounded-2xl bg-[var(--surface-raised)] shadow-md">
                 <MdCloud className="h-10 w-10 text-white" />
               </div>
             </div>
 
             <div className="text-center">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[#242E42]/55">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[var(--text-secondary)]">
                 Nexus admin
               </p>
-              <h1 className="mt-2 text-center text-[30px] font-bold leading-tight text-[#242E42] sm:text-[34px]">
+              <h1 className="mt-2 text-center text-[30px] font-bold leading-tight text-[var(--text-primary)] sm:text-[34px]">
                 Welcome back
               </h1>
-              <p className="mt-3 text-[14px] text-[#5b657d]">
+              <p className="mt-3 text-[14px] text-[var(--text-secondary)]">
                 Sign in to continue to your workspace
               </p>
             </div>
@@ -267,12 +267,12 @@ export default function LoginMain() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 block text-[14px] font-semibold text-[#242E42]"
+                  className="mb-2 block text-[14px] font-semibold text-[var(--text-primary)]"
                 >
                   Email address
                 </label>
                 <div className="relative">
-                  <FiMail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+                  <FiMail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     id="email"
                     name="email"
@@ -282,7 +282,7 @@ export default function LoginMain() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@nexus.com"
-                    className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pl-11 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
+                    className="h-12 w-full rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] px-4 pl-11 text-[14px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[var(--brand-primary)]/15"
                   />
                 </div>
               </div>
@@ -290,12 +290,12 @@ export default function LoginMain() {
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-2 block text-[14px] font-semibold text-[#242E42]"
+                  className="mb-2 block text-[14px] font-semibold text-[var(--text-primary)]"
                 >
                   Password
                 </label>
                 <div className="relative">
-                  <FiLock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+                  <FiLock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
                   <input
                     id="password"
                     name="password"
@@ -305,12 +305,12 @@ export default function LoginMain() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
-                    className="h-12 w-full rounded-xl border border-[#d7dce7] bg-white px-4 pl-11 pr-11 text-[14px] text-[#242E42] placeholder-[#adb2ba] outline-none transition focus:border-[#242e42] focus:ring-2 focus:ring-[#242e42]/15"
+                    className="h-12 w-full rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] px-4 pl-11 pr-11 text-[14px] text-[var(--text-primary)] placeholder-[var(--text-muted)] outline-none transition focus:border-[var(--brand-primary)] focus:ring-2 focus:ring-[var(--brand-primary)]/15"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[#757d94] transition hover:text-[#242E42]"
+                    className="absolute inset-y-0 right-0 z-10 flex items-center pr-3.5 text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                     aria-pressed={showPassword}
                   >
@@ -330,7 +330,7 @@ export default function LoginMain() {
                         "Please contact the owner to reset your password"
                       )
                     }
-                    className="cursor-pointer text-[13px] font-medium text-[#242E42] hover:underline"
+                    className="cursor-pointer text-[13px] font-medium text-[var(--text-primary)] hover:underline"
                   >
                     Forgot password?
                   </button>
@@ -340,7 +340,7 @@ export default function LoginMain() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[#242E42] text-[15px] font-semibold text-white transition hover:bg-[#1b2333] focus:outline-none focus:ring-2 focus:ring-[#242e42]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[var(--surface-raised)] text-[15px] font-semibold text-white transition hover:bg-[var(--surface-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? "Signing in..." : "Sign in"}
               </button>

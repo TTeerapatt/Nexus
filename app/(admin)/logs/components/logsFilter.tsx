@@ -37,7 +37,7 @@ export default function LogsFilter({
           className="w-[180px] shrink-0"
         >
           <div className="relative">
-            <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7a849c]" />
+            <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               id="logs-search"
               type="text"
@@ -59,7 +59,7 @@ export default function LogsFilter({
               id="logs-action"
               value={action}
               onChange={(e) => onActionChange(e.target.value)}
-              className={`${filterSelectClass} cursor-pointer hover:border-[#242e42]/40`}
+              className={`${filterSelectClass} cursor-pointer hover:border-[var(--brand-primary)]/40`}
             >
               <option value="">All</option>
               {actionOptions.map((value) => (
@@ -68,7 +68,7 @@ export default function LogsFilter({
                 </option>
               ))}
             </select>
-            <FiChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+            <FiChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
           </div>
         </FilterField>
 
@@ -82,14 +82,14 @@ export default function LogsFilter({
             type="datetime-local"
             value={datetime}
             onChange={(e) => onDatetimeChange(e.target.value)}
-            className={`${filterInputClass} cursor-pointer hover:border-[#242e42]/40`}
+            className={`${filterInputClass} cursor-pointer hover:border-[var(--brand-primary)]/40`}
           />
         </FilterField>
 
         <button
           type="button"
           onClick={onClear}
-          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e5eb] bg-white px-4 text-[13px] font-semibold text-[#242E42] shadow-sm transition hover:border-[#242E42] hover:bg-white hover:shadow-md active:scale-[0.98]"
+          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface)] hover:shadow-md active:scale-[0.98]"
         >
           <FiXCircle className="h-4 w-4" />
           Clear

@@ -54,7 +54,7 @@ function getActionBadgeClass(action: string): string {
   ) {
     return "bg-[#fee2e2] text-[#b91c1c] ring-1 ring-[#fecaca]/70";
   }
-  return "bg-white text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
+  return "bg-[var(--surface)] text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
 }
 
 export default function LogsTable({ logs, loading = false }: LogsTableProps) {
@@ -64,14 +64,14 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
         key: "index",
         title: "No.",
         headerClassName: "w-[72px]",
-        cellClassName: "w-[72px] font-medium text-[#5b657d]",
+        cellClassName: "w-[72px] font-medium text-[var(--text-secondary)]",
         render: (_log, index) => index + 1,
       },
       {
         key: "created_at",
         title: "Time",
         headerClassName: "w-[180px]",
-        cellClassName: "w-[180px] whitespace-nowrap text-[#5b657d]",
+        cellClassName: "w-[180px] whitespace-nowrap text-[var(--text-secondary)]",
         render: (log) => formatDateTime(log.created_at),
       },
       {
@@ -80,7 +80,7 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
         headerClassName: "w-[180px]",
         cellClassName: "w-[180px]",
         render: (log) => (
-          <span className="font-semibold text-[#242E42]">
+          <span className="font-semibold text-[var(--text-primary)]">
             {log.admin_display_name?.trim() || `Admin #${log.admin_id}`}
           </span>
         ),
@@ -91,7 +91,7 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
         headerClassName: "w-[220px]",
         cellClassName: "w-[220px]",
         render: (log) => (
-          <span className="text-[#5b657d]">
+          <span className="text-[var(--text-secondary)]">
             {log.admin_email?.trim() || "-"}
           </span>
         ),
@@ -114,7 +114,7 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
         title: "Message",
         render: (log) => (
           <span
-            className="block max-w-[520px] truncate text-[#5b657d]"
+            className="block max-w-[520px] truncate text-[var(--text-secondary)]"
             title={log.message?.trim() || undefined}
           >
             {log.message?.trim() ? log.message : "-"}

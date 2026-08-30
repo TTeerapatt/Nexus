@@ -1,10 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #242E42;
-  --brand-primary: #242E42;
-  --brand-secondary: #242E42;
+  --background: #0d172b;
+  --foreground: #f4f7fb;
+  --brand-primary: #5b86ff;
+  --brand-secondary: #8b5cf6;
+  --canvas: #0d172b;
+  --surface: #17243a;
+  --surface-raised: #1e2d44;
+  --surface-muted: #122036;
+  --surface-soft: #22324a;
+  --border: rgba(148, 163, 184, 0.18);
+  --border-strong: rgba(148, 163, 184, 0.28);
+  --text-primary: #f4f7fb;
+  --text-secondary: #a9b6ca;
+  --text-muted: #7f8ea7;
 }
 
 @theme inline {
@@ -14,17 +24,21 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Shared dark surfaces for native controls and browser-rendered states. */
+::selection {
+  background: rgba(91, 134, 255, 0.35);
+  color: var(--text-primary);
+}
+
+option {
+  background: var(--surface-raised);
+  color: var(--text-primary);
 }
 
 @keyframes ci-cd-border-run {
@@ -80,12 +94,12 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 
 .app-swal-popup {
   border-radius: 24px !important;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35) !important;
   overflow: hidden !important;
 }
 
 .app-swal-timer-bar {
-  background: #242e42 !important;
+  background: var(--brand-primary) !important;
   height: 4px !important;
 }
 
@@ -98,19 +112,19 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   overflow: hidden !important;
   border-bottom-left-radius: 24px !important;
   border-bottom-right-radius: 24px !important;
-  background: rgba(36, 46, 66, 0.12) !important;
+  background: rgba(148, 163, 184, 0.16) !important;
 }
 
 .app-swal-icon {
   margin: 0.15rem auto 0.85rem !important;
-  border-color: #242e42 !important;
-  color: #242e42 !important;
+  border-color: var(--brand-primary) !important;
+  color: var(--brand-primary) !important;
 }
 
 .app-swal-title {
   font-size: 1.05rem !important;
   font-weight: 700 !important;
-  color: #242E42 !important;
+  color: var(--text-primary) !important;
   line-height: 1.4 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -119,7 +133,7 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 .app-swal-text {
   font-size: 0.92rem !important;
   font-weight: 400 !important;
-  color: #242E42 !important;
+  color: var(--text-secondary) !important;
   line-height: 1.45 !important;
   margin: 0.45rem 0 0 !important;
   padding: 0 !important;
@@ -158,15 +172,15 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 .app-swal-confirm-btn {
-  background: #242e42 !important;
+  background: var(--brand-primary) !important;
   color: #ffffff !important;
 }
 
 .app-swal-confirm-btn:focus {
-  box-shadow: 0 0 0 3px rgba(36, 46, 66, 0.28) !important;
+  box-shadow: 0 0 0 3px rgba(91, 134, 255, 0.28) !important;
 }
 
 .app-swal-cancel-btn {
-  background: #e5e7eb !important;
-  color: #374151 !important;
+  background: var(--surface-soft) !important;
+  color: var(--text-primary) !important;
 }

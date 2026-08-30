@@ -25,7 +25,7 @@ export default function OverviewMetricCard({
   return (
     <Link
       href={href}
-      className="group rounded-2xl border border-[#e2e5eb] bg-white p-4 shadow-[0_8px_24px_rgba(36,46,66,0.06)] transition hover:-translate-y-0.5 hover:border-[#c7d7ff] hover:shadow-[0_10px_28px_rgba(36,46,66,0.1)]"
+      className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_8px_24px_rgba(36,46,66,0.06)] transition hover:-translate-y-0.5 hover:border-[#c7d7ff] hover:shadow-[0_10px_28px_rgba(36,46,66,0.1)]"
     >
       <div className="flex items-start justify-between gap-3">
         <span
@@ -33,14 +33,14 @@ export default function OverviewMetricCard({
         >
           <Icon className="h-5 w-5" />
         </span>
-        <FiArrowRight className="h-4 w-4 text-[#b5bdcc] transition group-hover:translate-x-0.5 group-hover:text-[#2553d8]" />
+        <FiArrowRight className="h-4 w-4 text-[var(--text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--brand-primary)]" />
       </div>
-      <p className="mt-4 text-[12px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+      <p className="mt-4 text-[12px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
         {label}
       </p>
-      <p className="mt-1 text-[28px] font-bold leading-none text-[#242e42]">
+      <p className="mt-1 text-[28px] font-bold leading-none text-[var(--text-primary)]">
         {loading ? (
-          <LoadingDots className="text-[#7a849c]" />
+          <LoadingDots className="text-[var(--text-muted)]" />
         ) : (
           value
         )}

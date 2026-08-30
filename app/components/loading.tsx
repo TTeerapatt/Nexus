@@ -9,7 +9,7 @@ export type LoadingProps = {
 };
 
 export function LoadingDots({
-  className = "text-[#242E42]",
+  className = "text-[var(--text-primary)]",
 }: {
   className?: string;
 }) {
@@ -42,11 +42,11 @@ function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 
   return (
     <div className={`relative ${sizeClass}`}>
-      <div className="absolute inset-0 rounded-full border-[3px] border-[#e2e5eb]" />
-      <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-[#242E42] border-r-[#242E42]" />
-      <div className="absolute inset-[18%] flex items-center justify-center rounded-full bg-white shadow-inner">
+      <div className="absolute inset-0 rounded-full border-[3px] border-[var(--border)]" />
+      <div className="absolute inset-0 animate-spin rounded-full border-[3px] border-transparent border-t-[var(--brand-primary)] border-r-[var(--brand-primary)]" />
+      <div className="absolute inset-[18%] flex items-center justify-center rounded-full bg-[var(--surface)] shadow-inner">
         <IoCodeSlashOutline
-          className={`${iconClass} text-[#242E42] animate-pulse`}
+          className={`${iconClass} text-[var(--text-primary)] animate-pulse`}
         />
       </div>
     </div>
@@ -62,7 +62,7 @@ export default function Loading({
     <div className="flex flex-col items-center gap-3 text-center">
       <LoadingSpinner size={variant === "inline" ? "sm" : "md"} />
       {message ? (
-        <p className="max-w-[240px] text-[14px] font-medium leading-snug text-[#5b657d]">
+        <p className="max-w-[240px] text-[14px] font-medium leading-snug text-[var(--text-secondary)]">
           {message}
         </p>
       ) : null}
@@ -72,9 +72,9 @@ export default function Loading({
   if (variant === "fullscreen") {
     return (
       <div
-        className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#f4f6fb]/95 backdrop-blur-sm ${className}`}
+        className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--canvas)]/95 backdrop-blur-sm ${className}`}
       >
-        <div className="rounded-[24px] border border-[#e2e5eb] bg-white px-10 py-8 shadow-md">
+        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-10 py-8 shadow-md">
           {content}
         </div>
       </div>
@@ -84,9 +84,9 @@ export default function Loading({
   if (variant === "overlay") {
     return (
       <div
-        className={`absolute inset-0 z-40 flex items-center justify-center bg-white/75 backdrop-blur-[2px] ${className}`}
+        className={`absolute inset-0 z-40 flex items-center justify-center bg-[var(--surface)]/75 backdrop-blur-[2px] ${className}`}
       >
-        <div className="rounded-[22px] border border-[#e2e5eb] bg-white px-8 py-7 shadow-md">
+        <div className="rounded-[22px] border border-[var(--border)] bg-[var(--surface)] px-8 py-7 shadow-md">
           {content}
         </div>
       </div>
