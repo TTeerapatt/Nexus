@@ -8,6 +8,28 @@ export type LoadingProps = {
   className?: string;
 };
 
+export function LoadingDots({
+  className = "text-[#242E42]",
+}: {
+  className?: string;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 ${className}`}
+      role="status"
+      aria-label="Loading"
+    >
+      {[0, 1, 2].map((dot) => (
+        <span
+          key={dot}
+          className="h-1.5 w-1.5 animate-bounce rounded-full bg-current"
+          style={{ animationDelay: `${dot * 140 - 280}ms` }}
+        />
+      ))}
+    </span>
+  );
+}
+
 function LoadingSpinner({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   const sizeClass =
     size === "sm"

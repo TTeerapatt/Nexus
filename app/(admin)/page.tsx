@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiActivity, FiDatabase, FiFolder, FiServer } from "react-icons/fi";
-import Loading from "@/app/components/loading";
 import adminAPI, { type AdminItem } from "@/app/services/admin/adminAPI";
 import ciCdAPI, { type CiCdJobItem } from "@/app/services/ciCd/ciCdAPI";
 import databaseAPI, {
@@ -28,44 +27,71 @@ import {
   type OverviewData,
 } from "./components/overview/overviewTypes";
 import {
-  getSettledList,
   getStatus,
+  readList,
 } from "./components/overview/overviewUtils";
+
+type OverviewLoadingState = {
+  projects: boolean;
+  ports: boolean;
+  databases: boolean;
+  admins: boolean;
+  domains: boolean;
+  jobs: boolean;
+  vps: boolean;
+};
+
+const INITIAL_LOADING_STATE: OverviewLoadingState = {
+  projects: true,
+  ports: true,
+  databases: true,
+  admins: true,
+  domains: true,
+  jobs: true,
+  vps: true,
+};
 
 export default function OverviewPage() {
   const [overview, setOverview] = useState<OverviewData>(EMPTY_OVERVIEW);
-  const [loading, setLoading] = useState(true);
+  const [loadingSections, setLoadingSections] =
+    useState<OverviewLoadingState>(INITIAL_LOADING_STATE);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
   const fetchOverview = useCallback(async (isRefresh = false) => {
-    if (isRefresh) {
-      setRefreshing(true);
-    } else {
-      setLoading(true);
-    }
+    setRefreshing(isRefresh);
+    setLoadingSections(INITIAL_LOADING_STATE);
 
-    const results = await Promise.allSettled([
-      projectAPI.getProjectAll(),
-      portAPI.getPortAll(),
-      databaseAPI.getDatabaseAll(),
-      adminAPI.getAdminAll(),
-      domainAPI.getDomainsAll(),
-      ciCdAPI.getJobs(),
-      vpsAPI.getVpsAll(),
+    const loadSection = async <T,>(
+      key: keyof OverviewLoadingState,
+      request: Promise<unknown>
+    ) => {
+      try {
+        const result = await request;
+        setOverview((current) => ({
+          ...current,
+          [key]: readList<T>(result),
+        }));
+      } catch {
+        setOverview((current) => ({
+          ...current,
+          [key]: [],
+        }));
+      } finally {
+        setLoadingSections((current) => ({ ...current, [key]: false }));
+      }
+    };
+
+    await Promise.all([
+      loadSection<ProjectItem>("projects", projectAPI.getProjectAll()),
+      loadSection<PortItem>("ports", portAPI.getPortAll()),
+      loadSection<DatabaseItem>("databases", databaseAPI.getDatabaseAll()),
+      loadSection<AdminItem>("admins", adminAPI.getAdminAll()),
+      loadSection<DomainListItem>("domains", domainAPI.getDomainsAll()),
+      loadSection<CiCdJobItem>("jobs", ciCdAPI.getJobs()),
+      loadSection<VpsVirtualMachine>("vps", vpsAPI.getVpsAll()),
     ]);
-
-    setOverview({
-      projects: getSettledList<ProjectItem>(results[0]),
-      ports: getSettledList<PortItem>(results[1]),
-      databases: getSettledList<DatabaseItem>(results[2]),
-      admins: getSettledList<AdminItem>(results[3]),
-      domains: getSettledList<DomainListItem>(results[4]),
-      jobs: getSettledList<CiCdJobItem>(results[5]),
-      vps: getSettledList<VpsVirtualMachine>(results[6]),
-    });
     setLastUpdated(new Date().toISOString());
-    setLoading(false);
     setRefreshing(false);
   }, []);
 
@@ -137,9 +163,7 @@ export default function OverviewPage() {
       }));
   }, [overview.ports]);
 
-  if (loading) {
-    return <Loading variant="page" message="Loading overview..." />;
-  }
+  const loading = Object.values(loadingSections).some(Boolean);
 
   return (
     <div className="space-y-5">
@@ -156,6 +180,7 @@ export default function OverviewPage() {
           icon={FiFolder}
           tone="bg-[#ecfeff] text-[#0e7490]"
           href="/projects"
+          loading={loadingSections.projects}
         />
         <OverviewMetricCard
           label="Active ports"
@@ -163,6 +188,7 @@ export default function OverviewPage() {
           icon={FiActivity}
           tone="bg-[#eff6ff] text-[#2563eb]"
           href="/port"
+          loading={loadingSections.ports}
         />
         <OverviewMetricCard
           label="Active databases"
@@ -170,6 +196,7 @@ export default function OverviewPage() {
           icon={FiDatabase}
           tone="bg-[#f0fdf4] text-[#16a34a]"
           href="/database"
+          loading={loadingSections.databases}
         />
         <OverviewMetricCard
           label="Running VPS"
@@ -177,6 +204,7 @@ export default function OverviewPage() {
           icon={FiServer}
           tone="bg-[#f5f3ff] text-[#7c3aed]"
           href="/vps"
+          loading={loadingSections.vps}
         />
       </section>
 
@@ -187,6 +215,12 @@ export default function OverviewPage() {
         failedJobs={summary.failedJobs}
         runningJobs={summary.runningJobs}
         lastUpdated={lastUpdated}
+        loading={{
+          vps: loadingSections.vps,
+          jobs: loadingSections.jobs,
+          domains: loadingSections.domains,
+          admins: loadingSections.admins,
+        }}
       />
 
       <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
@@ -194,11 +228,13 @@ export default function OverviewPage() {
           title="Projects by type"
           items={projectDistribution}
           emptyText="No project data available"
+          loading={loadingSections.projects}
         />
         <OverviewDistributionChart
           title="Ports by resource type"
           items={portDistribution}
           emptyText="No port data available"
+          loading={loadingSections.ports}
         />
       </section>
     </div>

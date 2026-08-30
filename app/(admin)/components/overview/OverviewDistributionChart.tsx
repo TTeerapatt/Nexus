@@ -1,24 +1,31 @@
 "use client";
 
+import { LoadingDots } from "@/app/components/loading";
 import type { DistributionItem } from "./overviewTypes";
 
 type OverviewDistributionChartProps = {
   title: string;
   items: DistributionItem[];
   emptyText: string;
+  loading?: boolean;
 };
 
 export default function OverviewDistributionChart({
   title,
   items,
   emptyText,
+  loading = false,
 }: OverviewDistributionChartProps) {
   const maxValue = Math.max(...items.map((item) => item.value), 1);
 
   return (
     <section className="rounded-2xl border border-[#e2e5eb] bg-white p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
       <h2 className="text-[16px] font-bold text-[#242e42]">{title}</h2>
-      {items.length === 0 ? (
+      {loading ? (
+        <div className="flex min-h-[92px] items-center justify-center text-[#2553d8]">
+          <LoadingDots />
+        </div>
+      ) : items.length === 0 ? (
         <p className="mt-8 text-center text-[13px] text-[#8b93a7]">
           {emptyText}
         </p>

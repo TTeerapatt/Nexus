@@ -10,6 +10,7 @@ import {
   FiServer,
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
+import { LoadingDots } from "@/app/components/loading";
 import type { OverviewData } from "./overviewTypes";
 import { formatDateTime } from "./overviewUtils";
 
@@ -20,6 +21,12 @@ type OverviewHealthSectionProps = {
   failedJobs: number;
   runningJobs: number;
   lastUpdated: string | null;
+  loading?: {
+    vps?: boolean;
+    jobs?: boolean;
+    domains?: boolean;
+    admins?: boolean;
+  };
 };
 
 function HealthRow({
@@ -48,8 +55,8 @@ function HealthRow({
           <p className="truncate text-[11px] text-[#8b93a7]">{detail}</p>
         </div>
       </div>
-      <span className="shrink-0 text-[13px] font-bold text-[#242e42]">
-        {value}
+      <span className="flex min-w-[36px] shrink-0 justify-end text-[13px] font-bold text-[#242e42]">
+        {value === "—" ? <LoadingDots className="text-[#7a849c]" /> : value}
       </span>
     </div>
   );
@@ -62,7 +69,14 @@ export default function OverviewHealthSection({
   failedJobs,
   runningJobs,
   lastUpdated,
+  loading = {},
 }: OverviewHealthSectionProps) {
+  const statusLoading =
+    loading.vps ||
+    loading.jobs ||
+    loading.domains ||
+    loading.admins;
+
   return (
     <section className="grid grid-cols-1 gap-5 xl:grid-cols-[1.15fr_0.85fr]">
       <div className="rounded-2xl border border-[#e2e5eb] bg-white p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
@@ -80,15 +94,25 @@ export default function OverviewHealthSection({
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <HealthRow
             label="VPS"
-            value={`${runningVps}/${overview.vps.length}`}
-            detail="Running virtual machines"
+            value={loading.vps ? "—" : `${runningVps}/${overview.vps.length}`}
+            detail={loading.vps ? "Loading VPS status" : "Running virtual machines"}
             tone="bg-[#f5f3ff] text-[#7c3aed]"
             icon={FiServer}
           />
           <HealthRow
             label="CI/CD"
-            value={failedJobs > 0 ? `${failedJobs} failed` : "Healthy"}
-            detail={`${runningJobs} jobs currently running`}
+            value={
+              loading.jobs
+                ? "—"
+                : failedJobs > 0
+                  ? `${failedJobs} failed`
+                  : "Healthy"
+            }
+            detail={
+              loading.jobs
+                ? "Loading job status"
+                : `${runningJobs} jobs currently running`
+            }
             tone={
               failedJobs > 0
                 ? "bg-[#fef2f2] text-[#dc2626]"
@@ -98,15 +122,27 @@ export default function OverviewHealthSection({
           />
           <HealthRow
             label="Domains"
-            value={`${activeDomains}/${overview.domains.length}`}
-            detail="Active or registered domains"
+            value={
+              loading.domains
+                ? "—"
+                : `${activeDomains}/${overview.domains.length}`
+            }
+            detail={
+              loading.domains
+                ? "Loading domain status"
+                : "Active or registered domains"
+            }
             tone="bg-[#eff6ff] text-[#2563eb]"
             icon={FiGlobe}
           />
           <HealthRow
             label="Admins"
-            value={String(overview.admins.length)}
-            detail="Registered administrator accounts"
+            value={loading.admins ? "—" : String(overview.admins.length)}
+            detail={
+              loading.admins
+                ? "Loading administrator data"
+                : "Registered administrator accounts"
+            }
             tone="bg-[#fff7ed] text-[#ea580c]"
             icon={FiActivity}
           />
@@ -134,17 +170,17 @@ export default function OverviewHealthSection({
           {[
             {
               label: "Total",
-              value: overview.jobs.length,
+              value: loading.jobs ? null : overview.jobs.length,
               tone: "text-[#242e42]",
             },
             {
               label: "Running",
-              value: runningJobs,
+              value: loading.jobs ? null : runningJobs,
               tone: "text-[#2563eb]",
             },
             {
               label: "Failed",
-              value: failedJobs,
+              value: loading.jobs ? null : failedJobs,
               tone: "text-[#dc2626]",
             },
           ].map((item) => (
@@ -153,14 +189,25 @@ export default function OverviewHealthSection({
                 {item.label}
               </p>
               <p className={`mt-2 text-[24px] font-bold ${item.tone}`}>
-                {item.value}
+                {item.value === null ? (
+                  <LoadingDots className="text-[#7a849c]" />
+                ) : (
+                  item.value
+                )}
               </p>
             </div>
           ))}
         </div>
         <div className="mt-5 flex items-center gap-2 rounded-xl bg-[#f0fdf4] px-4 py-3 text-[12px] font-medium text-[#15803d]">
           <FiClock className="h-4 w-4 shrink-0" />
-          Last updated {lastUpdated ? formatDateTime(lastUpdated) : "—"}
+          {statusLoading
+            ? (
+              <>
+                <span>Loading current status</span>
+                <LoadingDots className="text-[#15803d]" />
+              </>
+            )
+            : `Last updated ${lastUpdated ? formatDateTime(lastUpdated) : "—"}`}
         </div>
       </div>
     </section>

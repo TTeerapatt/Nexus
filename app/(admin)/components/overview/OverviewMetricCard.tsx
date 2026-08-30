@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 import type { IconType } from "react-icons";
+import { LoadingDots } from "@/app/components/loading";
 
 type OverviewMetricCardProps = {
   label: string;
   value: number;
+  loading?: boolean;
   icon: IconType;
   tone: string;
   href: string;
@@ -15,6 +17,7 @@ type OverviewMetricCardProps = {
 export default function OverviewMetricCard({
   label,
   value,
+  loading = false,
   icon: Icon,
   tone,
   href,
@@ -36,7 +39,11 @@ export default function OverviewMetricCard({
         {label}
       </p>
       <p className="mt-1 text-[28px] font-bold leading-none text-[#242e42]">
-        {value}
+        {loading ? (
+          <LoadingDots className="text-[#7a849c]" />
+        ) : (
+          value
+        )}
       </p>
     </Link>
   );
