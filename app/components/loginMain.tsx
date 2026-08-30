@@ -13,7 +13,8 @@ import {
   type StoredMenuAll,
   type StoredPermissionMenu,
 } from "@/app/lib/adminStorage";
-import { popup } from "@/app/ui/popUp";
+import { popup } from "@/app/ui/popUp"
+import { MdAdminPanelSettings } from "react-icons/md";;
 
 type LoginApiResult =
   | {
@@ -209,7 +210,7 @@ export default function LoginMain() {
         >
           <div className="flex flex-col items-center gap-4 text-white">
             <div className="flex h-[112px] w-[112px] items-center justify-center rounded-[28px] bg-white shadow-md">
-              <MdCloud className="h-16 w-16 text-[#242E42]" />
+              <MdAdminPanelSettings className="h-16 w-16 text-[#242E42]" />
             </div>
             <div className="text-center">
               <p className="text-[24px] font-bold uppercase tracking-[0.18em]">

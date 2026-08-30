@@ -1,7 +1,6 @@
 "use client";
 
 import SideBar from "@/app/components/layout/sideBar";
-import Header from "@/app/components/layout/header";
 import LoadingOverlayHost from "@/app/components/layout/LoadingOverlayHost";
 import AuthGuard from "@/app/hooks/AuthGuard";
 import { LoadingProvider } from "@/app/providers/LoadingProvider";
@@ -19,7 +18,6 @@ export default function AdminShell({
           <div className="flex h-screen overflow-hidden bg-[#f4f6fb]">
             <SideBar />
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <Header />
               <main className="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-6">
                 {children}
                 <LoadingOverlayHost />

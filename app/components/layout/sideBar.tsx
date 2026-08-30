@@ -1,18 +1,26 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { FiLogOut } from "react-icons/fi";
 import { MdAdminPanelSettings } from "react-icons/md";
 import type {
+  StoredAdmin,
   StoredMenuLabel,
   StoredMenuTab,
+} from "@/app/lib/adminStorage";
+import {
+  clearAdminSession,
+  getStoredAdmin,
 } from "@/app/lib/adminStorage";
 import {
   getTabHrefByCode,
   getTabIconByCode,
   NAV_ITEMS,
 } from "@/app/lib/navItems";
+import { popup } from "@/app/ui/popUp";
+import { useLoading } from "@/app/providers/LoadingProvider";
 import { useAdminSession } from "@/app/providers/AdminSessionProvider";
 
 type GroupedMenu = {
@@ -22,7 +30,28 @@ type GroupedMenu = {
 
 export default function SideBar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { withLoading } = useLoading();
   const { permissionMenu, menuAll } = useAdminSession();
+  const [admin, setAdmin] = useState<StoredAdmin | null>(null);
+
+  useEffect(() => {
+    // Read the browser session after the client has mounted.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAdmin(getStoredAdmin());
+  }, []);
+
+  const handleLogout = async () => {
+    const confirmed = await popup.logout();
+    if (!confirmed) return;
+
+    await withLoading(async () => {
+      clearAdminSession();
+      setAdmin(null);
+    }, "Signing out...");
+    await popup.success("Signed out successfully", "You have been signed out");
+    router.replace("/login");
+  };
 
   const groups = useMemo(() => {
     if (!menuAll) return [] as GroupedMenu[];
@@ -62,23 +91,27 @@ export default function SideBar() {
   const hasDynamicMenu = groups.length > 0;
 
   return (
-    <aside className="flex h-screen w-[250px] shrink-0 flex-col border-r border-[#e8ecf4] bg-white">
-      <div className="flex h-[88px] items-center justify-center border-b border-[#eef1f7] px-5">
+    <aside className="flex h-screen w-[250px] shrink-0 flex-col overflow-hidden border-r border-[#e8ecf4] bg-white">
+      <div className="flex h-[76px] shrink-0 items-center border-b border-[#eef1f7] px-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white">
-            <MdAdminPanelSettings className="h-10 w-10 text-[#242E42]" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#242E42] shadow-[0_6px_14px_rgba(36,46,66,0.18)] ring-1 ring-[#242E42]/10">
+            <MdAdminPanelSettings className="h-7 w-7 text-white" />
           </div>
-          <div className="leading-tight">
-            <p className="text-[15px] font-bold text-[#242E42]">Nexus Admin</p>
-            <p className="text-[11px] font-medium text-[#7a849c]">Admin Panel</p>
+          <div className="min-w-0 leading-tight">
+            <p className="text-[16px] font-extrabold tracking-[-0.01em] text-[#242E42]">
+              Nexus Admin
+            </p>
+            <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#7a849c]">
+              Admin Panel
+            </p>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-4">
+      <nav className="min-h-0 flex-1 space-y-3 overflow-hidden px-3 py-3">
         {hasDynamicMenu
           ? groups.map((group) => (
-              <div key={group.label.code} className="space-y-2">
+              <div key={group.label.code} className="space-y-1.5">
                 <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-[#8893ad]">
                   {group.label.name}
                 </p>
@@ -94,7 +127,7 @@ export default function SideBar() {
                     <Link
                       key={`${group.label.code}-${tab.code}`}
                       href={href}
-                      className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-[14px] font-semibold transition ${
+                      className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition ${
                         isActive
                           ? "bg-[#242E42] text-white shadow-md"
                           : "bg-[#f3f5f9] text-[#242E42] hover:bg-[#e9edf5]"
@@ -122,7 +155,7 @@ export default function SideBar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-[14px] font-semibold transition ${
+                  className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition ${
                     isActive
                       ? "bg-[#242E42] text-white shadow-md"
                       : "bg-[#f3f5f9] text-[#242E42] hover:bg-[#e9edf5]"
@@ -138,6 +171,39 @@ export default function SideBar() {
               );
             })}
       </nav>
+
+      <div className="shrink-0 border-t border-[#eef1f7] p-2.5">
+        <div className="rounded-2xl border border-[#e8ecf4] bg-[#f8f9fc] p-2.5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#242E42] text-[12px] font-bold text-white">
+              {(admin?.display_name || "Admin")
+                .split(/[\s_]+/)
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((part) => part[0]?.toUpperCase() ?? "")
+                .join("") || "A"}
+            </div>
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-[13px] font-semibold text-[#242E42]">
+                {admin?.display_name?.trim() || "Admin"}
+              </p>
+              <p className="truncate text-[11px] text-[#7a849c]">
+                {admin?.email?.trim() || "Administrator"}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => void handleLogout()}
+              className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-[#242E42] transition hover:scale-110 hover:text-[#dc2626] focus:outline-none focus:ring-2 focus:ring-[#dc2626]/25"
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <FiLogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 }
