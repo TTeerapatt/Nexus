@@ -34,15 +34,15 @@ function stageStyles(kind: StageKind) {
   switch (kind) {
     case "success":
       return {
-        node: "border-[#16a34a] bg-white text-[#16a34a]",
+        node: "border-[#16a34a] bg-[var(--surface)] text-[#16a34a]",
         rail: "bg-[#16a34a]",
         chip: "bg-[#ecfdf5] text-[#15803d] ring-[#bbf7d0]",
-        title: "text-[#14532d]",
+        title: "text-[#22c55e]",
         selectedRing: "ring-[#16a34a]/35",
       };
     case "failed":
       return {
-        node: "border-[#dc2626] bg-white text-[#dc2626]",
+        node: "border-[#dc2626] bg-[var(--surface)] text-[#dc2626]",
         rail: "bg-[#dc2626]",
         chip: "bg-[#fef2f2] text-[#b91c1c] ring-[#fecaca]",
         title: "text-[#7f1d1d]",
@@ -50,7 +50,7 @@ function stageStyles(kind: StageKind) {
       };
     case "running":
       return {
-        node: "border-[#2563eb] bg-white text-[#2563eb] animate-pulse",
+        node: "border-[#2563eb] bg-[var(--surface)] text-[#2563eb] animate-pulse",
         rail: "bg-[#2563eb]",
         chip: "bg-[#eff6ff] text-[#1d4ed8] ring-[#bfdbfe]",
         title: "text-[#1e3a8a]",
@@ -58,7 +58,7 @@ function stageStyles(kind: StageKind) {
       };
     case "unstable":
       return {
-        node: "border-[#ca8a04] bg-white text-[#ca8a04]",
+        node: "border-[#ca8a04] bg-[var(--surface)] text-[#ca8a04]",
         rail: "bg-[#ca8a04]",
         chip: "bg-[#fefce8] text-[#a16207] ring-[#fde68a]",
         title: "text-[#713f12]",
@@ -66,7 +66,7 @@ function stageStyles(kind: StageKind) {
       };
     case "aborted":
       return {
-        node: "border-[#6b7280] bg-white text-[#6b7280]",
+        node: "border-[#6b7280] bg-[var(--surface)] text-[#6b7280]",
         rail: "bg-[#6b7280]",
         chip: "bg-[#f9fafb] text-[#4b5563] ring-[#e5e7eb]",
         title: "text-[#374151]",
@@ -74,7 +74,7 @@ function stageStyles(kind: StageKind) {
       };
     default:
       return {
-        node: "border-[#d1d5db] bg-white text-[#9ca3af]",
+        node: "border-[#d1d5db] bg-[var(--surface)] text-[#9ca3af]",
         rail: "bg-[#d1d5db]",
         chip: "bg-[#f9fafb] text-[#9ca3af] ring-[#e5e7eb]",
         title: "text-[#6b7280]",
@@ -137,8 +137,8 @@ export default function CiCdPipeline({
 }: CiCdPipelineProps) {
   if (!stages.length) {
     return (
-      <div className="flex items-center justify-center rounded-2xl border border-dashed border-[#d8e0f0] bg-white/70 px-4 py-10 text-center">
-        <p className="max-w-md text-[13px] leading-relaxed text-[#7a849c]">
+      <div className="flex items-center justify-center rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface)]/70 px-4 py-10 text-center">
+        <p className="max-w-md text-[13px] leading-relaxed text-[var(--text-muted)]">
           {emptyMessage || "No pipeline stages available"}
         </p>
       </div>
@@ -146,7 +146,7 @@ export default function CiCdPipeline({
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[#e4eaf6] bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+    <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
       <ol className="flex min-w-max items-start px-2 py-3">
         {stages.map((stage, index) => {
           const kind = stageKind(stage.status);
@@ -171,11 +171,11 @@ export default function CiCdPipeline({
                 onClick={() => onStageClick?.(stage)}
                 className={`group flex w-[138px] flex-col items-center rounded-2xl px-1 py-1 text-center transition ${
                   clickable
-                    ? "cursor-pointer hover:bg-[#f5f8ff]"
+                    ? "cursor-pointer hover:bg-[var(--surface-soft)]"
                     : "cursor-default"
                 } ${
                   selected
-                    ? `bg-[#f5f8ff] ring-2 ${styles.selectedRing}`
+                    ? `bg-[var(--surface-soft)] ring-2 ${styles.selectedRing}`
                     : ""
                 }`}
                 title={
@@ -208,7 +208,7 @@ export default function CiCdPipeline({
                 </span>
 
                 {duration ? (
-                  <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-[#8b93a7]">
+                  <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-[var(--text-muted)]">
                     <FiClock className="h-3 w-3" />
                     {duration}
                   </span>

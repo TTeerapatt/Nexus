@@ -19,14 +19,14 @@ export default function OverviewDistributionChart({
   const maxValue = Math.max(...items.map((item) => item.value), 1);
 
   return (
-    <section className="rounded-2xl border border-[#e2e5eb] bg-white p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
-      <h2 className="text-[16px] font-bold text-[#242e42]">{title}</h2>
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
+      <h2 className="text-[16px] font-bold text-[var(--text-primary)]">{title}</h2>
       {loading ? (
-        <div className="flex min-h-[92px] items-center justify-center text-[#2553d8]">
+        <div className="flex min-h-[92px] items-center justify-center text-[var(--brand-primary)]">
           <LoadingDots />
         </div>
       ) : items.length === 0 ? (
-        <p className="mt-8 text-center text-[13px] text-[#8b93a7]">
+        <p className="mt-8 text-center text-[13px] text-[var(--text-muted)]">
           {emptyText}
         </p>
       ) : (
@@ -34,10 +34,10 @@ export default function OverviewDistributionChart({
           {items.map((item) => (
             <div key={item.label}>
               <div className="mb-1.5 flex items-center justify-between gap-3 text-[13px]">
-                <span className="font-medium text-[#5b657d]">{item.label}</span>
-                <span className="font-bold text-[#242e42]">{item.value}</span>
+                <span className="font-medium text-[var(--text-secondary)]">{item.label}</span>
+                <span className="font-bold text-[var(--text-primary)]">{item.value}</span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-[#eef1f7]">
+              <div className="h-2.5 overflow-hidden rounded-full bg-[var(--surface-soft)]">
                 <div
                   className={`h-full rounded-full ${item.color}`}
                   style={{

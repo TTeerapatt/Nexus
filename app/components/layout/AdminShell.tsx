@@ -15,7 +15,7 @@ export default function AdminShell({
     <LoadingProvider>
       <AuthGuard requireAuth>
         <AdminSessionProvider>
-          <div className="flex h-screen overflow-hidden bg-[#f4f6fb]">
+          <div className="flex h-screen overflow-hidden bg-[var(--canvas)]">
             <SideBar />
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <main className="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-6">

@@ -35,7 +35,7 @@ function getRoleLabel(role: string): string {
 function getRoleBadgeClass(role: string): string {
   const key = String(role || "").trim().toLowerCase();
   if (key === "owner") {
-    return "bg-white text-[#242E42] ring-1 ring-[#242E42]/20";
+    return "bg-[var(--surface)] text-[var(--text-primary)] ring-1 ring-[var(--brand-primary)]/20";
   }
   if (key === "admin") {
     return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/60";
@@ -62,7 +62,7 @@ function AdminRowActions({
         onClick={() => onEdit?.(admin)}
         aria-label={`Edit ${admin.display_name}`}
         title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-white text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[#eff6ff] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-[var(--surface)] text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-95"
       >
         <FiEdit2 className="h-4 w-4" />
       </button>
@@ -71,7 +71,7 @@ function AdminRowActions({
         onClick={() => onDelete?.(admin)}
         aria-label={`Delete ${admin.display_name}`}
         title="Delete"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-white text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#fef2f2] hover:shadow-md active:scale-95"
+        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-[var(--surface)] text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#4c1d2a] hover:shadow-md active:scale-95"
       >
         <FiTrash2 className="h-4 w-4" />
       </button>
@@ -90,14 +90,14 @@ export default function AdminTable({
       {
         key: "index",
         title: "No.",
-        cellClassName: "font-medium text-[#5b657d]",
+        cellClassName: "font-medium text-[var(--text-secondary)]",
         render: (_admin, index) => index + 1,
       },
       {
         key: "display_name",
         title: "Name",
         render: (admin) => (
-          <span className="font-semibold text-[#242E42]">{admin.display_name}</span>
+          <span className="font-semibold text-[var(--text-primary)]">{admin.display_name}</span>
         ),
       },
       {

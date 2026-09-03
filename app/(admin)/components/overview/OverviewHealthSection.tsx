@@ -43,7 +43,7 @@ function HealthRow({
   icon: IconType;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl bg-[#f8f9fc] px-4 py-3">
+    <div className="flex items-center justify-between gap-4 rounded-xl bg-[var(--surface-muted)] px-4 py-3">
       <div className="flex min-w-0 items-center gap-3">
         <span
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${tone}`}
@@ -51,12 +51,12 @@ function HealthRow({
           <Icon className="h-4 w-4" />
         </span>
         <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-[#242e42]">{label}</p>
-          <p className="truncate text-[11px] text-[#8b93a7]">{detail}</p>
+          <p className="text-[13px] font-semibold text-[var(--text-primary)]">{label}</p>
+          <p className="truncate text-[11px] text-[var(--text-muted)]">{detail}</p>
         </div>
       </div>
-      <span className="flex min-w-[36px] shrink-0 justify-end text-[13px] font-bold text-[#242e42]">
-        {value === "—" ? <LoadingDots className="text-[#7a849c]" /> : value}
+      <span className="flex min-w-[36px] shrink-0 justify-end text-[13px] font-bold text-[var(--text-primary)]">
+        {value === "—" ? <LoadingDots className="text-[var(--text-muted)]" /> : value}
       </span>
     </div>
   );
@@ -79,13 +79,13 @@ export default function OverviewHealthSection({
 
   return (
     <section className="grid grid-cols-1 gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-      <div className="rounded-2xl border border-[#e2e5eb] bg-white p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[16px] font-bold text-[#242e42]">
+            <h2 className="text-[16px] font-bold text-[var(--text-primary)]">
               System health
             </h2>
-            <p className="mt-1 text-[12px] text-[#8b93a7]">
+            <p className="mt-1 text-[12px] text-[var(--text-muted)]">
               Current status across connected services
             </p>
           </div>
@@ -149,19 +149,19 @@ export default function OverviewHealthSection({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#e2e5eb] bg-white p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-[16px] font-bold text-[#242e42]">
+            <h2 className="text-[16px] font-bold text-[var(--text-primary)]">
               Deployment status
             </h2>
-            <p className="mt-1 text-[12px] text-[#8b93a7]">
+            <p className="mt-1 text-[12px] text-[var(--text-muted)]">
               Jenkins job summary
             </p>
           </div>
           <Link
             href="/ci-cd"
-            className="text-[12px] font-semibold text-[#2553d8] hover:underline"
+            className="text-[12px] font-semibold text-[var(--brand-primary)] hover:underline"
           >
             View jobs
           </Link>
@@ -171,7 +171,7 @@ export default function OverviewHealthSection({
             {
               label: "Total",
               value: loading.jobs ? null : overview.jobs.length,
-              tone: "text-[#242e42]",
+              tone: "text-[var(--text-primary)]",
             },
             {
               label: "Running",
@@ -184,13 +184,13 @@ export default function OverviewHealthSection({
               tone: "text-[#dc2626]",
             },
           ].map((item) => (
-            <div key={item.label} className="rounded-xl bg-[#f8f9fc] px-3 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+            <div key={item.label} className="rounded-xl bg-[var(--surface-muted)] px-3 py-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 {item.label}
               </p>
               <p className={`mt-2 text-[24px] font-bold ${item.tone}`}>
                 {item.value === null ? (
-                  <LoadingDots className="text-[#7a849c]" />
+                  <LoadingDots className="text-[var(--text-muted)]" />
                 ) : (
                   item.value
                 )}

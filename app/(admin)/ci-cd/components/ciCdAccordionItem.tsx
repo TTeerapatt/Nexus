@@ -91,19 +91,19 @@ function healthBarClass(score: number): string {
 
 function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {
   if (selected) {
-    return "bg-[#242E42] text-white ring-[#242E42]";
+    return "bg-[var(--surface-raised)] text-white ring-[var(--brand-primary)]";
   }
   switch (status) {
     case "success":
-      return "bg-white text-[#15803d] ring-[#86efac] hover:bg-[#ecfdf5]";
+      return "bg-[var(--surface)] text-[#15803d] ring-[#86efac] hover:bg-[var(--surface-soft)]";
     case "failed":
-      return "bg-white text-[#b91c1c] ring-[#fecaca] hover:bg-[#fef2f2]";
+      return "bg-[var(--surface)] text-[#b91c1c] ring-[#fecaca] hover:bg-[#4c1d2a]";
     case "unstable":
-      return "bg-white text-[#a16207] ring-[#fde68a] hover:bg-[#fefce8]";
+      return "bg-[var(--surface)] text-[#a16207] ring-[#fde68a] hover:bg-[var(--surface-soft)]";
     case "running":
-      return "bg-white text-[#1d4ed8] ring-[#93c5fd] hover:bg-[#eff6ff]";
+      return "bg-[var(--surface)] text-[#1d4ed8] ring-[#93c5fd] hover:bg-[var(--surface-soft)]";
     default:
-      return "bg-white text-[#5b657d] ring-[#e4eaf6] hover:bg-white";
+      return "bg-[var(--surface)] text-[var(--text-secondary)] ring-[var(--border)] hover:bg-[var(--surface)]";
   }
 }
 
@@ -375,12 +375,12 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border bg-white transition duration-300 ${
+      className={`relative overflow-hidden rounded-2xl border bg-[var(--surface)] transition duration-300 ${
         isRunning ? "ci-cd-running-card" : ""
       } ${
         open
-          ? "border-[#e2e5eb] shadow-md"
-          : "border-[#e4e9f4] shadow-[0_2px_8px_rgba(31,38,64,0.04)] hover:border-[#d4def5] hover:shadow-[0_8px_20px_rgba(31,38,64,0.06)]"
+          ? "border-[var(--border)] shadow-md"
+          : "border-[var(--border)] shadow-[0_2px_8px_rgba(31,38,64,0.04)] hover:border-[#d4def5] hover:shadow-[0_8px_20px_rgba(31,38,64,0.06)]"
       }`}
     >
       {isRunning ? (
@@ -392,10 +392,10 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
       <button
         type="button"
         onClick={() => void handleToggle()}
-        className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left transition hover:bg-white/80"
+        className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left transition hover:bg-[var(--surface)]/80"
         aria-expanded={open}
       >
-        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white text-[#242E42]">
+        <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface)] text-[var(--text-primary)]">
           {isRunning ? (
             <span className="absolute inset-0 rounded-2xl border border-[#2563eb]/35 ci-cd-running-icon-ring" />
           ) : null}
@@ -406,11 +406,11 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] font-bold tracking-tight text-[#242E42]">
+          <p className="truncate text-[15px] font-bold tracking-tight text-[var(--text-primary)]">
             {job.name}
           </p>
           {job.url ? (
-            <p className="mt-0.5 truncate text-[12px] text-[#8b93a7]">
+            <p className="mt-0.5 truncate text-[12px] text-[var(--text-muted)]">
               {job.url.replace(/^https?:\/\//, "")}
             </p>
           ) : null}
@@ -424,8 +424,8 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
             {statusLabel(job.status)}
           </span>
           <span
-            className={`flex h-8 w-8 items-center justify-center rounded-xl bg-[#f3f6fc] text-[#5b657d] transition-transform duration-300 ${
-              open ? "rotate-180 bg-white text-[#242E42]" : ""
+            className={`flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-[var(--text-secondary)] transition-transform duration-300 ${
+              open ? "rotate-180 bg-[var(--surface)] text-[var(--text-primary)]" : ""
             }`}
           >
             <FiChevronDown className="h-4 w-4" />
@@ -439,11 +439,11 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="border-t border-[#eef1f7] bg-white px-5 py-5">
+          <div className="border-t border-[var(--border)] bg-[var(--surface)] px-5 py-5">
             {loadingDetail ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-[#e4eaf6] bg-white px-4 py-6">
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
-                <p className="text-[13px] font-medium text-[#7a849c]">
+              <div className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-6">
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--brand-primary)]/20 border-t-[var(--brand-primary)]" />
+                <p className="text-[13px] font-medium text-[var(--text-muted)]">
                   Loading pipeline stages…
                 </p>
               </div>
@@ -451,10 +451,10 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
                   {detail.healthScore != null ? (
-                    <span className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#242E42] ring-1 ring-[#e4eaf6]">
+                    <span className="inline-flex items-center gap-2 rounded-xl bg-[var(--surface)] px-3 py-1.5 text-[12px] font-semibold text-[var(--text-primary)] ring-1 ring-[var(--border)]">
                       <FiHeart className="h-3.5 w-3.5 text-[#ef4444]" />
                       Health {detail.healthScore}%
-                      <span className="ml-1 h-1.5 w-16 overflow-hidden rounded-full bg-[#eef1f7]">
+                      <span className="ml-1 h-1.5 w-16 overflow-hidden rounded-full bg-[var(--surface-soft)]">
                         <span
                           className={`block h-full rounded-full ${healthBarClass(detail.healthScore)}`}
                           style={{
@@ -465,8 +465,8 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                     </span>
                   ) : null}
 
-                  <span className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#5b657d] ring-1 ring-[#e4eaf6]">
-                    <FiActivity className="h-3.5 w-3.5 text-[#242E42]" />
+                  <span className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--surface)] px-3 py-1.5 text-[12px] font-semibold text-[var(--text-secondary)] ring-1 ring-[var(--border)]">
+                    <FiActivity className="h-3.5 w-3.5 text-[var(--text-primary)]" />
                     {stages.length} stages
                     {(pendingBuildNumber ?? selectedBuildNumber) != null
                       ? ` · #${pendingBuildNumber ?? selectedBuildNumber}`
@@ -479,7 +479,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                       target="_blank"
                       rel="noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-[12px] font-semibold text-[#242E42] ring-1 ring-[#242E42]/15 transition hover:bg-white"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--surface)] px-3 py-1.5 text-[12px] font-semibold text-[var(--text-primary)] ring-1 ring-[var(--brand-primary)]/15 transition hover:bg-[var(--surface)]"
                     >
                       Open Jenkins
                       <FiExternalLink className="h-3.5 w-3.5" />
@@ -489,7 +489,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
 
                 {builds.length > 0 ? (
                   <div className="space-y-2">
-                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+                    <p className="text-[12px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                       Build history
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -511,7 +511,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                             <span
                               className={`h-1.5 w-1.5 rounded-full ${
                                 selected
-                                  ? "bg-white"
+                                  ? "bg-[var(--surface)]"
                                   : statusDotClass(build.status).split(" ")[0]
                               }`}
                             />
@@ -547,9 +547,9 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                   </div>
 
                   {loadingBuild ? (
-                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-white/70 backdrop-blur-[1px]">
-                      <div className="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[13px] font-medium text-[#5b657d] ring-1 ring-[#e4eaf6]">
-                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
+                    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[var(--surface)]/70 backdrop-blur-[1px]">
+                      <div className="inline-flex items-center gap-2 rounded-xl bg-[var(--surface)] px-3 py-2 text-[13px] font-medium text-[var(--text-secondary)] ring-1 ring-[var(--border)]">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--brand-primary)]/20 border-t-[var(--brand-primary)]" />
                         Loading build
                         {pendingBuildNumber != null
                           ? ` #${pendingBuildNumber}`
@@ -573,7 +573,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                 ) : null}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-[#d8e0f0] bg-white/70 px-4 py-8 text-center text-[13px] text-[#7a849c]">
+              <div className="rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface)]/70 px-4 py-8 text-center text-[13px] text-[var(--text-muted)]">
                 Unable to load pipeline details
               </div>
             )}

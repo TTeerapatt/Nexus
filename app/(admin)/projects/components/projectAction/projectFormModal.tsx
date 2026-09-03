@@ -216,20 +216,20 @@ export default function ProjectFormModal({
         onClick={() => void handleRequestClose()}
       />
 
-      <div className="relative z-10 flex max-h-[92vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[24px] border border-[#e8ecf4] bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
-        <div className="flex items-center justify-between border-b border-[#edf8eb] px-6 py-4">
+      <div className="relative z-10 flex max-h-[92vh] w-full max-w-[560px] flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+        <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
           <div>
-            <h2 className="text-[18px] font-bold text-[#242E42]">
+            <h2 className="text-[18px] font-bold text-[var(--text-primary)]">
               {isEdit ? "Edit Project" : "Add Project"}
             </h2>
-            <p className="text-[13px] text-[#7a849c]">
+            <p className="text-[13px] text-[var(--text-muted)]">
               Enter name, type, and resource type
             </p>
           </div>
           <button
             type="button"
             onClick={() => void handleRequestClose()}
-            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#e8ecf4] text-[#5b657d] transition hover:bg-white"
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[var(--border)] text-[var(--text-secondary)] transition hover:bg-[var(--surface)]"
             aria-label="Close"
           >
             <FiX className="h-4 w-4" />
@@ -271,7 +271,7 @@ export default function ProjectFormModal({
                   </option>
                 ))}
               </select>
-              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
             </div>
           </FilterField>
 
@@ -299,7 +299,7 @@ export default function ProjectFormModal({
                   ))
                 )}
               </select>
-              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
             </div>
           </FilterField>
 
@@ -319,10 +319,10 @@ export default function ProjectFormModal({
             />
           </FilterField>
 
-          <div className="flex items-center justify-between rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
+          <div className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
             <div>
-              <p className="text-[14px] font-semibold text-[#242E42]">Status</p>
-              <p className="text-[12px] text-[#7a849c]">
+              <p className="text-[14px] font-semibold text-[var(--text-primary)]">Status</p>
+              <p className="text-[12px] text-[var(--text-muted)]">
                 {form.is_active ? "Active" : "Inactive"}
               </p>
             </div>
@@ -334,11 +334,11 @@ export default function ProjectFormModal({
                 setForm((prev) => ({ ...prev, is_active: !prev.is_active }))
               }
               className={`relative h-7 w-12 cursor-pointer rounded-full transition ${
-                form.is_active ? "bg-[#242E42]" : "bg-[#cbd5e1]"
+                form.is_active ? "bg-[var(--surface-raised)]" : "bg-[#cbd5e1]"
               }`}
             >
               <span
-                className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition ${
+                className={`absolute top-0.5 h-6 w-6 rounded-full bg-[var(--surface)] shadow transition ${
                   form.is_active ? "left-[22px]" : "left-0.5"
                 }`}
               />
@@ -346,18 +346,18 @@ export default function ProjectFormModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-[#edf8eb] px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-[var(--border)] px-6 py-4">
           <button
             type="button"
             onClick={() => void handleRequestClose()}
-            className="inline-flex h-11 cursor-pointer items-center rounded-xl px-4 text-[14px] font-semibold text-[#5b657d] transition hover:bg-[#f3f5f9]"
+            className="inline-flex h-11 cursor-pointer items-center rounded-xl px-4 text-[14px] font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)]"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={() => void handleSave()}
-            className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[#242E42] px-5 text-[14px] font-semibold text-white transition hover:bg-[#1b2333]"
+            className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[var(--surface-raised)] px-5 text-[14px] font-semibold text-white transition hover:bg-[var(--surface-soft)]"
           >
             {isEdit ? "Save changes" : "Create Project"}
           </button>

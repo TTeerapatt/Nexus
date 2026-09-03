@@ -34,23 +34,23 @@ export function AdminFormStepper({
               <div
                 className={`absolute left-[calc(50%+18px)] right-[calc(-50%+18px)] top-4 h-[2px] ${
                   isDone || currentStep > step.id
-                    ? "bg-[#242E42]"
-                    : "bg-[#d7dce7]"
+                    ? "bg-[var(--surface-raised)]"
+                    : "bg-[var(--surface-soft)]"
                 }`}
               />
             ) : null}
             <div
               className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-bold ${
                 isDone || isActive
-                  ? "bg-[#242E42] text-white"
-                  : "bg-[#e8ecf4] text-[#8b93a7]"
+                  ? "bg-[var(--surface-raised)] text-white"
+                  : "bg-[var(--surface-soft)] text-[var(--text-muted)]"
               }`}
             >
               {isDone ? <FiCheck className="h-4 w-4" /> : step.id}
             </div>
             <p
               className={`mt-2 text-center text-[12px] font-semibold ${
-                isActive || isDone ? "text-[#242E42]" : "text-[#8b93a7]"
+                isActive || isDone ? "text-[var(--text-primary)]" : "text-[var(--text-muted)]"
               }`}
             >
               {step.label}
@@ -81,10 +81,10 @@ function PermissionFragmentGroup({
 }) {
   return (
     <>
-      <tr className="bg-[#f3f5f9]">
+      <tr className="bg-[var(--surface-muted)]">
         <td
           colSpan={1 + actionColumns.length}
-          className="px-4 py-2 text-[12px] font-bold uppercase tracking-wide text-[#5b657d]"
+          className="px-4 py-2 text-[12px] font-bold uppercase tracking-wide text-[var(--text-secondary)]"
         >
           {labelName}
         </td>
@@ -92,8 +92,8 @@ function PermissionFragmentGroup({
       {tabs.map((tab) => {
         const available = new Set((tab.actions ?? []).map((item) => item.code));
         return (
-          <tr key={tab.code} className="border-t border-[#edf8eb]">
-            <td className="px-4 py-3 text-[14px] font-medium text-[#242E42]">
+          <tr key={tab.code} className="border-t border-[var(--border)]">
+            <td className="px-4 py-3 text-[14px] font-medium text-[var(--text-primary)]">
               {tab.name}
             </td>
             {actionColumns.map((actionCode) => {
@@ -104,7 +104,7 @@ function PermissionFragmentGroup({
                   {supported ? (
                     readOnly ? (
                       checked ? (
-                        <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-white text-[#242E42]">
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded bg-[var(--surface)] text-[var(--text-primary)]">
                           <FiCheck className="h-3.5 w-3.5" />
                         </span>
                       ) : (
@@ -116,7 +116,7 @@ function PermissionFragmentGroup({
                         checked={checked}
                         disabled={disabled}
                         onChange={() => onToggle(tab.code, actionCode)}
-                        className="h-4 w-4 cursor-pointer accent-[#242E42] disabled:cursor-not-allowed"
+                        className="h-4 w-4 cursor-pointer accent-[var(--brand-primary)] disabled:cursor-not-allowed"
                       />
                     )
                   ) : (
@@ -153,10 +153,10 @@ export function AdminPermissionTable({
   onToggle: (tabCode: string, actionCode: string) => void;
 }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[#e8ecf4]">
+    <div className="overflow-x-auto rounded-2xl border border-[var(--border)]">
       <table className="min-w-full border-collapse">
         <thead>
-          <tr className="bg-white text-left text-[12px] font-semibold text-[#5b657d]">
+          <tr className="bg-[var(--surface)] text-left text-[12px] font-semibold text-[var(--text-secondary)]">
             <th className="px-4 py-3">Category / System menu</th>
             {actionColumns.map((code) => (
               <th key={code} className="px-3 py-3 text-center capitalize">
@@ -193,10 +193,10 @@ export function AdminRoleStep({
 }) {
   return (
     <div>
-      <h3 className="text-[22px] font-bold text-[#242E42]">
+      <h3 className="text-[22px] font-bold text-[var(--text-primary)]">
         Select user role
       </h3>
-      {/* <p className="mt-1 text-[14px] text-[#7a849c]">
+      {/* <p className="mt-1 text-[14px] text-[var(--text-muted)]">
         Choose a role that matches the job to set the right permissions
       </p> */}
 
@@ -211,25 +211,25 @@ export function AdminRoleStep({
               onClick={() => onSelectRole(option.value)}
               className={`relative cursor-pointer rounded-2xl border px-4 py-6 text-left transition ${
                 selected
-                  ? "border-[#242E42] bg-white shadow-md"
-                  : "border-[#e8ecf4] bg-white hover:border-[#e2e5eb]"
+                  ? "border-[var(--brand-primary)] bg-[var(--surface)] shadow-md"
+                  : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border)]"
               }`}
             >
               {selected ? (
-                <span className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#242E42] text-white">
+                <span className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--surface-raised)] text-white">
                   <FiCheck className="h-3.5 w-3.5" />
                 </span>
               ) : null}
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[#242E42]">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--surface)] text-[var(--text-primary)]">
                 <Icon className="h-7 w-7" />
               </div>
-              <p className="text-center text-[16px] font-bold text-[#242E42]">
+              <p className="text-center text-[16px] font-bold text-[var(--text-primary)]">
                 {option.title}
               </p>
-              <p className="mt-1 text-center text-[13px] font-medium text-[#242E42]">
+              <p className="mt-1 text-center text-[13px] font-medium text-[var(--text-primary)]">
                 ({option.subtitle})
               </p>
-              {/* <p className="mt-3 text-center text-[12px] leading-relaxed text-[#7a849c]">
+              {/* <p className="mt-3 text-center text-[12px] leading-relaxed text-[var(--text-muted)]">
                 {option.description}
               </p> */}
             </button>
@@ -263,20 +263,20 @@ export function AdminProfileStep({
 }) {
   return (
     <div>
-      <h3 className="text-[22px] font-bold text-[#242E42]">
+      <h3 className="text-[22px] font-bold text-[var(--text-primary)]">
         Enter user details
       </h3>
-      {/* <p className="mt-1 text-[14px] text-[#7a849c]">
+      {/* <p className="mt-1 text-[14px] text-[var(--text-muted)]">
         Fill in the required details to create an admin account
       </p> */}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <label className="block sm:col-span-2">
-          <span className="mb-2 block text-[13px] font-semibold text-[#242E42]">
+          <span className="mb-2 block text-[13px] font-semibold text-[var(--text-primary)]">
             Display name
           </span>
           <div className="relative">
-            <FiUser className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8b93a7]" />
+            <FiUser className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="text"
               value={form.display_name}
@@ -293,7 +293,7 @@ export function AdminProfileStep({
         </label>
 
         <label className="block sm:col-span-2">
-          <span className="mb-2 block text-[13px] font-semibold text-[#242E42]">
+          <span className="mb-2 block text-[13px] font-semibold text-[var(--text-primary)]">
             Email
           </span>
           <input
@@ -308,7 +308,7 @@ export function AdminProfileStep({
         </label>
 
         <label className="block sm:col-span-2">
-          <span className="mb-2 block text-[13px] font-semibold text-[#242E42]">
+          <span className="mb-2 block text-[13px] font-semibold text-[var(--text-primary)]">
             {isEdit ? "New password (optional)" : "Password"}
           </span>
           <div className="relative">
@@ -328,7 +328,7 @@ export function AdminProfileStep({
             <button
               type="button"
               onClick={onToggleShowPassword}
-              className="absolute inset-y-0 right-0 z-10 flex cursor-pointer items-center pr-3.5 text-[#8b93a7] hover:text-[#242E42]"
+              className="absolute inset-y-0 right-0 z-10 flex cursor-pointer items-center pr-3.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               aria-label={showPassword ? "Hide password" : "Show password"}
               aria-pressed={showPassword}
             >
@@ -343,7 +343,7 @@ export function AdminProfileStep({
             {!isEdit || form.password.length > 0 ? (
               <PasswordPolicyChecklist password={form.password} />
             ) : (
-              <p className="text-[12px] text-[#7a849c]">
+              <p className="text-[12px] text-[var(--text-muted)]">
                 Leave blank to keep the current password
               </p>
             )}
@@ -351,7 +351,7 @@ export function AdminProfileStep({
         </label>
 
         <label className="block sm:col-span-2">
-          <span className="mb-2 block text-[13px] font-semibold text-[#242E42]">
+          <span className="mb-2 block text-[13px] font-semibold text-[var(--text-primary)]">
             {isEdit ? "Confirm new password" : "Confirm password"}
           </span>
           <div className="relative">
@@ -371,7 +371,7 @@ export function AdminProfileStep({
             <button
               type="button"
               onClick={onToggleShowConfirmPassword}
-              className="absolute inset-y-0 right-0 z-10 flex cursor-pointer items-center pr-3.5 text-[#8b93a7] hover:text-[#242E42]"
+              className="absolute inset-y-0 right-0 z-10 flex cursor-pointer items-center pr-3.5 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               aria-label={
                 showConfirmPassword ? "Hide password" : "Show password"
               }
@@ -411,24 +411,24 @@ export function AdminPermissionStep({
     <div>
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h3 className="text-[22px] font-bold text-[#242E42]">
+          <h3 className="text-[22px] font-bold text-[var(--text-primary)]">
             Set permission scope
           </h3>
-          {/* <p className="mt-1 text-[14px] text-[#7a849c]">
+          {/* <p className="mt-1 text-[14px] text-[var(--text-muted)]">
             Check permissions by menu (from getMenuAll)
             {role === "owner"
               ? " — Owner has full access automatically"
               : ""}
           </p> */}
         </div>
-        <div className="inline-flex items-center gap-2 rounded-xl border border-[#e2e5eb] bg-white px-3 py-2 text-[13px] font-semibold text-[#242E42]">
+        <div className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[13px] font-semibold text-[var(--text-primary)]">
           <FiShield className="h-4 w-4" />
           {roleTitle || "-"}
         </div>
       </div>
 
       {menuLoading ? (
-        <p className="py-10 text-center text-[14px] text-[#7a849c]">
+        <p className="py-10 text-center text-[14px] text-[var(--text-muted)]">
           Loading permission menus...
         </p>
       ) : (
@@ -463,29 +463,29 @@ export function AdminConfirmStep({
 }) {
   return (
     <div>
-      <h3 className="text-[22px] font-bold text-[#242E42]">
+      <h3 className="text-[22px] font-bold text-[var(--text-primary)]">
         {isEdit ? "Review and confirm update" : "Review and confirm create"}
       </h3>
-      {/* <p className="mt-1 text-[14px] text-[#7a849c]">
+      {/* <p className="mt-1 text-[14px] text-[var(--text-muted)]">
         Review details before creating the admin account
       </p> */}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-[#e8ecf4] bg-white px-4 py-3">
-          <p className="text-[12px] font-semibold text-[#7a849c]">Role name</p>
-          <p className="mt-1 text-[15px] font-bold text-[#242E42]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+          <p className="text-[12px] font-semibold text-[var(--text-muted)]">Role name</p>
+          <p className="mt-1 text-[15px] font-bold text-[var(--text-primary)]">
             {selectedRoleTitle} ({selectedRoleSubtitle})
           </p>
         </div>
-        <div className="rounded-2xl border border-[#e8ecf4] bg-white px-4 py-3">
-          <p className="text-[12px] font-semibold text-[#7a849c]">Display name</p>
-          <p className="mt-1 text-[15px] font-bold text-[#242E42]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+          <p className="text-[12px] font-semibold text-[var(--text-muted)]">Display name</p>
+          <p className="mt-1 text-[15px] font-bold text-[var(--text-primary)]">
             {form.display_name.trim() || "-"}
           </p>
         </div>
-        <div className="rounded-2xl border border-[#e8ecf4] bg-white px-4 py-3 sm:col-span-2">
-          <p className="text-[12px] font-semibold text-[#7a849c]">Email</p>
-          <p className="mt-1 text-[15px] font-bold text-[#242E42]">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 sm:col-span-2">
+          <p className="text-[12px] font-semibold text-[var(--text-muted)]">Email</p>
+          <p className="mt-1 text-[15px] font-bold text-[var(--text-primary)]">
             {form.email.trim() || "-"}
           </p>
         </div>
@@ -493,13 +493,13 @@ export function AdminConfirmStep({
 
       <div className="mt-6">
         <div className="mb-3 flex items-center justify-between">
-          <h4 className="text-[15px] font-bold text-[#242E42]">
+          <h4 className="text-[15px] font-bold text-[var(--text-primary)]">
             Menu access summary
           </h4>
           {/* <button
             type="button"
             onClick={() => setStep(3)}
-            className="cursor-pointer text-[13px] font-semibold text-[#242E42] hover:underline"
+            className="cursor-pointer text-[13px] font-semibold text-[var(--text-primary)] hover:underline"
           >
             Edit →
           </button> */}

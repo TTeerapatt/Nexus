@@ -104,9 +104,9 @@ type MetricTone = {
 
 const METRIC_TONES: Record<string, MetricTone> = {
   CPU: {
-    stroke: "#242E42",
-    fillFrom: "rgba(36,46,66,0.28)",
-    chip: "bg-white text-[#242E42]",
+    stroke: "#5b86ff",
+    fillFrom: "rgba(91,134,255,0.28)",
+    chip: "bg-[var(--surface)] text-[var(--text-primary)]",
   },
   RAM: {
     stroke: "#7c3aed",
@@ -231,13 +231,13 @@ function MetricChartCard({
   const unit = series?.unit ?? null;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#e8ecf4] bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
       <div className="flex items-start justify-between gap-3 px-4 pt-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
             {label}
           </p>
-          <p className="mt-1 text-[20px] font-bold tracking-tight text-[#242E42]">
+          <p className="mt-1 text-[20px] font-bold tracking-tight text-[var(--text-primary)]">
             {formatMetric(latest, unit)}
           </p>
         </div>
@@ -271,7 +271,7 @@ function getStateBadgeClass(state: string): string {
   if (key === "error" || key === "failed") {
     return "bg-[#fee2e2] text-[#b91c1c] ring-1 ring-[#fecaca]/70";
   }
-  return "bg-white text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
+  return "bg-[var(--surface)] text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
 }
 
 function primaryIp(vm: VpsVirtualMachine): string {
@@ -415,19 +415,19 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#e4e9f4] bg-white shadow-md">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-md">
       <button
         type="button"
         onClick={handleToggle}
-        className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left transition hover:bg-white"
+        className="flex w-full cursor-pointer items-center gap-4 px-5 py-4 text-left transition hover:bg-[var(--surface)]"
       >
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#242E42]">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--surface)] text-[var(--text-primary)]">
           <FiCpu className="h-5 w-5" />
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="truncate text-[16px] font-bold text-[#242E42]">
+            <h3 className="truncate text-[16px] font-bold text-[var(--text-primary)]">
               {vm.hostname}
             </h3>
             <span
@@ -436,30 +436,30 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
               {state}
             </span>
           </div>
-          <p className="mt-1 truncate text-[13px] text-[#7a849c]">
+          <p className="mt-1 truncate text-[13px] text-[var(--text-muted)]">
             {primaryIp(vm)}
             {vm.plan ? ` · ${vm.plan}` : ""}
             {vm.template?.name ? ` · ${vm.template.name}` : ""}
           </p>
         </div>
 
-        <div className="hidden items-center gap-4 text-[12px] font-semibold text-[#5b657d] sm:flex">
+        <div className="hidden items-center gap-4 text-[12px] font-semibold text-[var(--text-secondary)] sm:flex">
           <span>{vm.cpus != null ? `${vm.cpus} vCPU` : "-"}</span>
           <span>{formatMb(vm.memory_mb)}</span>
           <span>{formatMb(vm.disk_mb)}</span>
         </div>
 
         <FiChevronDown
-          className={`h-5 w-5 shrink-0 text-[#5b657d] transition ${open ? "rotate-180" : ""}`}
+          className={`h-5 w-5 shrink-0 text-[var(--text-secondary)] transition ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open ? (
-        <div className="space-y-4 border-t border-[#edf8eb] px-5 py-5">
+        <div className="space-y-4 border-t border-[var(--border)] px-5 py-5">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                   IPv4
                 </p>
                 <button
@@ -468,7 +468,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                   disabled={!ipv4Value}
                   title={copiedIpv4 ? "Copied" : "Copy IPv4"}
                   aria-label={copiedIpv4 ? "IPv4 copied" : "Copy IPv4"}
-                  className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-[#e2e5eb] bg-white text-[#242E42] transition hover:border-[#242E42] hover:bg-[#f7f7f7] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-primary)] transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {copiedIpv4 ? (
                     <FiCheck className="h-3.5 w-3.5" />
@@ -477,44 +477,44 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                   )}
                 </button>
               </div>
-              <p className="mt-1 break-all font-mono text-[13px] font-semibold text-[#242E42]">
+              <p className="mt-1 break-all font-mono text-[13px] font-semibold text-[var(--text-primary)]">
                 {ipv4Value || "-"}
               </p>
             </div>
-            <div className="rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 Specs
               </p>
-              <p className="mt-1 text-[13px] font-semibold text-[#242E42]">
+              <p className="mt-1 text-[13px] font-semibold text-[var(--text-primary)]">
                 {vm.cpus != null ? `${vm.cpus} vCPU` : "-"} ·{" "}
                 {formatMb(vm.memory_mb)} · {formatMb(vm.disk_mb)}
               </p>
             </div>
-            <div className="rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 Bandwidth
               </p>
-              <p className="mt-1 text-[13px] font-semibold text-[#242E42]">
+              <p className="mt-1 text-[13px] font-semibold text-[var(--text-primary)]">
                 {formatMb(vm.bandwidth_mb)}
               </p>
             </div>
-            <div className="rounded-xl border border-[#e8ecf4] bg-white px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 Created
               </p>
-              <p className="mt-1 text-[13px] font-semibold text-[#242E42]">
+              <p className="mt-1 text-[13px] font-semibold text-[var(--text-primary)]">
                 {formatDateTime(vm.created_at)}
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[#e8ecf4] bg-white p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
             <div className="mb-2.5 flex items-center justify-between gap-2 px-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 Power controls
               </p>
               {actionBusy ? (
-                <span className="text-[11px] font-medium text-[#7a849c]">
+                <span className="text-[11px] font-medium text-[var(--text-muted)]">
                   Processing…
                 </span>
               ) : null}
@@ -527,7 +527,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                 onClick={() => void handlePower("start")}
                 className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#16a34a] px-4 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(22,163,74,0.28)] transition hover:bg-[#15803d] hover:shadow-[0_8px_18px_rgba(22,163,74,0.34)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#86efac] disabled:shadow-none disabled:opacity-70"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 transition group-hover:bg-white/25">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
                   <FiPlay className="h-3.5 w-3.5 fill-current" />
                 </span>
                 Start
@@ -539,7 +539,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                 onClick={() => void handlePower("stop")}
                 className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#dc2626] px-4 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(220,38,38,0.28)] transition hover:bg-[#b91c1c] hover:shadow-[0_8px_18px_rgba(220,38,38,0.34)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#fca5a5] disabled:shadow-none disabled:opacity-70"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 transition group-hover:bg-white/25">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
                   <FiSquare className="h-3.5 w-3.5 fill-current" />
                 </span>
                 Stop
@@ -549,9 +549,9 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                 type="button"
                 disabled={actionBusy || !canRestart}
                 onClick={() => void handlePower("restart")}
-                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#242E42] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[#1b2333] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#93b0f5] disabled:shadow-none disabled:opacity-70"
+                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#93b0f5] disabled:shadow-none disabled:opacity-70"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 transition group-hover:bg-white/25">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
                   <FiRefreshCw className="h-3.5 w-3.5" />
                 </span>
                 Restart
@@ -563,9 +563,9 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                 type="button"
                 disabled={metricsLoading}
                 onClick={() => void loadMetrics(false)}
-                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-[#e2e5eb] bg-white px-4 text-[13px] font-semibold text-[#242E42] shadow-sm transition hover:border-[#242E42] hover:bg-white hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface)] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-white text-[#242E42] transition group-hover:bg-white">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--text-primary)] transition group-hover:bg-[var(--surface)]">
                   <FiWifi
                     className={`h-3.5 w-3.5 ${metricsLoading ? "animate-pulse" : ""}`}
                   />
@@ -578,28 +578,28 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
           <div>
             <div className="mb-2 flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2">
-                <FiHardDrive className="h-4 w-4 shrink-0 text-[#242E42]" />
-                <h4 className="text-[14px] font-bold text-[#242E42]">
+                <FiHardDrive className="h-4 w-4 shrink-0 text-[var(--text-primary)]" />
+                <h4 className="text-[14px] font-bold text-[var(--text-primary)]">
                   Metrics (last 24h)
                 </h4>
               </div>
               {metricsUpdatedAt ? (
-                <span className="shrink-0 text-[11px] font-medium text-[#7a849c]">
+                <span className="shrink-0 text-[11px] font-medium text-[var(--text-muted)]">
                   Updated {metricsUpdatedAt}
                 </span>
               ) : null}
             </div>
 
             {metricsLoading && !metrics ? (
-              <div className="flex items-center gap-2 rounded-xl border border-[#e8ecf4] bg-white px-4 py-6 text-[13px] text-[#7a849c]">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-6 text-[13px] text-[var(--text-muted)]">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--brand-primary)]/20 border-t-[var(--brand-primary)]" />
                 Loading metrics…
               </div>
             ) : (
               <div className="relative grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {metricsLoading ? (
-                  <div className="absolute right-0 top-[-1.75rem] flex items-center gap-1.5 text-[11px] text-[#7a849c]">
-                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
+                  <div className="absolute right-0 top-[-1.75rem] flex items-center gap-1.5 text-[11px] text-[var(--text-muted)]">
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--brand-primary)]/20 border-t-[var(--brand-primary)]" />
                     Refreshing…
                   </div>
                 ) : null}

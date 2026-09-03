@@ -37,7 +37,7 @@ export default function AdminFilter({
         <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
           <FilterField label="Search" htmlFor="admin-search" className="w-full sm:w-[280px]">
             <div className="relative">
-              <FiSearch className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7a849c]" />
+              <FiSearch className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
               <input
                 id="admin-search"
                 type="text"
@@ -55,7 +55,7 @@ export default function AdminFilter({
                 id="admin-role"
                 value={role}
                 onChange={(e) => onRoleChange(e.target.value)}
-                className={`${filterSelectClass} cursor-pointer hover:border-[#242e42]/40`}
+                className={`${filterSelectClass} cursor-pointer hover:border-[var(--brand-primary)]/40`}
               >
                 {ROLE_OPTIONS.map((option) => (
                   <option key={option.value || "all"} value={option.value}>
@@ -63,14 +63,14 @@ export default function AdminFilter({
                   </option>
                 ))}
               </select>
-              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5b657d]" />
+              <FiChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-secondary)]" />
             </div>
           </FilterField>
 
           <button
             type="button"
             onClick={onClear}
-            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#e2e5eb] bg-white px-4 text-[13px] font-semibold text-[#242E42] shadow-sm transition hover:border-[#242E42] hover:bg-white hover:shadow-md active:scale-[0.98]"
+            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface)] hover:shadow-md active:scale-[0.98]"
           >
             <FiXCircle className="h-4 w-4" />
             Clear filters
@@ -80,7 +80,7 @@ export default function AdminFilter({
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#242E42] px-5 text-[14px] font-semibold text-white shadow-sm transition hover:bg-[#1b2333] hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[#242e42]/40"
+          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--surface-raised)] px-5 text-[14px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40"
         >
           <FiPlus className="h-4 w-4" />
           Add admin

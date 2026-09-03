@@ -2,14 +2,14 @@
 
 import Swal, { type SweetAlertIcon, type SweetAlertResult } from "sweetalert2";
 
-const BLUE = "#242E42";
-const TEXT = "#242E42";
-const CANCEL_BG = "#e5e7eb";
+const BLUE = "#5b86ff";
+const TEXT = "#f4f7fb";
+const CANCEL_BG = "#22324a";
 
 const LAYOUT = {
   width: "360px",
   padding: "1.75rem 1.5rem 1.5rem",
-  background: "#ffffff",
+  background: "#17243a",
   color: TEXT,
   iconColor: BLUE,
   backdrop: `

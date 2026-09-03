@@ -71,40 +71,40 @@ export default function DomainMain() {
 
   return (
     <div className="space-y-5">
-      <div className="relative overflow-hidden rounded-3xl border border-[#e2e5eb] bg-white px-6 py-5 shadow-[0_8px_24px_rgba(36,46,66,0.08)]">
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface)] px-6 py-5 shadow-[0_8px_24px_rgba(36,46,66,0.08)]">
 
         <div className="relative flex flex-wrap items-end justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#242E42] text-white">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--surface-raised)] text-white">
               <FiGlobe className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="text-[24px] font-bold tracking-tight text-[#242E42]">
+              <h1 className="text-[24px] font-bold tracking-tight text-[var(--text-primary)]">
                 Hostinger Domains
               </h1>
-              {/* <p className="mt-1 text-[14px] text-[#7a849c]">
+              {/* <p className="mt-1 text-[14px] text-[var(--text-muted)]">
                 Portfolio domains and DNS zone records
               </p> */}
             </div>
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => void fetchDomains(true)}
             disabled={loading || refreshing}
-            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#242E42] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[#1b2333] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
           >
             <FiRefreshCw
               className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
             />
             Refresh
-          </button>
+          </button> */}
         </div>
 
         {!loading && domains.length > 0 ? (
           <div className="relative mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: "Total", value: summary.total, tone: "text-[#242E42]" },
+              { label: "Total", value: summary.total, tone: "text-[var(--text-primary)]" },
               {
                 label: "Active",
                 value: summary.active,
@@ -123,9 +123,9 @@ export default function DomainMain() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-2xl bg-white px-4 py-3 shadow-sm"
+                className="rounded-2xl bg-[var(--surface)] px-4 py-3 shadow-sm"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-[#8b93a7]">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                   {item.label}
                 </p>
                 <p className={`mt-1 text-[22px] font-bold ${item.tone}`}>
@@ -138,21 +138,21 @@ export default function DomainMain() {
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center gap-3 rounded-2xl border border-[#e4e9f4] bg-white px-5 py-14">
-          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[#242E42]/20 border-t-[#242E42]" />
-          <p className="text-[14px] font-medium text-[#7a849c]">
+        <div className="flex items-center justify-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-5 py-14">
+          <span className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--brand-primary)]/20 border-t-[var(--brand-primary)]" />
+          <p className="text-[14px] font-medium text-[var(--text-muted)]">
             Loading Hostinger domains…
           </p>
         </div>
       ) : domains.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#d8e0f0] bg-white px-5 py-14 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f3f6fc] text-[#242E42]">
+        <div className="rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface)] px-5 py-14 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--surface-muted)] text-[var(--text-primary)]">
             <FiGlobe className="h-6 w-6" />
           </div>
-          <p className="text-[15px] font-semibold text-[#242E42]">
+          <p className="text-[15px] font-semibold text-[var(--text-primary)]">
             No domains found
           </p>
-          <p className="mt-1 text-[13px] text-[#7a849c]">
+          <p className="mt-1 text-[13px] text-[var(--text-muted)]">
             Check Hostinger API token or try Refresh
           </p>
         </div>

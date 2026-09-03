@@ -85,7 +85,7 @@ export default function CiCdStageLogPanel({
   const plainText = htmlLogToPlainText(text);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#e4eaf6] bg-[#0f172a]">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0f172a]">
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
         <div className="min-w-0">
           <p className="truncate text-[13px] font-semibold text-white">
@@ -107,7 +107,7 @@ export default function CiCdStageLogPanel({
               href={consoleUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-[#93c5fd] transition hover:bg-white/10"
+              className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-[#93c5fd] transition hover:bg-[var(--surface)]/10"
             >
               Jenkins
               <FiExternalLink className="h-3 w-3" />
@@ -116,7 +116,7 @@ export default function CiCdStageLogPanel({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-white/70 transition hover:bg-white/10 hover:text-white"
+            className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-white/70 transition hover:bg-[var(--surface)]/10 hover:text-white"
             aria-label="Close stage log"
           >
             <FiX className="h-4 w-4" />
@@ -132,7 +132,7 @@ export default function CiCdStageLogPanel({
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0f172a]/75 backdrop-blur-[1px]">
             <div className="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-3 py-2 text-[13px] font-medium text-[#cbd5e1] ring-1 ring-white/10">
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#242E42]/30 border-t-[#93c5fd]" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[var(--brand-primary)]/30 border-t-[#93c5fd]" />
               Loading stage log…
             </div>
           </div>
