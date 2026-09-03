@@ -1,9 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import {
+  getActiveTone,
+  getProjectTypeTone,
+  getResourceTypeTone,
+} from "@/app/lib/uiTone";
 import { type ProjectItem } from "@/app/services/project/projectAPI";
 import DataTable, { type TableColumn } from "@/app/ui/table";
+import TableIconActions from "@/app/ui/tableIconActions";
 
 type ProjectTableProps = {
   projects: ProjectItem[];
@@ -26,72 +31,11 @@ function formatDateTime(value: string | null): string {
   }
 }
 
-function getProjectTypeBadgeClass(type: string): string {
-  const key = String(type || "").trim().toLowerCase();
-  if (key === "project") {
-    return "bg-[#0e7490] text-white ring-1 ring-[#155e75]/40";
-  }
-  if (key === "service") {
-    return "bg-[#e11d48] text-white ring-1 ring-[#be123c]/40";
-  }
-  return "bg-[#64748b] text-white ring-1 ring-[#475569]/40";
-}
-
 function getProjectTypeLabel(type: string): string {
   const key = String(type || "").trim().toLowerCase();
   if (key === "project") return "Project";
   if (key === "service") return "Service";
   return type || "-";
-}
-
-function getResourceTypeBadgeClass(code: string): string {
-  const key = String(code || "").trim().toLowerCase();
-  if (key === "frontend") {
-    return "bg-[#2563eb] text-white ring-1 ring-[#1d4ed8]/40";
-  }
-  if (key === "backend") {
-    return "bg-[#d97706] text-white ring-1 ring-[#b45309]/40";
-  }
-  if (key === "database") {
-    return "bg-[#16a34a] text-white ring-1 ring-[#15803d]/40";
-  }
-  if (key === "services") {
-    return "bg-[#7c3aed] text-white ring-1 ring-[#6d28d9]/40";
-  }
-  return "bg-[#64748b] text-white ring-1 ring-[#475569]/40";
-}
-
-function ProjectRowActions({
-  project,
-  onEdit,
-  onDelete,
-}: {
-  project: ProjectItem;
-  onEdit?: (project: ProjectItem) => void;
-  onDelete?: (project: ProjectItem) => void;
-}) {
-  return (
-    <div className="flex items-center justify-end gap-2">
-      <button
-        type="button"
-        onClick={() => onEdit?.(project)}
-        aria-label={`Edit ${project.name}`}
-        title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-[var(--surface)] text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-95"
-      >
-        <FiEdit2 className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => onDelete?.(project)}
-        aria-label={`Delete ${project.name}`}
-        title="Delete"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-[var(--surface)] text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#4c1d2a] hover:shadow-md active:scale-95"
-      >
-        <FiTrash2 className="h-4 w-4" />
-      </button>
-    </div>
-  );
 }
 
 export default function ProjectTable({
@@ -122,7 +66,7 @@ export default function ProjectTable({
         title: "Type",
         render: (project) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getProjectTypeBadgeClass(project.type)}`}
+            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getProjectTypeTone(project.type)}`}
           >
             {getProjectTypeLabel(project.type)}
           </span>
@@ -133,7 +77,7 @@ export default function ProjectTable({
         title: "Resource Type",
         render: (project) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getResourceTypeBadgeClass(project.resource_type_code)}`}
+            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getResourceTypeTone(project.resource_type_code)}`}
           >
             {project.resource_type_name || "-"}
           </span>
@@ -150,11 +94,7 @@ export default function ProjectTable({
               disabled={busy}
               onClick={() => onToggleActive?.(project)}
               title={project.is_active ? "Deactivate" : "Activate"}
-              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${
-                project.is_active
-                  ? "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70 hover:bg-[#bbf7d0]"
-                  : "bg-[#f3f4f6] text-[#6b7280] ring-1 ring-[#e5e7eb] hover:bg-[var(--surface-soft)]"
-              }`}
+              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${getActiveTone(project.is_active)}`}
             >
               {busy ? "..." : project.is_active ? "Active" : "Inactive"}
             </button>
@@ -177,10 +117,11 @@ export default function ProjectTable({
         headerClassName: "text-right",
         cellClassName: "text-right",
         render: (project) => (
-          <ProjectRowActions
-            project={project}
-            onEdit={onEdit}
-            onDelete={onDelete}
+          <TableIconActions
+            editLabel={`Edit ${project.name}`}
+            deleteLabel={`Delete ${project.name}`}
+            onEdit={() => onEdit?.(project)}
+            onDelete={() => onDelete?.(project)}
           />
         ),
       },

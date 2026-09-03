@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiChevronDown, FiGlobe, FiLock, FiShield } from "react-icons/fi";
+import { getDnsTypeTone, getStatusTone, TONE } from "@/app/lib/uiTone";
 import domainAPI, {
   type DnsRecordItem,
   type DomainDetail,
@@ -21,31 +22,6 @@ function formatDate(value: string | null): string {
   } catch {
     return "-";
   }
-}
-
-function getStatusBadgeClass(status: string): string {
-  const key = status.trim().toLowerCase();
-  if (key === "active" || key === "ok") {
-    return "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70";
-  }
-  if (key === "expired" || key === "fail" || key === "failed") {
-    return "bg-[#fee2e2] text-[#b91c1c] ring-1 ring-[#fecaca]/70";
-  }
-  if (key === "pending" || key === "processing") {
-    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/70";
-  }
-  return "bg-[var(--surface)] text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
-}
-
-function getDnsTypeBadgeClass(type: string): string {
-  const key = type.trim().toUpperCase();
-  if (key === "A") return "bg-[#2563eb] text-white";
-  if (key === "AAAA") return "bg-[#7c3aed] text-white";
-  if (key === "CNAME") return "bg-[#0d9488] text-white";
-  if (key === "MX") return "bg-[#d97706] text-white";
-  if (key === "TXT") return "bg-[#64748b] text-white";
-  if (key === "NS") return "bg-[#e11d48] text-white";
-  return "bg-[#475569] text-white";
 }
 
 export default function DomainCard({ item }: DomainCardProps) {
@@ -177,12 +153,12 @@ export default function DomainCard({ item }: DomainCardProps) {
               {item.domain}
             </h3>
             <span
-              className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${getStatusBadgeClass(status)}`}
+              className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold capitalize ${getStatusTone(status)}`}
             >
               {status}
             </span>
             {item.type ? (
-              <span className="inline-flex rounded-full bg-[#f3f4f6] px-2.5 py-0.5 text-[11px] font-semibold text-[#6b7280]">
+              <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${TONE.slate}`}>
                 {item.type}
               </span>
             ) : null}
@@ -214,7 +190,7 @@ export default function DomainCard({ item }: DomainCardProps) {
               ) : null}
 
               {detailError && !detail ? (
-                <div className="rounded-xl border border-[#fecaca] bg-[#fef2f2] px-4 py-3 text-[13px] text-[#b91c1c]">
+                <div className="rounded-xl border border-[rgba(248,113,113,0.28)] bg-[rgba(248,113,113,0.12)] px-4 py-3 text-[13px] text-[#fca5a5]">
                   {detailError}
                 </div>
               ) : null}
@@ -307,7 +283,7 @@ export default function DomainCard({ item }: DomainCardProps) {
                             >
                               <td className="px-3 py-2.5">
                                 <span
-                                  className={`inline-flex rounded-md px-2 py-0.5 text-[11px] font-bold ${getDnsTypeBadgeClass(record.type)}`}
+                                  className={`inline-flex rounded-md px-2 py-0.5 text-[11px] font-bold ${getDnsTypeTone(record.type)}`}
                                 >
                                   {record.type}
                                 </span>
@@ -324,9 +300,7 @@ export default function DomainCard({ item }: DomainCardProps) {
                               <td className="px-3 py-2.5">
                                 <span
                                   className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ${
-                                    record.is_disabled
-                                      ? "bg-[#f3f4f6] text-[#6b7280]"
-                                      : "bg-[#dcfce7] text-[#15803d]"
+                                    record.is_disabled ? TONE.slate : TONE.emerald
                                   }`}
                                 >
                                   {record.is_disabled ? "Disabled" : "Active"}

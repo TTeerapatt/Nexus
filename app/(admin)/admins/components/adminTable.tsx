@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { getRoleTone } from "@/app/lib/uiTone";
 import { type AdminItem } from "@/app/services/admin/adminAPI";
 import DataTable, { type TableColumn } from "@/app/ui/table";
+import TableIconActions from "@/app/ui/tableIconActions";
 
 type AdminTableProps = {
   admins: AdminItem[];
@@ -30,53 +31,6 @@ function getRoleLabel(role: string): string {
   if (key === "admin") return "Admin";
   if (key === "staff") return "Staff";
   return role || "-";
-}
-
-function getRoleBadgeClass(role: string): string {
-  const key = String(role || "").trim().toLowerCase();
-  if (key === "owner") {
-    return "bg-[var(--surface)] text-[var(--text-primary)] ring-1 ring-[var(--brand-primary)]/20";
-  }
-  if (key === "admin") {
-    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/60";
-  }
-  if (key === "staff") {
-    return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
-  }
-  return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
-}
-
-function AdminRowActions({
-  admin,
-  onEdit,
-  onDelete,
-}: {
-  admin: AdminItem;
-  onEdit?: (admin: AdminItem) => void;
-  onDelete?: (admin: AdminItem) => void;
-}) {
-  return (
-    <div className="flex items-center justify-end gap-2">
-      <button
-        type="button"
-        onClick={() => onEdit?.(admin)}
-        aria-label={`Edit ${admin.display_name}`}
-        title="Edit"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#bfdbfe] bg-[var(--surface)] text-[#2563EB] shadow-sm transition hover:border-[#2563EB] hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-95"
-      >
-        <FiEdit2 className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => onDelete?.(admin)}
-        aria-label={`Delete ${admin.display_name}`}
-        title="Delete"
-        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-[#fecaca] bg-[var(--surface)] text-[#dc2626] shadow-sm transition hover:border-[#f87171] hover:bg-[#4c1d2a] hover:shadow-md active:scale-95"
-      >
-        <FiTrash2 className="h-4 w-4" />
-      </button>
-    </div>
-  );
 }
 
 export default function AdminTable({
@@ -110,7 +64,7 @@ export default function AdminTable({
         title: "Role",
         render: (admin) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getRoleBadgeClass(admin.role)}`}
+            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getRoleTone(admin.role)}`}
           >
             {getRoleLabel(admin.role)}
           </span>
@@ -132,7 +86,12 @@ export default function AdminTable({
         headerClassName: "text-right",
         cellClassName: "text-right",
         render: (admin) => (
-          <AdminRowActions admin={admin} onEdit={onEdit} onDelete={onDelete} />
+          <TableIconActions
+            editLabel={`Edit ${admin.display_name}`}
+            deleteLabel={`Delete ${admin.display_name}`}
+            onEdit={() => onEdit?.(admin)}
+            onDelete={() => onDelete?.(admin)}
+          />
         ),
       },
     ],

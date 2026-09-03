@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
 import { LoadingDots } from "@/app/components/loading";
+import { ICON_TONE } from "@/app/lib/uiTone";
 import type { OverviewData } from "./overviewTypes";
 import { formatDateTime } from "./overviewUtils";
 
@@ -89,14 +90,14 @@ export default function OverviewHealthSection({
               Current status across connected services
             </p>
           </div>
-          <FiCheckCircle className="h-5 w-5 text-[#16a34a]" />
+          <FiCheckCircle className="h-5 w-5 text-[#34d399]" />
         </div>
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <HealthRow
             label="VPS"
             value={loading.vps ? "—" : `${runningVps}/${overview.vps.length}`}
             detail={loading.vps ? "Loading VPS status" : "Running virtual machines"}
-            tone="bg-[#f5f3ff] text-[#7c3aed]"
+            tone={ICON_TONE.violet}
             icon={FiServer}
           />
           <HealthRow
@@ -113,11 +114,7 @@ export default function OverviewHealthSection({
                 ? "Loading job status"
                 : `${runningJobs} jobs currently running`
             }
-            tone={
-              failedJobs > 0
-                ? "bg-[#fef2f2] text-[#dc2626]"
-                : "bg-[#f0fdf4] text-[#16a34a]"
-            }
+            tone={failedJobs > 0 ? ICON_TONE.rose : ICON_TONE.emerald}
             icon={failedJobs > 0 ? FiAlertCircle : FiCheckCircle}
           />
           <HealthRow
@@ -132,7 +129,7 @@ export default function OverviewHealthSection({
                 ? "Loading domain status"
                 : "Active or registered domains"
             }
-            tone="bg-[#eff6ff] text-[#2563eb]"
+            tone={ICON_TONE.blue}
             icon={FiGlobe}
           />
           <HealthRow
@@ -143,7 +140,7 @@ export default function OverviewHealthSection({
                 ? "Loading administrator data"
                 : "Registered administrator accounts"
             }
-            tone="bg-[#fff7ed] text-[#ea580c]"
+            tone={ICON_TONE.orange}
             icon={FiActivity}
           />
         </div>
@@ -176,12 +173,12 @@ export default function OverviewHealthSection({
             {
               label: "Running",
               value: loading.jobs ? null : runningJobs,
-              tone: "text-[#2563eb]",
+              tone: "text-[#5b86ff]",
             },
             {
               label: "Failed",
               value: loading.jobs ? null : failedJobs,
-              tone: "text-[#dc2626]",
+              tone: "text-[#f87171]",
             },
           ].map((item) => (
             <div key={item.label} className="rounded-xl bg-[var(--surface-muted)] px-3 py-4">
@@ -198,13 +195,13 @@ export default function OverviewHealthSection({
             </div>
           ))}
         </div>
-        <div className="mt-5 flex items-center gap-2 rounded-xl bg-[#f0fdf4] px-4 py-3 text-[12px] font-medium text-[#15803d]">
+        <div className="mt-5 flex items-center gap-2 rounded-xl bg-[rgba(52,211,153,0.12)] px-4 py-3 text-[12px] font-medium text-[#6ee7b7]">
           <FiClock className="h-4 w-4 shrink-0" />
           {statusLoading
             ? (
               <>
                 <span>Loading current status</span>
-                <LoadingDots className="text-[#15803d]" />
+                <LoadingDots className="text-[#6ee7b7]" />
               </>
             )
             : `Last updated ${lastUpdated ? formatDateTime(lastUpdated) : "—"}`}

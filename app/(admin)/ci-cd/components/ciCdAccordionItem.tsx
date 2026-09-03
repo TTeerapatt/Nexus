@@ -9,6 +9,7 @@ import {
   FiLoader,
 } from "react-icons/fi";
 import { GoWorkflow } from "react-icons/go";
+import { getJenkinsStatusTone } from "@/app/lib/uiTone";
 import ciCdAPI, {
   type CiCdBuildItem,
   type CiCdBuildStages,
@@ -23,24 +24,7 @@ import CiCdPipeline from "./ciCdPipeline";
 import CiCdStageLogPanel from "./ciCdStageLogPanel";
 
 function statusBadgeClass(status: JenkinsJobStatus): string {
-  switch (status) {
-    case "success":
-      return "bg-[#ecfdf5] text-[#15803d] ring-1 ring-[#86efac]/80";
-    case "failed":
-      return "bg-[#fef2f2] text-[#b91c1c] ring-1 ring-[#fecaca]/90";
-    case "unstable":
-      return "bg-[#fefce8] text-[#a16207] ring-1 ring-[#fde68a]/90";
-    case "running":
-      return "bg-[#eff6ff] text-[#1d4ed8] ring-1 ring-[#93c5fd]/80";
-    case "aborted":
-      return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
-    case "disabled":
-      return "bg-[#f3f4f6] text-[#6b7280] ring-1 ring-[#e5e7eb]";
-    case "not_built":
-      return "bg-[#f8fafc] text-[#64748b] ring-1 ring-[#e2e8f0]";
-    default:
-      return "bg-[#f3f4f6] text-[#4b5563] ring-1 ring-[#e5e7eb]";
-  }
+  return getJenkinsStatusTone(status);
 }
 
 function isRunningStatus(status: JenkinsJobStatus): boolean {
@@ -84,9 +68,9 @@ function statusLabel(status: JenkinsJobStatus): string {
 }
 
 function healthBarClass(score: number): string {
-  if (score >= 80) return "bg-[#22c55e]";
-  if (score >= 50) return "bg-[#eab308]";
-  return "bg-[#ef4444]";
+  if (score >= 80) return "bg-[#34d399]";
+  if (score >= 50) return "bg-[#fbbf24]";
+  return "bg-[#f87171]";
 }
 
 function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {

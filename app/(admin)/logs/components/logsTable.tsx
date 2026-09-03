@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { getActionTone } from "@/app/lib/uiTone";
 import { type AdminLogItem } from "@/app/services/adminLog/adminLogAPI";
 import DataTable, { type TableColumn } from "@/app/ui/table";
 
@@ -33,28 +34,6 @@ function getActionLabel(action: string): string {
   if (key === "stop") return "Stop";
   if (key === "restart") return "Restart";
   return action || "-";
-}
-
-function getActionBadgeClass(action: string): string {
-  const key = String(action || "").trim().toLowerCase();
-  if (key === "login") {
-    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/70";
-  }
-  if (key === "create" || key === "start") {
-    return "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70";
-  }
-  if (key === "update" || key === "restart") {
-    return "bg-[#fef3c7] text-[#b45309] ring-1 ring-[#fcd34d]/70";
-  }
-  if (
-    key === "soft_delete" ||
-    key === "hard_delete" ||
-    key === "delete" ||
-    key === "stop"
-  ) {
-    return "bg-[#fee2e2] text-[#b91c1c] ring-1 ring-[#fecaca]/70";
-  }
-  return "bg-[var(--surface)] text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
 }
 
 export default function LogsTable({ logs, loading = false }: LogsTableProps) {
@@ -103,7 +82,7 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
         cellClassName: "w-[140px]",
         render: (log) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getActionBadgeClass(log.action)}`}
+            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-semibold ${getActionTone(log.action)}`}
           >
             {getActionLabel(log.action)}
           </span>

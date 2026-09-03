@@ -34,51 +34,51 @@ function stageStyles(kind: StageKind) {
   switch (kind) {
     case "success":
       return {
-        node: "border-[#16a34a] bg-[var(--surface)] text-[#16a34a]",
-        rail: "bg-[#16a34a]",
-        chip: "bg-[#ecfdf5] text-[#15803d] ring-[#bbf7d0]",
-        title: "text-[#22c55e]",
-        selectedRing: "ring-[#16a34a]/35",
+        node: "border-[#34d399] bg-[var(--surface)] text-[#34d399]",
+        rail: "bg-[#34d399]",
+        chip: "bg-[rgba(52,211,153,0.14)] text-[#6ee7b7] ring-[rgba(52,211,153,0.28)]",
+        title: "text-[#6ee7b7]",
+        selectedRing: "ring-[#34d399]/35",
       };
     case "failed":
       return {
-        node: "border-[#dc2626] bg-[var(--surface)] text-[#dc2626]",
-        rail: "bg-[#dc2626]",
-        chip: "bg-[#fef2f2] text-[#b91c1c] ring-[#fecaca]",
-        title: "text-[#7f1d1d]",
-        selectedRing: "ring-[#dc2626]/30",
+        node: "border-[#f87171] bg-[var(--surface)] text-[#f87171]",
+        rail: "bg-[#f87171]",
+        chip: "bg-[rgba(248,113,113,0.14)] text-[#fca5a5] ring-[rgba(248,113,113,0.28)]",
+        title: "text-[#fca5a5]",
+        selectedRing: "ring-[#f87171]/30",
       };
     case "running":
       return {
-        node: "border-[#2563eb] bg-[var(--surface)] text-[#2563eb] animate-pulse",
-        rail: "bg-[#2563eb]",
-        chip: "bg-[#eff6ff] text-[#1d4ed8] ring-[#bfdbfe]",
-        title: "text-[#1e3a8a]",
-        selectedRing: "ring-[#2563eb]/30",
+        node: "border-[#5b86ff] bg-[var(--surface)] text-[#5b86ff] animate-pulse",
+        rail: "bg-[#5b86ff]",
+        chip: "bg-[rgba(91,134,255,0.16)] text-[#b4c8ff] ring-[rgba(91,134,255,0.32)]",
+        title: "text-[#b4c8ff]",
+        selectedRing: "ring-[#5b86ff]/30",
       };
     case "unstable":
       return {
-        node: "border-[#ca8a04] bg-[var(--surface)] text-[#ca8a04]",
-        rail: "bg-[#ca8a04]",
-        chip: "bg-[#fefce8] text-[#a16207] ring-[#fde68a]",
-        title: "text-[#713f12]",
-        selectedRing: "ring-[#ca8a04]/30",
+        node: "border-[#fbbf24] bg-[var(--surface)] text-[#fbbf24]",
+        rail: "bg-[#fbbf24]",
+        chip: "bg-[rgba(251,191,36,0.14)] text-[#fcd34d] ring-[rgba(251,191,36,0.28)]",
+        title: "text-[#fcd34d]",
+        selectedRing: "ring-[#fbbf24]/30",
       };
     case "aborted":
       return {
-        node: "border-[#6b7280] bg-[var(--surface)] text-[#6b7280]",
-        rail: "bg-[#6b7280]",
-        chip: "bg-[#f9fafb] text-[#4b5563] ring-[#e5e7eb]",
-        title: "text-[#374151]",
-        selectedRing: "ring-[#6b7280]/25",
+        node: "border-[#94a3b8] bg-[var(--surface)] text-[#94a3b8]",
+        rail: "bg-[#94a3b8]",
+        chip: "bg-[rgba(148,163,184,0.12)] text-[#cbd5e1] ring-[rgba(148,163,184,0.22)]",
+        title: "text-[#cbd5e1]",
+        selectedRing: "ring-[#94a3b8]/25",
       };
     default:
       return {
-        node: "border-[#d1d5db] bg-[var(--surface)] text-[#9ca3af]",
-        rail: "bg-[#d1d5db]",
-        chip: "bg-[#f9fafb] text-[#9ca3af] ring-[#e5e7eb]",
-        title: "text-[#6b7280]",
-        selectedRing: "ring-[#d1d5db]/40",
+        node: "border-[#64748b] bg-[var(--surface)] text-[#94a3b8]",
+        rail: "bg-[#64748b]",
+        chip: "bg-[rgba(148,163,184,0.12)] text-[#94a3b8] ring-[rgba(148,163,184,0.22)]",
+        title: "text-[#94a3b8]",
+        selectedRing: "ring-[#64748b]/40",
       };
   }
 }

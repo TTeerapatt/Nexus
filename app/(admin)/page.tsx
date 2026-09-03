@@ -17,6 +17,11 @@ import projectAPI, {
 import vpsAPI, {
   type VpsVirtualMachine,
 } from "@/app/services/vps/vpsAPI";
+import {
+  CHART_TONE,
+  ICON_TONE,
+  RESOURCE_CHART_COLORS,
+} from "@/app/lib/uiTone";
 import OverviewDistributionChart from "./components/overview/OverviewDistributionChart";
 import OverviewDonutChart from "./components/overview/OverviewDonutChart";
 import OverviewHeader from "./components/overview/OverviewHeader";
@@ -36,12 +41,12 @@ import {
 } from "./components/overview/overviewUtils";
 
 const CHART_COLORS = {
-  success: "#16a34a",
-  running: "#2563eb",
-  failed: "#dc2626",
-  other: "#94a3b8",
-  active: "#0891b2",
-  inactive: "#cbd5e1",
+  success: CHART_TONE.success,
+  running: CHART_TONE.running,
+  failed: CHART_TONE.failed,
+  other: CHART_TONE.other,
+  active: CHART_TONE.active,
+  inactive: CHART_TONE.inactive,
 } as const;
 
 const ACTIVE_INACTIVE_LEGEND: ChartSlice[] = [
@@ -153,13 +158,12 @@ export default function OverviewPage() {
     ).length;
 
     return [
-      { label: "Project", value: projectCount, color: "#0891b2" },
-      { label: "Service", value: serviceCount, color: "#e11d48" },
+      { label: "Project", value: projectCount, color: CHART_TONE.project },
+      { label: "Service", value: serviceCount, color: CHART_TONE.service },
     ].filter((item) => item.value > 0);
   }, [overview.projects]);
 
   const portDistribution = useMemo<DistributionItem[]>(() => {
-    const colors = ["#2563eb", "#d97706", "#16a34a", "#7c3aed"];
     const counts = new Map<string, number>();
 
     for (const port of overview.ports) {
@@ -172,7 +176,7 @@ export default function OverviewPage() {
       .map(([label, value], index) => ({
         label,
         value,
-        color: colors[index % colors.length],
+        color: RESOURCE_CHART_COLORS[index % RESOURCE_CHART_COLORS.length],
       }));
   }, [overview.ports]);
 
@@ -243,7 +247,7 @@ export default function OverviewPage() {
           label="Active projects"
           value={summary.activeProjects}
           icon={FiFolder}
-          tone="bg-[#ecfeff] text-[#0e7490]"
+          tone={ICON_TONE.cyan}
           href="/projects"
           loading={loadingSections.projects}
         />
@@ -251,7 +255,7 @@ export default function OverviewPage() {
           label="Active ports"
           value={summary.activePorts}
           icon={FiActivity}
-          tone="bg-[#eff6ff] text-[#2563eb]"
+          tone={ICON_TONE.blue}
           href="/port"
           loading={loadingSections.ports}
         />
@@ -259,7 +263,7 @@ export default function OverviewPage() {
           label="Active databases"
           value={summary.activeDatabases}
           icon={FiDatabase}
-          tone="bg-[#f0fdf4] text-[#16a34a]"
+          tone={ICON_TONE.emerald}
           href="/database"
           loading={loadingSections.databases}
         />
@@ -267,7 +271,7 @@ export default function OverviewPage() {
           label="Running VPS"
           value={summary.runningVps}
           icon={FiServer}
-          tone="bg-[#f5f3ff] text-[#7c3aed]"
+          tone={ICON_TONE.violet}
           href="/vps"
           loading={loadingSections.vps}
         />

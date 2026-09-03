@@ -12,6 +12,7 @@ import {
   FiSquare,
   FiWifi,
 } from "react-icons/fi";
+import { getStatusTone, ICON_TONE } from "@/app/lib/uiTone";
 import vpsAPI, {
   type VpsMetricSeries,
   type VpsMetrics,
@@ -106,32 +107,32 @@ const METRIC_TONES: Record<string, MetricTone> = {
   CPU: {
     stroke: "#5b86ff",
     fillFrom: "rgba(91,134,255,0.28)",
-    chip: "bg-[var(--surface)] text-[var(--text-primary)]",
+    chip: ICON_TONE.blue,
   },
   RAM: {
-    stroke: "#7c3aed",
-    fillFrom: "rgba(124,58,237,0.24)",
-    chip: "bg-[#f5f3ff] text-[#6d28d9]",
+    stroke: "#a78bfa",
+    fillFrom: "rgba(167,139,250,0.24)",
+    chip: ICON_TONE.violet,
   },
   Disk: {
-    stroke: "#0d9488",
-    fillFrom: "rgba(13,148,136,0.24)",
-    chip: "bg-[#f0fdfa] text-[#0f766e]",
+    stroke: "#2dd4bf",
+    fillFrom: "rgba(45,212,191,0.24)",
+    chip: ICON_TONE.teal,
   },
   "In traffic": {
-    stroke: "#16a34a",
-    fillFrom: "rgba(22,163,74,0.24)",
-    chip: "bg-[#f0fdf4] text-[#15803d]",
+    stroke: "#34d399",
+    fillFrom: "rgba(52,211,153,0.24)",
+    chip: ICON_TONE.emerald,
   },
   "Out traffic": {
-    stroke: "#ea580c",
-    fillFrom: "rgba(234,88,12,0.24)",
-    chip: "bg-[#fff7ed] text-[#c2410c]",
+    stroke: "#fb923c",
+    fillFrom: "rgba(251,146,60,0.24)",
+    chip: ICON_TONE.orange,
   },
   Uptime: {
-    stroke: "#0891b2",
-    fillFrom: "rgba(8,145,178,0.24)",
-    chip: "bg-[#ecfeff] text-[#0e7490]",
+    stroke: "#22d3ee",
+    fillFrom: "rgba(34,211,238,0.24)",
+    chip: ICON_TONE.cyan,
   },
 };
 
@@ -258,20 +259,7 @@ function MetricChartCard({
 }
 
 function getStateBadgeClass(state: string): string {
-  const key = state.trim().toLowerCase();
-  if (key === "running") {
-    return "bg-[#dcfce7] text-[#15803d] ring-1 ring-[#86efac]/70";
-  }
-  if (key === "stopped" || key === "off") {
-    return "bg-[#f3f4f6] text-[#6b7280] ring-1 ring-[#e5e7eb]";
-  }
-  if (key === "starting" || key === "stopping" || key === "restarting") {
-    return "bg-[#dbeafe] text-[#1d4ed8] ring-1 ring-[#93c5fd]/70";
-  }
-  if (key === "error" || key === "failed") {
-    return "bg-[#fee2e2] text-[#b91c1c] ring-1 ring-[#fecaca]/70";
-  }
-  return "bg-[var(--surface)] text-[#4338ca] ring-1 ring-[#c7d2fe]/70";
+  return getStatusTone(state);
 }
 
 function primaryIp(vm: VpsVirtualMachine): string {
