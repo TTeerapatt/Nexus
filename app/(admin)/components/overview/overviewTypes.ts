@@ -28,6 +28,18 @@ export type DistributionItem = {
   color: string;
 };
 
+/** Slice for SVG / stacked charts — `color` is a CSS color (hex). */
+export type ChartSlice = {
+  label: string;
+  value: number;
+  color: string;
+};
+
+export type StackedBarGroup = {
+  label: string;
+  segments: ChartSlice[];
+};
+
 export const EMPTY_OVERVIEW: OverviewData = {
   projects: [],
   ports: [],

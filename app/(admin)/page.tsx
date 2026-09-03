@@ -18,18 +18,46 @@ import vpsAPI, {
   type VpsVirtualMachine,
 } from "@/app/services/vps/vpsAPI";
 import OverviewDistributionChart from "./components/overview/OverviewDistributionChart";
+import OverviewDonutChart from "./components/overview/OverviewDonutChart";
 import OverviewHeader from "./components/overview/OverviewHeader";
 import OverviewHealthSection from "./components/overview/OverviewHealthSection";
 import OverviewMetricCard from "./components/overview/OverviewMetricCard";
+import OverviewStackedBarChart from "./components/overview/OverviewStackedBarChart";
 import {
   EMPTY_OVERVIEW,
+  type ChartSlice,
   type DistributionItem,
   type OverviewData,
+  type StackedBarGroup,
 } from "./components/overview/overviewTypes";
 import {
   getStatus,
   readList,
 } from "./components/overview/overviewUtils";
+
+const CHART_COLORS = {
+  success: "#16a34a",
+  running: "#2563eb",
+  failed: "#dc2626",
+  other: "#94a3b8",
+  stopped: "#ea580c",
+  active: "#0891b2",
+  inactive: "#cbd5e1",
+} as const;
+
+const ACTIVE_INACTIVE_LEGEND: ChartSlice[] = [
+  { label: "Active", value: 0, color: CHART_COLORS.active },
+  { label: "Inactive", value: 0, color: CHART_COLORS.inactive },
+];
+
+const ENGINE_BAR_COLORS = [
+  "bg-[#0891b2]",
+  "bg-[#2563eb]",
+  "bg-[#16a34a]",
+  "bg-[#d97706]",
+  "bg-[#7c3aed]",
+  "bg-[#e11d48]",
+] as const;
 
 type OverviewLoadingState = {
   projects: boolean;
@@ -163,6 +191,97 @@ export default function OverviewPage() {
       }));
   }, [overview.ports]);
 
+  const ciCdStatusDistribution = useMemo<ChartSlice[]>(() => {
+    let success = 0;
+    let running = 0;
+    let failed = 0;
+    let other = 0;
+
+    for (const job of overview.jobs) {
+      const status = getStatus(job.status);
+      if (status === "success") success += 1;
+      else if (status === "running") running += 1;
+      else if (status === "failed" || status === "unstable") failed += 1;
+      else other += 1;
+    }
+
+    return [
+      { label: "Success", value: success, color: CHART_COLORS.success },
+      { label: "Running", value: running, color: CHART_COLORS.running },
+      { label: "Failed", value: failed, color: CHART_COLORS.failed },
+      { label: "Other", value: other, color: CHART_COLORS.other },
+    ].filter((item) => item.value > 0);
+  }, [overview.jobs]);
+
+  const vpsStateDistribution = useMemo<ChartSlice[]>(() => {
+    let running = 0;
+    let stopped = 0;
+    let other = 0;
+
+    for (const vm of overview.vps) {
+      const state = getStatus(vm.state);
+      if (state === "running") running += 1;
+      else if (state === "stopped" || state === "off") stopped += 1;
+      else other += 1;
+    }
+
+    return [
+      { label: "Running", value: running, color: CHART_COLORS.running },
+      { label: "Stopped", value: stopped, color: CHART_COLORS.stopped },
+      { label: "Other", value: other, color: CHART_COLORS.other },
+    ].filter((item) => item.value > 0);
+  }, [overview.vps]);
+
+  const databaseEngineDistribution = useMemo<DistributionItem[]>(() => {
+    const counts = new Map<string, number>();
+
+    for (const database of overview.databases) {
+      const label =
+        database.all_database_name ||
+        database.all_database_code ||
+        "Other";
+      counts.set(label, (counts.get(label) || 0) + 1);
+    }
+
+    return Array.from(counts.entries())
+      .sort(([, a], [, b]) => b - a)
+      .map(([label, value], index) => ({
+        label,
+        value,
+        color: ENGINE_BAR_COLORS[index % ENGINE_BAR_COLORS.length],
+      }));
+  }, [overview.databases]);
+
+  const activeInactiveGroups = useMemo<StackedBarGroup[]>(() => {
+    const buildGroup = (
+      label: string,
+      items: Array<{ is_active: boolean }>
+    ): StackedBarGroup => {
+      const active = items.filter((item) => item.is_active).length;
+      const inactive = items.length - active;
+      return {
+        label,
+        segments: [
+          { label: "Active", value: active, color: CHART_COLORS.active },
+          { label: "Inactive", value: inactive, color: CHART_COLORS.inactive },
+        ],
+      };
+    };
+
+    return [
+      buildGroup("Projects", overview.projects),
+      buildGroup("Ports", overview.ports),
+      buildGroup("Databases", overview.databases),
+    ].filter((group) =>
+      group.segments.some((segment) => segment.value > 0)
+    );
+  }, [overview.projects, overview.ports, overview.databases]);
+
+  const chartsLoading =
+    loadingSections.projects ||
+    loadingSections.ports ||
+    loadingSections.databases;
+
   const loading = Object.values(loadingSections).some(Boolean);
 
   return (
@@ -222,6 +341,42 @@ export default function OverviewPage() {
           admins: loadingSections.admins,
         }}
       />
+
+      <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <OverviewDonutChart
+          title="CI/CD status"
+          subtitle="Job health across Jenkins pipelines"
+          items={ciCdStatusDistribution}
+          emptyText="No CI/CD job data available"
+          loading={loadingSections.jobs}
+          centerLabel="Jobs"
+        />
+        <OverviewDonutChart
+          title="VPS state mix"
+          subtitle="Running, stopped, and other VM states"
+          items={vpsStateDistribution}
+          emptyText="No VPS data available"
+          loading={loadingSections.vps}
+          centerLabel="VMs"
+        />
+      </section>
+
+      <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <OverviewDistributionChart
+          title="Databases by engine"
+          items={databaseEngineDistribution}
+          emptyText="No database data available"
+          loading={loadingSections.databases}
+        />
+        <OverviewStackedBarChart
+          title="Active vs inactive"
+          subtitle="Projects, ports, and databases in use"
+          groups={activeInactiveGroups}
+          legend={ACTIVE_INACTIVE_LEGEND}
+          emptyText="No resource data available"
+          loading={chartsLoading}
+        />
+      </section>
 
       <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <OverviewDistributionChart
