@@ -146,7 +146,7 @@ export default function CiCdPipeline({
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+    <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <ol className="flex min-w-max items-start px-2 py-3">
         {stages.map((stage, index) => {
           const kind = stageKind(stage.status);

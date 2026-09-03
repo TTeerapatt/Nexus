@@ -34,15 +34,15 @@ function isRunningStatus(status: JenkinsJobStatus): boolean {
 function statusDotClass(status: JenkinsJobStatus): string {
   switch (status) {
     case "success":
-      return "bg-[#22c55e] shadow-[0_0_0_4px_rgba(34,197,94,0.18)]";
+      return "bg-[#34d399] shadow-[0_0_0_3px_rgba(52,211,153,0.22)]";
     case "failed":
-      return "bg-[#ef4444] shadow-[0_0_0_4px_rgba(239,68,68,0.16)]";
+      return "bg-[#f87171] shadow-[0_0_0_3px_rgba(248,113,113,0.22)]";
     case "unstable":
-      return "bg-[#eab308] shadow-[0_0_0_4px_rgba(234,179,8,0.18)]";
+      return "bg-[#fbbf24] shadow-[0_0_0_3px_rgba(251,191,36,0.22)]";
     case "running":
-      return "bg-[#2563eb] animate-pulse";
+      return "bg-[#5b86ff] animate-pulse shadow-[0_0_0_3px_rgba(91,134,255,0.22)]";
     default:
-      return "bg-[#9ca3af] shadow-[0_0_0_4px_rgba(156,163,175,0.16)]";
+      return "bg-[#94a3b8] shadow-[0_0_0_3px_rgba(148,163,184,0.18)]";
   }
 }
 
@@ -73,21 +73,39 @@ function healthBarClass(score: number): string {
   return "bg-[#f87171]";
 }
 
-function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {
-  if (selected) {
-    return "bg-[var(--surface-raised)] text-white ring-[var(--brand-primary)]";
-  }
+function buildPillTextClass(status: JenkinsJobStatus): string {
   switch (status) {
     case "success":
-      return "bg-[var(--surface)] text-[#15803d] ring-[#86efac] hover:bg-[var(--surface-soft)]";
+      return "text-[#6ee7b7]";
     case "failed":
-      return "bg-[var(--surface)] text-[#b91c1c] ring-[#fecaca] hover:bg-[#4c1d2a]";
+      return "text-[#fca5a5]";
     case "unstable":
-      return "bg-[var(--surface)] text-[#a16207] ring-[#fde68a] hover:bg-[var(--surface-soft)]";
+      return "text-[#fcd34d]";
     case "running":
-      return "bg-[var(--surface)] text-[#1d4ed8] ring-[#93c5fd] hover:bg-[var(--surface-soft)]";
+      return "text-[#b4c8ff]";
     default:
-      return "bg-[var(--surface)] text-[var(--text-secondary)] ring-[var(--border)] hover:bg-[var(--surface)]";
+      return "text-[var(--text-secondary)]";
+  }
+}
+
+function buildPillClass(status: JenkinsJobStatus, selected: boolean): string {
+  const text = buildPillTextClass(status);
+
+  if (selected) {
+    return `bg-[var(--surface-soft)] ${text} ring-2 ring-[var(--brand-primary)]/70`;
+  }
+
+  switch (status) {
+    case "success":
+      return `${text} bg-[rgba(52,211,153,0.10)] ring-[rgba(52,211,153,0.32)] hover:bg-[rgba(52,211,153,0.16)]`;
+    case "failed":
+      return `${text} bg-[rgba(248,113,113,0.10)] ring-[rgba(248,113,113,0.32)] hover:bg-[rgba(248,113,113,0.16)]`;
+    case "unstable":
+      return `${text} bg-[rgba(251,191,36,0.10)] ring-[rgba(251,191,36,0.32)] hover:bg-[rgba(251,191,36,0.16)]`;
+    case "running":
+      return `${text} bg-[rgba(91,134,255,0.12)] ring-[rgba(91,134,255,0.34)] hover:bg-[rgba(91,134,255,0.18)]`;
+    default:
+      return `${text} bg-[var(--surface-raised)] ring-[var(--border)] hover:bg-[var(--surface-soft)]`;
   }
 }
 
@@ -364,7 +382,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
       } ${
         open
           ? "border-[var(--border)] shadow-md"
-          : "border-[var(--border)] shadow-[0_2px_8px_rgba(31,38,64,0.04)] hover:border-[#d4def5] hover:shadow-[0_8px_20px_rgba(31,38,64,0.06)]"
+          : "border-[var(--border)] shadow-[0_2px_8px_rgba(0,0,0,0.18)] hover:border-[var(--border-strong)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.28)]"
       }`}
     >
       {isRunning ? (
@@ -495,7 +513,7 @@ export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
                             <span
                               className={`h-1.5 w-1.5 rounded-full ${
                                 selected
-                                  ? "bg-[var(--surface)]"
+                                  ? "bg-[var(--brand-primary)]"
                                   : statusDotClass(build.status).split(" ")[0]
                               }`}
                             />
