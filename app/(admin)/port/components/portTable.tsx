@@ -180,9 +180,6 @@ export default function PortTable({
       data={ports}
       loading={loading}
       getRowKey={(port) => port.id}
-      title="Ports"
-      count={ports.length}
-      countLabel="ports"
       emptyText="No ports found"
       loadingText="Loading ports..."
     />

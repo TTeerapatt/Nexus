@@ -40,7 +40,7 @@ export default function OverviewHeader({
           type="button"
           onClick={onRefresh}
           disabled={busy}
-          className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:brightness-110 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 text-[13px] font-semibold text-white/90 shadow-sm backdrop-blur-sm transition hover:border-white/25 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/35 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <FiRefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
           Refresh

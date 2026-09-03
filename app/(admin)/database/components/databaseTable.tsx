@@ -126,9 +126,6 @@ export default function DatabaseTable({
       data={databases}
       loading={loading}
       getRowKey={(database) => database.id}
-      title="Databases"
-      count={databases.length}
-      countLabel="databases"
       emptyText="No databases found"
       loadingText="Loading databases..."
     />
