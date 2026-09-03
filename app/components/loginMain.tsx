@@ -227,7 +227,7 @@ export default function LoginMain() {
               <FiCode className="h-4 w-4" />
             </div>
             <p className="mt-3 text-[12px] font-medium text-white/65">
-              This system was created by
+              Nexus system was created by
             </p>
             <p className="mt-1 text-[15px] font-semibold tracking-wide">
               Teerapat Sommaloun
