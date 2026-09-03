@@ -116,7 +116,7 @@ export default function CiCdMain() {
             ].map((item) => (
               <div
                 key={item.label}
-                className="rounded-2xl bg-[var(--surface)] px-4 py-3 shadow-sm"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 shadow-[0_4px_14px_rgba(0,0,0,0.22)]"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                   {item.label}
