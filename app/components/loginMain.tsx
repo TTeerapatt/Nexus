@@ -230,7 +230,7 @@ export default function LoginMain() {
               This system was created by
             </p>
             <p className="mt-1 text-[15px] font-semibold tracking-wide">
-              Teerapat Sommaloun
+              Teerapat Sommaloun test
             </p>
             <a
               href="mailto:rznot778@gmail.com"
