@@ -13,8 +13,8 @@ const notoThai = Noto_Sans_Thai({
 
 
 export const metadata: Metadata = {
-  title: "Nexus Admin",
-  description: "Nexus Admin",
+  title: "Nexus",
+  description: "Nexus",
 };
 
 export default async function RootLayout({
