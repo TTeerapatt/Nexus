@@ -101,17 +101,17 @@ export default function CiCdMain() {
               {
                 label: "Success",
                 value: summary.success,
-                tone: "text-[#15803d]",
+                tone: "text-[#34d399]",
               },
               {
                 label: "Failed",
                 value: summary.failed,
-                tone: "text-[#b91c1c]",
+                tone: "text-[#f87171]",
               },
               {
                 label: "Running",
                 value: summary.running,
-                tone: "text-[#1d4ed8]",
+                tone: "text-[#5b86ff]",
               },
             ].map((item) => (
               <div

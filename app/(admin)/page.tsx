@@ -239,6 +239,7 @@ export default function OverviewPage() {
       <OverviewHeader
         loading={loading}
         refreshing={refreshing}
+        lastUpdated={lastUpdated}
         onRefresh={() => void fetchOverview(true)}
       />
 

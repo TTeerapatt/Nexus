@@ -108,17 +108,17 @@ export default function VpsMain() {
               {
                 label: "Running",
                 value: summary.running,
-                tone: "text-[#15803d]",
+                tone: "text-[#34d399]",
               },
               {
                 label: "Stopped",
                 value: summary.stopped,
-                tone: "text-[#6b7280]",
+                tone: "text-[#94a3b8]",
               },
               {
                 label: "Other",
                 value: summary.other,
-                tone: "text-[#1d4ed8]",
+                tone: "text-[#5b86ff]",
               },
             ].map((item) => (
               <div

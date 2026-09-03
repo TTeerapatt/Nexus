@@ -135,6 +135,9 @@ export default function ProjectTable({
       data={projects}
       loading={loading}
       getRowKey={(project) => project.id}
+      title="Projects"
+      count={projects.length}
+      countLabel="projects"
       emptyText="No projects found"
       loadingText="Loading projects..."
     />

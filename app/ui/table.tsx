@@ -92,7 +92,7 @@ export default function DataTable<T>({
             ) : null}
           </div>
           {typeof count === "number" ? (
-            <span className="inline-flex items-center rounded-full bg-[var(--surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text-primary)]">
+            <span className="inline-flex items-center rounded-full bg-[rgba(91,134,255,0.16)] px-3 py-1.5 text-[13px] font-semibold text-[#b4c8ff] ring-1 ring-[rgba(91,134,255,0.28)]">
               {count} {countLabel}
             </span>
           ) : null}
@@ -122,7 +122,7 @@ export default function DataTable<T>({
               {paginatedData.map((row, index) => (
                 <tr
                   key={getRowKey(row, pageStartIndex + index)}
-                  className="border-b border-[var(--border)] transition hover:bg-[var(--surface)]"
+                  className="border-b border-[var(--border)] transition hover:bg-[var(--surface-soft)]"
                 >
                   {columns.map((column) => (
                     <td

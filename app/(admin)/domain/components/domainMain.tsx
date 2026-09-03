@@ -108,17 +108,17 @@ export default function DomainMain() {
               {
                 label: "Active",
                 value: summary.active,
-                tone: "text-[#15803d]",
+                tone: "text-[#34d399]",
               },
               {
                 label: "Expired",
                 value: summary.expired,
-                tone: "text-[#b91c1c]",
+                tone: "text-[#f87171]",
               },
               {
                 label: "Other",
                 value: summary.other,
-                tone: "text-[#1d4ed8]",
+                tone: "text-[#5b86ff]",
               },
             ].map((item) => (
               <div

@@ -110,6 +110,9 @@ export default function LogsTable({ logs, loading = false }: LogsTableProps) {
       data={logs}
       loading={loading}
       getRowKey={(log) => log.id}
+      title="Admin logs"
+      count={logs.length}
+      countLabel="logs"
       emptyText="No logs found"
       loadingText="Loading logs..."
     />

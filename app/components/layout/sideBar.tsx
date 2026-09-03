@@ -108,7 +108,7 @@ export default function SideBar() {
         </div>
       </div>
 
-      <nav className="min-h-0 flex-1 space-y-3 overflow-hidden px-3 py-3">
+      <nav className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-3">
         {hasDynamicMenu
           ? groups.map((group) => (
               <div key={group.label.code} className="space-y-1.5">
@@ -129,13 +129,13 @@ export default function SideBar() {
                       href={href}
                       className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition ${
                         isActive
-                          ? "bg-[var(--surface-raised)] text-white shadow-md"
-                          : "bg-[var(--surface-muted)] text-[var(--text-primary)] hover:bg-[var(--surface-soft)]"
+                          ? "bg-[rgba(91,134,255,0.16)] text-[#b4c8ff] shadow-sm ring-1 ring-[rgba(91,134,255,0.32)]"
+                          : "text-[var(--text-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
                       }`}
                     >
                       <Icon
                         className={`h-5 w-5 shrink-0 ${
-                          isActive ? "text-white" : "text-[var(--text-secondary)]"
+                          isActive ? "text-[#b4c8ff]" : "text-[var(--text-muted)]"
                         }`}
                       />
                       <span>{tab.name}</span>
@@ -157,13 +157,13 @@ export default function SideBar() {
                   href={item.href}
                   className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-semibold transition ${
                     isActive
-                      ? "bg-[var(--surface-raised)] text-white shadow-md"
-                      : "bg-[var(--surface-muted)] text-[var(--text-primary)] hover:bg-[var(--surface-soft)]"
+                      ? "bg-[rgba(91,134,255,0.16)] text-[#b4c8ff] shadow-sm ring-1 ring-[rgba(91,134,255,0.32)]"
+                      : "text-[var(--text-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
                   }`}
                 >
                   <Icon
                     className={`h-5 w-5 shrink-0 ${
-                      isActive ? "text-white" : "text-[var(--text-secondary)]"
+                      isActive ? "text-[#b4c8ff]" : "text-[var(--text-muted)]"
                     }`}
                   />
                   <span>{item.label}</span>

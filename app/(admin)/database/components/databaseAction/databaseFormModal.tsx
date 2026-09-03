@@ -369,7 +369,7 @@ export default function DatabaseFormModal({
           <button
             type="button"
             onClick={() => void handleSave()}
-            className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[var(--surface-raised)] px-5 text-[14px] font-semibold text-white transition hover:bg-[var(--surface-soft)]"
+            className="inline-flex h-11 cursor-pointer items-center rounded-xl bg-[var(--brand-primary)] px-5 text-[14px] font-semibold text-white transition hover:brightness-110"
           >
             {isEdit ? "Save changes" : "Create Database"}
           </button>

@@ -104,6 +104,9 @@ export default function AdminTable({
       data={admins}
       loading={loading}
       getRowKey={(admin) => admin.id}
+      title="Admins"
+      count={admins.length}
+      countLabel="admins"
       emptyText="No admins found"
       loadingText="Loading admins..."
     />

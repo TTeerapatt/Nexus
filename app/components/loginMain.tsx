@@ -340,7 +340,7 @@ export default function LoginMain() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[var(--surface-raised)] text-[15px] font-semibold text-white transition hover:bg-[var(--surface-soft)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-3 flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-[var(--brand-primary)] text-[15px] font-semibold text-white transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? "Signing in..." : "Sign in"}
               </button>

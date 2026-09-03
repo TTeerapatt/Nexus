@@ -25,7 +25,7 @@ export default function OverviewMetricCard({
   return (
     <Link
       href={href}
-      className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_8px_24px_rgba(36,46,66,0.06)] transition hover:-translate-y-0.5 hover:border-[#c7d7ff] hover:shadow-[0_10px_28px_rgba(36,46,66,0.1)]"
+      className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_8px_24px_rgba(36,46,66,0.06)] transition hover:-translate-y-0.5 hover:border-[rgba(91,134,255,0.45)] hover:shadow-[0_10px_28px_rgba(0,0,0,0.28)]"
     >
       <div className="flex items-start justify-between gap-3">
         <span

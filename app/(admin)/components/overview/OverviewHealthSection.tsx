@@ -78,6 +78,18 @@ export default function OverviewHealthSection({
     loading.domains ||
     loading.admins;
 
+  const hasIssues = !loading.jobs && failedJobs > 0;
+  const healthTitle = statusLoading
+    ? "Checking status"
+    : hasIssues
+      ? "Attention needed"
+      : "All systems healthy";
+  const healthSubtitle = statusLoading
+    ? "Loading status across connected services"
+    : hasIssues
+      ? `${failedJobs} CI/CD job${failedJobs === 1 ? "" : "s"} failed`
+      : "Current status across connected services";
+
   return (
     <section className="grid grid-cols-1 gap-5 xl:grid-cols-[1.15fr_0.85fr]">
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
@@ -87,12 +99,21 @@ export default function OverviewHealthSection({
               System health
             </h2>
             <p className="mt-1 text-[12px] text-[var(--text-muted)]">
-              Current status across connected services
+              {healthSubtitle}
             </p>
           </div>
-          <FiCheckCircle className="h-5 w-5 text-[#34d399]" />
+          {statusLoading ? (
+            <FiClock className="h-5 w-5 text-[var(--text-muted)]" />
+          ) : hasIssues ? (
+            <FiAlertCircle className="h-5 w-5 text-[#f87171]" />
+          ) : (
+            <FiCheckCircle className="h-5 w-5 text-[#34d399]" />
+          )}
         </div>
-        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <p className="mt-2 text-[12px] font-semibold text-[var(--text-secondary)]">
+          {healthTitle}
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <HealthRow
             label="VPS"
             value={loading.vps ? "—" : `${runningVps}/${overview.vps.length}`}
@@ -195,16 +216,24 @@ export default function OverviewHealthSection({
             </div>
           ))}
         </div>
-        <div className="mt-5 flex items-center gap-2 rounded-xl bg-[rgba(52,211,153,0.12)] px-4 py-3 text-[12px] font-medium text-[#6ee7b7]">
+        <div
+          className={`mt-5 flex items-center gap-2 rounded-xl px-4 py-3 text-[12px] font-medium ${
+            hasIssues
+              ? "bg-[rgba(248,113,113,0.12)] text-[#fca5a5]"
+              : "bg-[rgba(52,211,153,0.12)] text-[#6ee7b7]"
+          }`}
+        >
           <FiClock className="h-4 w-4 shrink-0" />
-          {statusLoading
-            ? (
-              <>
-                <span>Loading current status</span>
-                <LoadingDots className="text-[#6ee7b7]" />
-              </>
-            )
-            : `Last updated ${lastUpdated ? formatDateTime(lastUpdated) : "—"}`}
+          {statusLoading ? (
+            <>
+              <span>Loading current status</span>
+              <LoadingDots
+                className={hasIssues ? "text-[#fca5a5]" : "text-[#6ee7b7]"}
+              />
+            </>
+          ) : (
+            `Last updated ${lastUpdated ? formatDateTime(lastUpdated) : "—"}`
+          )}
         </div>
       </div>
     </section>

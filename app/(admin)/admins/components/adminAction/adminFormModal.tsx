@@ -593,7 +593,7 @@ export default function AdminCreateModal({
               type="button"
               onClick={() => void handleNext()}
               disabled={detailLoading}
-              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[var(--surface-raised)] px-5 text-[14px] font-semibold text-white transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 text-[14px] font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
               <FiArrowRight className="h-4 w-4" />
@@ -603,7 +603,7 @@ export default function AdminCreateModal({
               type="button"
               onClick={() => void handleConfirmSave()}
               disabled={detailLoading}
-              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[#16a34a] px-5 text-[14px] font-semibold text-white transition hover:bg-[#15803d] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 text-[14px] font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <FiCheck className="h-4 w-4" />
               {isEdit ? "Confirm update" : "Confirm create"}
