@@ -58,38 +58,67 @@ export default function CiCdMain() {
   const [loading, setLoading] = useState(true);
   const lastHandledAtRef = useRef<string | null>(null);
   const appliedSnapshotRef = useRef(false);
+  const syncInFlightRef = useRef(false);
 
   const { lastEvent, snapshot, connected } = useDeployStream({
     enabled: !loading,
   });
 
-  const fetchJobs = useCallback(async () => {
-    setLoading(true);
-
-    try {
-      const result = (await ciCdAPI.getJobs()) as JobListApiResult;
-
-      if (!result || result.status === "failed" || result.success === false) {
-        const message =
-          result?.errMessage ||
-          result?.message ||
-          "Unable to fetch CI-CD jobs";
-        await popup.error("Error", message);
-        setJobs([]);
-        return;
+  const fetchJobs = useCallback(
+    async (opts?: { background?: boolean; silent?: boolean }) => {
+      const background = opts?.background === true;
+      const silent = opts?.silent === true;
+      if (syncInFlightRef.current) return;
+      syncInFlightRef.current = true;
+      if (!background) {
+        setLoading(true);
       }
 
-      setJobs(Array.isArray(result.data) ? result.data : []);
-    } catch {
-      await popup.error("Error", "Unable to fetch CI-CD jobs");
-      setJobs([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const result = (await ciCdAPI.getJobs()) as JobListApiResult;
+
+        if (!result || result.status === "failed" || result.success === false) {
+          const message =
+            result?.errMessage ||
+            result?.message ||
+            "Unable to fetch CI-CD jobs";
+          if (!silent) {
+            await popup.error("Error", message);
+          }
+          if (!background) {
+            setJobs([]);
+          }
+          return;
+        }
+
+        setJobs(Array.isArray(result.data) ? result.data : []);
+      } catch {
+        if (!silent) {
+          await popup.error("Error", "Unable to fetch CI-CD jobs");
+        }
+        if (!background) {
+          setJobs([]);
+        }
+      } finally {
+        if (!background) {
+          setLoading(false);
+        }
+        syncInFlightRef.current = false;
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     void fetchJobs();
+  }, [fetchJobs]);
+
+  // Fallback sync: keep UI fresh even when webhook events are delayed/missed
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      void fetchJobs({ background: true, silent: true });
+    }, 8000);
+    return () => window.clearInterval(timer);
   }, [fetchJobs]);
 
   // Apply in-memory webhook snapshot once after SSE connects

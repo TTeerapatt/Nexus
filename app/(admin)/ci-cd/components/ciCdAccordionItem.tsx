@@ -426,6 +426,16 @@ export default function CiCdAccordionItem({
       : job.status;
   const isRunning = isRunningStatus(displayStatus);
 
+  // Fallback refresh for running jobs in case webhook delivery is delayed.
+  useEffect(() => {
+    if (!open || !isRunning) return;
+    const timer = window.setInterval(() => {
+      void loadDetail({ force: true, silent: true });
+    }, 8000);
+    return () => window.clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadDetail depends on component state
+  }, [open, isRunning, job.name]);
+
   return (
     <div
       className={`relative overflow-hidden rounded-2xl border bg-[var(--surface)] transition duration-300 ${
