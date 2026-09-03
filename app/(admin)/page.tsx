@@ -40,7 +40,6 @@ const CHART_COLORS = {
   running: "#2563eb",
   failed: "#dc2626",
   other: "#94a3b8",
-  stopped: "#ea580c",
   active: "#0891b2",
   inactive: "#cbd5e1",
 } as const;
@@ -49,15 +48,6 @@ const ACTIVE_INACTIVE_LEGEND: ChartSlice[] = [
   { label: "Active", value: 0, color: CHART_COLORS.active },
   { label: "Inactive", value: 0, color: CHART_COLORS.inactive },
 ];
-
-const ENGINE_BAR_COLORS = [
-  "bg-[#0891b2]",
-  "bg-[#2563eb]",
-  "bg-[#16a34a]",
-  "bg-[#d97706]",
-  "bg-[#7c3aed]",
-  "bg-[#e11d48]",
-] as const;
 
 type OverviewLoadingState = {
   projects: boolean;
@@ -213,45 +203,6 @@ export default function OverviewPage() {
     ].filter((item) => item.value > 0);
   }, [overview.jobs]);
 
-  const vpsStateDistribution = useMemo<ChartSlice[]>(() => {
-    let running = 0;
-    let stopped = 0;
-    let other = 0;
-
-    for (const vm of overview.vps) {
-      const state = getStatus(vm.state);
-      if (state === "running") running += 1;
-      else if (state === "stopped" || state === "off") stopped += 1;
-      else other += 1;
-    }
-
-    return [
-      { label: "Running", value: running, color: CHART_COLORS.running },
-      { label: "Stopped", value: stopped, color: CHART_COLORS.stopped },
-      { label: "Other", value: other, color: CHART_COLORS.other },
-    ].filter((item) => item.value > 0);
-  }, [overview.vps]);
-
-  const databaseEngineDistribution = useMemo<DistributionItem[]>(() => {
-    const counts = new Map<string, number>();
-
-    for (const database of overview.databases) {
-      const label =
-        database.all_database_name ||
-        database.all_database_code ||
-        "Other";
-      counts.set(label, (counts.get(label) || 0) + 1);
-    }
-
-    return Array.from(counts.entries())
-      .sort(([, a], [, b]) => b - a)
-      .map(([label, value], index) => ({
-        label,
-        value,
-        color: ENGINE_BAR_COLORS[index % ENGINE_BAR_COLORS.length],
-      }));
-  }, [overview.databases]);
-
   const activeInactiveGroups = useMemo<StackedBarGroup[]>(() => {
     const buildGroup = (
       label: string,
@@ -350,23 +301,6 @@ export default function OverviewPage() {
           emptyText="No CI/CD job data available"
           loading={loadingSections.jobs}
           centerLabel="Jobs"
-        />
-        <OverviewDonutChart
-          title="VPS state mix"
-          subtitle="Running, stopped, and other VM states"
-          items={vpsStateDistribution}
-          emptyText="No VPS data available"
-          loading={loadingSections.vps}
-          centerLabel="VMs"
-        />
-      </section>
-
-      <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-        <OverviewDistributionChart
-          title="Databases by engine"
-          items={databaseEngineDistribution}
-          emptyText="No database data available"
-          loading={loadingSections.databases}
         />
         <OverviewStackedBarChart
           title="Active vs inactive"
