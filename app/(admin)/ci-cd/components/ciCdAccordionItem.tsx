@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   FiActivity,
   FiChevronDown,
@@ -9,7 +9,6 @@ import {
   FiLoader,
 } from "react-icons/fi";
 import { GoWorkflow } from "react-icons/go";
-import type { DeployStreamEvent } from "@/app/hooks/useDeployStream";
 import ciCdAPI, {
   type CiCdBuildItem,
   type CiCdBuildStages,
@@ -157,13 +156,9 @@ function stageCacheKey(buildNumber: number, stageId: string) {
 
 type CiCdAccordionItemProps = {
   job: CiCdJobItem;
-  liveEvent?: DeployStreamEvent | null;
 };
 
-export default function CiCdAccordionItem({
-  job,
-  liveEvent = null,
-}: CiCdAccordionItemProps) {
+export default function CiCdAccordionItem({ job }: CiCdAccordionItemProps) {
   const isRunning = isRunningStatus(job.status);
   const [open, setOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -187,7 +182,6 @@ export default function CiCdAccordionItem({
   const [stageLogError, setStageLogError] = useState<string | undefined>();
   const [stageConsoleUrl, setStageConsoleUrl] = useState<string | null>(null);
   const [stageLogCache, setStageLogCache] = useState<StageLogCache>({});
-  const lastLiveKeyRef = useRef<string | null>(null);
 
   const clearStageLog = () => {
     setSelectedStage(null);
@@ -216,46 +210,26 @@ export default function CiCdAccordionItem({
     clearStageLog();
   };
 
-  const loadDetail = async (opts?: { force?: boolean; silent?: boolean }) => {
-    const force = opts?.force === true;
-    const silent = opts?.silent === true;
-    if (!force && (loaded || loadingDetail)) return;
-    if (force && loadingDetail) return;
+  const loadDetail = async () => {
+    if (loaded || loadingDetail) return;
 
     setLoadingDetail(true);
     try {
-      const preferredBuild =
-        liveEvent?.jobName === job.name ? liveEvent.buildNumber : undefined;
-      const result = (await ciCdAPI.getJobByName(
-        job.name,
-        preferredBuild
-      )) as DetailApiResult;
+      const result = (await ciCdAPI.getJobByName(job.name)) as DetailApiResult;
 
       if (!result || result.status === "failed" || result.success === false) {
         const message =
           result?.errMessage ||
           result?.message ||
           "Unable to fetch job pipeline";
-        if (!silent) {
-          await popup.error("Error", message);
-        }
-        if (!force) setDetail(null);
+        await popup.error("Error", message);
+        setDetail(null);
         return;
       }
 
       const data = result.data ?? null;
       setDetail(data);
       setLoaded(true);
-
-      // Invalidate stage cache for the live build so UI can pick up stage changes
-      if (preferredBuild != null) {
-        setStagesCache((prev) => {
-          if (!(preferredBuild in prev)) return prev;
-          const next = { ...prev };
-          delete next[preferredBuild];
-          return next;
-        });
-      }
 
       if (data?.selectedBuildNumber != null) {
         applyStages(
@@ -271,23 +245,12 @@ export default function CiCdAccordionItem({
         clearStageLog();
       }
     } catch {
-      if (!silent) {
-        await popup.error("Error", "Unable to fetch job pipeline");
-      }
-      if (!force) setDetail(null);
+      await popup.error("Error", "Unable to fetch job pipeline");
+      setDetail(null);
     } finally {
       setLoadingDetail(false);
     }
   };
-
-  useEffect(() => {
-    if (!liveEvent || liveEvent.jobName !== job.name || !open) return;
-    const key = `${liveEvent.buildNumber}:${liveEvent.status}:${liveEvent.phase}:${liveEvent.stage ?? ""}:${liveEvent.timestamp}`;
-    if (lastLiveKeyRef.current === key) return;
-    lastLiveKeyRef.current = key;
-    void loadDetail({ force: true, silent: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh only when live event fingerprint changes
-  }, [liveEvent, job.name, open]);
 
   const handleSelectBuild = async (build: CiCdBuildItem) => {
     if (loadingBuild || loadingStageId) return;
@@ -404,7 +367,7 @@ export default function CiCdAccordionItem({
     const next = !open;
     setOpen(next);
     if (next) {
-      await loadDetail({ force: loaded });
+      await loadDetail();
     }
   };
 
@@ -454,22 +417,11 @@ export default function CiCdAccordionItem({
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          {liveEvent?.stage ? (
-            <span className="hidden max-w-[140px] truncate text-[11px] text-[var(--text-muted)] sm:inline">
-              {liveEvent.stage}
-            </span>
-          ) : null}
           <span
-            className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition-colors duration-300 ${statusBadgeClass(job.status)}`}
+            className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold ${statusBadgeClass(job.status)}`}
           >
             {isRunning ? <FiLoader className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
-            {job.status === "running"
-              ? "กำลัง Deploy"
-              : job.status === "success"
-                ? "สำเร็จ"
-                : job.status === "failed"
-                  ? "ล้มเหลว"
-                  : statusLabel(job.status)}
+            {statusLabel(job.status)}
           </span>
           <span
             className={`flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-[var(--text-secondary)] transition-transform duration-300 ${

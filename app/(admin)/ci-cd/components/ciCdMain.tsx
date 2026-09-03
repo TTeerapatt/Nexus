@@ -1,12 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 import { GoWorkflow } from "react-icons/go";
-import {
-  useDeployStream,
-  type DeployStreamEvent,
-} from "@/app/hooks/useDeployStream";
 import ciCdAPI, { type CiCdJobItem } from "@/app/services/ciCd/ciCdAPI";
 import { popup } from "@/app/ui/popUp";
 import CiCdAccordionItem from "./ciCdAccordionItem";
@@ -22,48 +18,10 @@ type JobListApiResult =
   | null
   | undefined;
 
-function applyDeployEventToJobs(
-  jobs: CiCdJobItem[],
-  event: DeployStreamEvent
-): CiCdJobItem[] {
-  let found = false;
-  const next = jobs.map((job) => {
-    if (job.name !== event.jobName) return job;
-    found = true;
-    if (job.status === event.jobStatus && job.color === event.color) {
-      return job;
-    }
-    return {
-      ...job,
-      status: event.jobStatus,
-      color: event.color,
-    };
-  });
-
-  if (found) return next;
-
-  // Job not yet in list — append a lightweight card until next full refresh
-  return [
-    ...next,
-    {
-      name: event.jobName,
-      url: "",
-      color: event.color,
-      status: event.jobStatus,
-    },
-  ];
-}
-
 export default function CiCdMain() {
   const [jobs, setJobs] = useState<CiCdJobItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const lastHandledAtRef = useRef<string | null>(null);
-  const appliedSnapshotRef = useRef(false);
-
-  const { lastEvent, snapshot, connected } = useDeployStream({
-    enabled: !loading,
-  });
 
   const fetchJobs = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
@@ -96,27 +54,6 @@ export default function CiCdMain() {
     void fetchJobs();
   }, [fetchJobs]);
 
-  // Apply in-memory webhook snapshot once after SSE connects
-  useEffect(() => {
-    if (appliedSnapshotRef.current || !snapshot.length) return;
-    appliedSnapshotRef.current = true;
-    setJobs((prev) => {
-      let next = prev;
-      for (const event of snapshot) {
-        next = applyDeployEventToJobs(next, event);
-      }
-      return next;
-    });
-  }, [snapshot]);
-
-  useEffect(() => {
-    if (!lastEvent) return;
-    const key = `${lastEvent.jobName}:${lastEvent.buildNumber}:${lastEvent.status}:${lastEvent.timestamp}`;
-    if (lastHandledAtRef.current === key) return;
-    lastHandledAtRef.current = key;
-    setJobs((prev) => applyDeployEventToJobs(prev, lastEvent));
-  }, [lastEvent]);
-
   const summary = useMemo(() => {
     const total = jobs.length;
     const success = jobs.filter((j) => j.status === "success").length;
@@ -124,17 +61,6 @@ export default function CiCdMain() {
     const running = jobs.filter((j) => j.status === "running").length;
     return { total, success, failed, running };
   }, [jobs]);
-
-  const liveByJob = useMemo(() => {
-    const map = new Map<string, DeployStreamEvent>();
-    for (const event of snapshot) {
-      map.set(event.jobName, event);
-    }
-    if (lastEvent) {
-      map.set(lastEvent.jobName, lastEvent);
-    }
-    return map;
-  }, [snapshot, lastEvent]);
 
   return (
     <div className="space-y-5">
@@ -148,20 +74,10 @@ export default function CiCdMain() {
               <h1 className="text-[24px] font-bold tracking-tight text-[var(--text-primary)]">
                 Jenkins CI/CD
               </h1>
-              <p className="mt-1 flex items-center gap-2 text-[13px] text-[var(--text-muted)]">
-                <span
-                  className={`inline-flex h-2 w-2 rounded-full ${
-                    connected
-                      ? "bg-[#22c55e] shadow-[0_0_0_4px_rgba(34,197,94,0.18)]"
-                      : "bg-[#94a3b8]"
-                  }`}
-                />
-                {connected ? "Live updates connected" : "Connecting live updates…"}
-              </p>
             </div>
           </div>
 
-          <button
+          {/* <button
             type="button"
             onClick={() => void fetchJobs(true)}
             disabled={loading || refreshing}
@@ -171,7 +87,7 @@ export default function CiCdMain() {
               className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
             />
             Refresh
-          </button>
+          </button> */}
         </div>
 
         {!loading && jobs.length > 0 ? (
@@ -236,11 +152,7 @@ export default function CiCdMain() {
       ) : (
         <div className="space-y-3">
           {jobs.map((job) => (
-            <CiCdAccordionItem
-              key={job.name}
-              job={job}
-              liveEvent={liveByJob.get(job.name) ?? null}
-            />
+            <CiCdAccordionItem key={job.name} job={job} />
           ))}
         </div>
       )}
