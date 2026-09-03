@@ -125,6 +125,7 @@ type CiCdPipelineProps = {
   emptyMessage?: string;
   selectedStageId?: string | null;
   loadingStageId?: string | null;
+  running?: boolean;
   onStageClick?: (stage: CiCdStageItem) => void;
 };
 
@@ -133,6 +134,7 @@ export default function CiCdPipeline({
   emptyMessage,
   selectedStageId,
   loadingStageId,
+  running = false,
   onStageClick,
 }: CiCdPipelineProps) {
   if (!stages.length) {
@@ -146,7 +148,20 @@ export default function CiCdPipeline({
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface)]/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+    <div
+      className={`relative overflow-hidden rounded-2xl border bg-[var(--surface)]/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] ${
+        running
+          ? "ci-cd-running-card border-transparent"
+          : "border-[var(--border)]"
+      }`}
+    >
+      {running ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-10 rounded-2xl ci-cd-running-border"
+        />
+      ) : null}
+      <div className="overflow-x-auto p-4">
       <ol className="flex min-w-max items-start px-2 py-3">
         {stages.map((stage, index) => {
           const kind = stageKind(stage.status);
@@ -229,6 +244,7 @@ export default function CiCdPipeline({
           );
         })}
       </ol>
+      </div>
     </div>
   );
 }

@@ -48,6 +48,15 @@ function isRunningStatus(status: JenkinsJobStatus): boolean {
   return status === "running";
 }
 
+function isStageRunning(status: string): boolean {
+  const value = status.trim().toUpperCase();
+  return (
+    value === "IN_PROGRESS" ||
+    value === "RUNNING" ||
+    value === "PAUSED_PENDING_INPUT"
+  );
+}
+
 function statusDotClass(status: JenkinsJobStatus): string {
   switch (status) {
     case "success":
@@ -164,7 +173,6 @@ export default function CiCdAccordionItem({
   job,
   liveEvent = null,
 }: CiCdAccordionItemProps) {
-  const isRunning = isRunningStatus(job.status);
   const [open, setOpen] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingBuild, setLoadingBuild] = useState(false);
@@ -409,6 +417,14 @@ export default function CiCdAccordionItem({
   };
 
   const builds: CiCdBuildItem[] = detail?.builds || [];
+  const pipelineRunning = stages.some((stage) => isStageRunning(stage.status));
+  const displayStatus: JenkinsJobStatus =
+    liveEvent?.status === "in_progress" ||
+    pipelineRunning ||
+    builds.some((build) => build.building)
+      ? "running"
+      : job.status;
+  const isRunning = isRunningStatus(displayStatus);
 
   return (
     <div
@@ -438,7 +454,7 @@ export default function CiCdAccordionItem({
           ) : null}
           <GoWorkflow className="h-5 w-5" />
           <span
-            className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ${statusDotClass(job.status)}`}
+            className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full ${statusDotClass(displayStatus)}`}
           />
         </div>
 
@@ -454,22 +470,11 @@ export default function CiCdAccordionItem({
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
-          {liveEvent?.stage ? (
-            <span className="hidden max-w-[140px] truncate text-[11px] text-[var(--text-muted)] sm:inline">
-              {liveEvent.stage}
-            </span>
-          ) : null}
           <span
-            className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition-colors duration-300 ${statusBadgeClass(job.status)}`}
+            className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition-colors duration-300 ${statusBadgeClass(displayStatus)}`}
           >
             {isRunning ? <FiLoader className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
-            {job.status === "running"
-              ? "กำลัง Deploy"
-              : job.status === "success"
-                ? "สำเร็จ"
-                : job.status === "failed"
-                  ? "ล้มเหลว"
-                  : statusLabel(job.status)}
+            {statusLabel(displayStatus)}
           </span>
           <span
             className={`flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--surface-muted)] text-[var(--text-secondary)] transition-transform duration-300 ${
@@ -590,6 +595,7 @@ export default function CiCdAccordionItem({
                       emptyMessage={stagesMessage}
                       selectedStageId={selectedStage?.id ?? null}
                       loadingStageId={loadingStageId}
+                      running={pipelineRunning}
                       onStageClick={(stage) => void handleStageClick(stage)}
                     />
                   </div>
