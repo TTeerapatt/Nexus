@@ -1,7 +1,24 @@
 "use client";
 
-import { LoadingDots } from "@/app/components/loading";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { DistributionItem } from "./overviewTypes";
+import {
+  CHART_ANIMATION_MS,
+  OverviewChartShell,
+  chartAxisTick,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+  chartTooltipStyle,
+} from "./overviewChartShared";
 
 type OverviewDistributionChartProps = {
   title: string;
@@ -16,39 +33,63 @@ export default function OverviewDistributionChart({
   emptyText,
   loading = false,
 }: OverviewDistributionChartProps) {
-  const maxValue = Math.max(...items.map((item) => item.value), 1);
+  const chartHeight = Math.max(180, items.length * 44 + 40);
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
-      <h2 className="text-[16px] font-bold text-[var(--text-primary)]">{title}</h2>
-      {loading ? (
-        <div className="flex min-h-[92px] items-center justify-center text-[var(--brand-primary)]">
-          <LoadingDots />
-        </div>
-      ) : items.length === 0 ? (
-        <p className="mt-8 text-center text-[13px] text-[var(--text-muted)]">
-          {emptyText}
-        </p>
-      ) : (
-        <div className="mt-5 space-y-4">
-          {items.map((item) => (
-            <div key={item.label}>
-              <div className="mb-1.5 flex items-center justify-between gap-3 text-[13px]">
-                <span className="font-medium text-[var(--text-secondary)]">{item.label}</span>
-                <span className="font-bold text-[var(--text-primary)]">{item.value}</span>
-              </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-[var(--surface-soft)]">
-                <div
-                  className={`h-full rounded-full ${item.color}`}
-                  style={{
-                    width: `${Math.max((item.value / maxValue) * 100, 4)}%`,
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
+    <OverviewChartShell
+      title={title}
+      loading={loading}
+      empty={items.length === 0}
+      emptyText={emptyText}
+      minHeight={chartHeight}
+    >
+      <ResponsiveContainer width="100%" height={chartHeight}>
+        <BarChart
+          layout="vertical"
+          data={items}
+          margin={{ top: 4, right: 16, left: 4, bottom: 0 }}
+          barCategoryGap="28%"
+        >
+          <CartesianGrid
+            stroke="var(--border)"
+            strokeDasharray="3 3"
+            horizontal={false}
+          />
+          <XAxis
+            type="number"
+            allowDecimals={false}
+            tick={chartAxisTick}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            type="category"
+            dataKey="label"
+            width={88}
+            tick={chartAxisTick}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip
+            cursor={{ fill: "var(--surface-soft)", opacity: 0.55 }}
+            contentStyle={chartTooltipStyle}
+            labelStyle={chartTooltipLabelStyle}
+            itemStyle={chartTooltipItemStyle}
+            formatter={(value) => [value, "Count"]}
+          />
+          <Bar
+            dataKey="value"
+            radius={[0, 8, 8, 0]}
+            isAnimationActive
+            animationBegin={0}
+            animationDuration={CHART_ANIMATION_MS}
+          >
+            {items.map((item) => (
+              <Cell key={item.label} fill={item.color} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </OverviewChartShell>
   );
 }

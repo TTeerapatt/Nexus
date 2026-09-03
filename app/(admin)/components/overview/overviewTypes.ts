@@ -22,18 +22,15 @@ export type OverviewData = {
   vps: VpsVirtualMachine[];
 };
 
+/** Chart slice — `color` is a CSS color (hex) for Recharts. */
 export type DistributionItem = {
   label: string;
   value: number;
   color: string;
 };
 
-/** Slice for SVG / stacked charts — `color` is a CSS color (hex). */
-export type ChartSlice = {
-  label: string;
-  value: number;
-  color: string;
-};
+/** Alias kept for donut / stacked chart call sites. */
+export type ChartSlice = DistributionItem;
 
 export type StackedBarGroup = {
   label: string;

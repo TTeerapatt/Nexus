@@ -1,7 +1,25 @@
 "use client";
 
-import { LoadingDots } from "@/app/components/loading";
+import { useMemo } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { ChartSlice, StackedBarGroup } from "./overviewTypes";
+import {
+  CHART_ANIMATION_MS,
+  OverviewChartShell,
+  chartAxisTick,
+  chartTooltipItemStyle,
+  chartTooltipLabelStyle,
+  chartTooltipStyle,
+} from "./overviewChartShared";
 
 type OverviewStackedBarChartProps = {
   title: string;
@@ -24,105 +42,97 @@ export default function OverviewStackedBarChart({
     group.segments.some((segment) => segment.value > 0)
   );
 
+  const chartData = useMemo(
+    () =>
+      groups.map((group) => {
+        const row: Record<string, string | number> = { name: group.label };
+        for (const segment of group.segments) {
+          row[segment.label] = segment.value;
+        }
+        return row;
+      }),
+    [groups]
+  );
+
+  const series = useMemo(() => {
+    const keys = new Map<string, string>();
+    for (const group of groups) {
+      for (const segment of group.segments) {
+        keys.set(segment.label, segment.color);
+      }
+    }
+    for (const item of legend) {
+      if (!keys.has(item.label)) keys.set(item.label, item.color);
+    }
+    return Array.from(keys.entries()).map(([key, color]) => ({ key, color }));
+  }, [groups, legend]);
+
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-[16px] font-bold text-[var(--text-primary)]">
-            {title}
-          </h2>
-          {subtitle ? (
-            <p className="mt-1 text-[12px] text-[var(--text-muted)]">{subtitle}</p>
-          ) : null}
-        </div>
-        {!loading && hasData ? (
-          <ul className="flex flex-wrap items-center gap-3">
-            {legend.map((item) => (
-              <li
-                key={item.label}
-                className="flex items-center gap-1.5 text-[12px] font-medium text-[var(--text-secondary)]"
-              >
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ backgroundColor: item.color }}
-                />
-                {item.label}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-      </div>
-
-      {loading ? (
-        <div className="flex min-h-[180px] items-center justify-center text-[var(--brand-primary)]">
-          <LoadingDots />
-        </div>
-      ) : !hasData ? (
-        <p className="mt-12 text-center text-[13px] text-[var(--text-muted)]">
-          {emptyText}
-        </p>
-      ) : (
-        <div className="mt-6 space-y-5">
-          {groups.map((group) => {
-            const total = group.segments.reduce(
-              (sum, segment) => sum + segment.value,
-              0
-            );
-            const active = group.segments.find(
-              (segment) => segment.label.toLowerCase() === "active"
-            )?.value;
-            const activePercent =
-              total > 0 && typeof active === "number"
-                ? Math.round((active / total) * 100)
-                : null;
-
-            return (
-              <div key={group.label}>
-                <div className="mb-1.5 flex items-center justify-between gap-3 text-[13px]">
-                  <span className="font-medium text-[var(--text-secondary)]">
-                    {group.label}
-                  </span>
-                  <span className="font-bold text-[var(--text-primary)]">
-                    {total}
-                    {activePercent !== null ? (
-                      <span className="ml-1.5 font-medium text-[var(--text-muted)]">
-                        {activePercent}% active
-                      </span>
-                    ) : null}
-                  </span>
-                </div>
-                <div className="flex h-3 overflow-hidden rounded-full bg-[var(--surface-soft)]">
-                  {group.segments.map((segment) => {
-                    if (segment.value <= 0 || total <= 0) return null;
-                    const width = (segment.value / total) * 100;
-                    return (
-                      <div
-                        key={`${group.label}-${segment.label}`}
-                        className="h-full first:rounded-l-full last:rounded-r-full"
-                        style={{
-                          width: `${Math.max(width, 2)}%`,
-                          backgroundColor: segment.color,
-                        }}
-                        title={`${segment.label}: ${segment.value}`}
-                      />
-                    );
-                  })}
-                </div>
-                <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[var(--text-muted)]">
-                  {group.segments.map((segment) => (
-                    <span key={`${group.label}-${segment.label}-meta`}>
-                      {segment.label}:{" "}
-                      <span className="font-semibold text-[var(--text-secondary)]">
-                        {segment.value}
-                      </span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </section>
+    <OverviewChartShell
+      title={title}
+      subtitle={subtitle}
+      loading={loading}
+      empty={!hasData}
+      emptyText={emptyText}
+      minHeight={240}
+    >
+      <ResponsiveContainer width="100%" height={240}>
+        <BarChart
+          data={chartData}
+          margin={{ top: 8, right: 8, left: -8, bottom: 0 }}
+          barCategoryGap="28%"
+        >
+          <CartesianGrid
+            stroke="var(--border)"
+            strokeDasharray="3 3"
+            vertical={false}
+          />
+          <XAxis
+            dataKey="name"
+            tick={chartAxisTick}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            allowDecimals={false}
+            tick={chartAxisTick}
+            axisLine={false}
+            tickLine={false}
+            width={32}
+          />
+          <Tooltip
+            cursor={{ fill: "var(--surface-soft)", opacity: 0.55 }}
+            contentStyle={chartTooltipStyle}
+            labelStyle={chartTooltipLabelStyle}
+            itemStyle={chartTooltipItemStyle}
+          />
+          <Legend
+            verticalAlign="top"
+            align="right"
+            iconType="circle"
+            iconSize={8}
+            wrapperStyle={{
+              fontSize: 12,
+              color: "var(--text-secondary)",
+              paddingBottom: 8,
+            }}
+          />
+          {series.map((item, index) => (
+            <Bar
+              key={item.key}
+              dataKey={item.key}
+              stackId="status"
+              fill={item.color}
+              radius={
+                index === series.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]
+              }
+              isAnimationActive
+              animationBegin={index * 80}
+              animationDuration={CHART_ANIMATION_MS}
+            />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    </OverviewChartShell>
   );
 }

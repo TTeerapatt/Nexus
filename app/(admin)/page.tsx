@@ -153,18 +153,13 @@ export default function OverviewPage() {
     ).length;
 
     return [
-      { label: "Project", value: projectCount, color: "bg-[#0891b2]" },
-      { label: "Service", value: serviceCount, color: "bg-[#e11d48]" },
+      { label: "Project", value: projectCount, color: "#0891b2" },
+      { label: "Service", value: serviceCount, color: "#e11d48" },
     ].filter((item) => item.value > 0);
   }, [overview.projects]);
 
   const portDistribution = useMemo<DistributionItem[]>(() => {
-    const colors = [
-      "bg-[#2563eb]",
-      "bg-[#d97706]",
-      "bg-[#16a34a]",
-      "bg-[#7c3aed]",
-    ];
+    const colors = ["#2563eb", "#d97706", "#16a34a", "#7c3aed"];
     const counts = new Map<string, number>();
 
     for (const port of overview.ports) {
