@@ -22,12 +22,55 @@ type LoadingContextValue = {
 
 const LoadingContext = createContext<LoadingContextValue | null>(null);
 
+function normalizeAppPath(path: string): string {
+  const trimmed = path.trim();
+  if (!trimmed || trimmed === "/") return "/";
+  return trimmed.length > 1 && trimmed.endsWith("/")
+    ? trimmed.slice(0, -1)
+    : trimmed;
+}
+
+/**
+ * usePathname() omits Next.js basePath (e.g. "/vps"),
+ * while DOM <a href> includes it (e.g. "/nexus/vps").
+ * Strip basePath before comparing so same-tab clicks don't stick loading.
+ */
+function toAppPath(pathnameFromHref: string, routerPathname: string): string {
+  const full = normalizeAppPath(pathnameFromHref);
+  const current = normalizeAppPath(routerPathname);
+
+  if (typeof window === "undefined") return full;
+
+  const locationPath = normalizeAppPath(window.location.pathname);
+  let basePath = "";
+
+  if (current === "/") {
+    basePath =
+      locationPath === "/"
+        ? ""
+        : locationPath.endsWith("/")
+          ? locationPath.slice(0, -1)
+          : locationPath;
+  } else if (locationPath.endsWith(current)) {
+    basePath = locationPath.slice(0, locationPath.length - current.length);
+  }
+
+  if (basePath && (full === basePath || full.startsWith(`${basePath}/`))) {
+    return normalizeAppPath(full.slice(basePath.length) || "/");
+  }
+
+  return full;
+}
+
 export function LoadingProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [manualCount, setManualCount] = useState(0);
   const [routeLoading, setRouteLoading] = useState(false);
   const [message, setMessage] = useState("Loading...");
   const routeTimerRef = useRef<number | null>(null);
+  const pathnameRef = useRef(pathname);
+
+  pathnameRef.current = pathname;
 
   const clearRouteTimer = useCallback(() => {
     if (routeTimerRef.current !== null) {
@@ -68,6 +111,11 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const handleClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+
       const target = event.target as HTMLElement | null;
       const anchor = target?.closest("a[href]");
       if (!anchor || anchor.getAttribute("target") === "_blank") return;
@@ -82,16 +130,24 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      let nextPath = href;
+      let hrefPathname = href;
       try {
         const url = new URL(href, window.location.origin);
         if (url.origin !== window.location.origin) return;
-        nextPath = url.pathname;
+        hrefPathname = url.pathname;
       } catch {
         return;
       }
 
-      if (nextPath === pathname) return;
+      const nextPath = toAppPath(hrefPathname, pathnameRef.current);
+      const currentPath = normalizeAppPath(pathnameRef.current);
+
+      // Same page — clear any pending overlay so it never sticks.
+      if (nextPath === currentPath) {
+        setRouteLoading(false);
+        clearRouteTimer();
+        return;
+      }
 
       setMessage("Changing page...");
       setRouteLoading(true);
@@ -99,7 +155,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
       routeTimerRef.current = window.setTimeout(() => {
         setRouteLoading(false);
         routeTimerRef.current = null;
-      }, 10000);
+      }, 8000);
     };
 
     document.addEventListener("click", handleClick, true);
@@ -107,7 +163,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
       document.removeEventListener("click", handleClick, true);
       clearRouteTimer();
     };
-  }, [pathname, clearRouteTimer]);
+  }, [clearRouteTimer]);
 
   const value = useMemo<LoadingContextValue>(
     () => ({

@@ -12,6 +12,17 @@ import {
   FiSquare,
   FiWifi,
 } from "react-icons/fi";
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  YAxis,
+} from "recharts";
+import {
+  CHART_ANIMATION_MS,
+  downsamplePoints,
+  prefersReducedMotion,
+} from "@/app/lib/chartPerf";
 import { getStatusTone, ICON_TONE } from "@/app/lib/uiTone";
 import vpsAPI, {
   type VpsMetricSeries,
@@ -21,6 +32,8 @@ import vpsAPI, {
 } from "@/app/services/vps/vpsAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
+
+const SPARKLINE_MAX_POINTS = 40;
 
 type VpsCardProps = {
   vm: VpsVirtualMachine;
@@ -139,92 +152,84 @@ const METRIC_TONES: Record<string, MetricTone> = {
 function MetricSparkline({
   points,
   tone,
+  gradientId,
+  animationIndex = 0,
 }: {
   points: Array<{ timestamp: number; value: number }>;
   tone: MetricTone;
+  gradientId: string;
+  animationIndex?: number;
 }) {
-  const geometry = useMemo(() => {
-    if (!points.length) return null;
+  const reduceMotion = useMemo(() => prefersReducedMotion(), []);
+  const data = useMemo(
+    () =>
+      downsamplePoints(points, SPARKLINE_MAX_POINTS).map((point, index) => ({
+        index,
+        value: point.value,
+      })),
+    [points]
+  );
 
-    const width = 320;
-    const height = 84;
-    const padX = 4;
-    const padY = 8;
-    const values = points.map((p) => p.value);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const span = max - min || 1;
+  // Remount when series changes so the draw animation plays again.
+  const chartKey = useMemo(() => {
+    if (!data.length) return "empty";
+    const last = data[data.length - 1];
+    return `${data.length}-${last.value}-${points[points.length - 1]?.timestamp ?? 0}`;
+  }, [data, points]);
 
-    const coords = points.map((point, index) => {
-      const x =
-        padX +
-        (points.length === 1
-          ? (width - padX * 2) / 2
-          : (index / (points.length - 1)) * (width - padX * 2));
-      const y =
-        height - padY - ((point.value - min) / span) * (height - padY * 2);
-      return { x, y };
-    });
-
-    const linePath = coords
-      .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
-      .join(" ");
-
-    const areaPath = [
-      `M ${coords[0].x} ${height - padY}`,
-      ...coords.map((point) => `L ${point.x} ${point.y}`),
-      `L ${coords[coords.length - 1].x} ${height - padY}`,
-      "Z",
-    ].join(" ");
-
-    const last = coords[coords.length - 1];
-
-    return { width, height, linePath, areaPath, last };
-  }, [points]);
-
-  if (!geometry) {
+  if (!data.length) {
     return (
-      <div className="flex h-[84px] items-center justify-center text-[12px] text-[#9aa3b5]">
+      <div className="flex h-[84px] items-center justify-center text-[12px] text-[var(--text-muted)]">
         No chart data
       </div>
     );
   }
 
   return (
-    <svg
-      viewBox={`0 0 ${geometry.width} ${geometry.height}`}
-      className="h-[84px] w-full"
-      preserveAspectRatio="none"
-      role="img"
-      aria-hidden="true"
-    >
-      <path d={geometry.areaPath} fill={tone.fillFrom} />
-      <path
-        d={geometry.linePath}
-        fill="none"
-        stroke={tone.stroke}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle
-        cx={geometry.last.x}
-        cy={geometry.last.y}
-        r="3.5"
-        fill="#ffffff"
-        stroke={tone.stroke}
-        strokeWidth="2"
-      />
-    </svg>
+    <div className="h-[84px] w-full [contain:layout]">
+      <ResponsiveContainer width="100%" height="100%" debounce={100}>
+        <AreaChart
+          key={chartKey}
+          data={data}
+          margin={{ top: 10, right: 8, left: 4, bottom: 8 }}
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={tone.stroke} stopOpacity={0.38} />
+              <stop offset="100%" stopColor={tone.stroke} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <YAxis domain={["dataMin", "dataMax"]} hide width={0} />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={tone.stroke}
+            strokeWidth={2.5}
+            fill={`url(#${gradientId})`}
+            fillOpacity={1}
+            isAnimationActive={!reduceMotion}
+            animationBegin={reduceMotion ? 0 : 40 + animationIndex * 70}
+            animationDuration={CHART_ANIMATION_MS}
+            animationEasing="ease-out"
+            dot={false}
+            activeDot={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
 function MetricChartCard({
   label,
   series,
+  chartId,
+  animationIndex = 0,
 }: {
   label: string;
   series: VpsMetricSeries | null | undefined;
+  chartId: string;
+  animationIndex?: number;
 }) {
   const tone = METRIC_TONES[label] ?? METRIC_TONES.CPU;
   const points = series?.points ?? [];
@@ -252,6 +257,8 @@ function MetricChartCard({
         <MetricSparkline
           points={points}
           tone={tone}
+          gradientId={chartId}
+          animationIndex={animationIndex}
         />
       </div>
     </div>
@@ -496,7 +503,7 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]">
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-3">
             <div className="mb-2.5 flex items-center justify-between gap-2 px-1">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 Power controls
@@ -545,15 +552,15 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                 Restart
               </button>
 
-              <div className="mx-0.5 hidden h-8 w-px bg-[#dbe3f3] sm:block" />
+              <div className="mx-0.5 hidden h-8 w-px bg-[var(--border-strong)] sm:block" />
 
               <button
                 type="button"
                 disabled={metricsLoading}
                 onClick={() => void loadMetrics(false)}
-                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface)] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[rgba(91,134,255,0.45)] hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--text-primary)] transition group-hover:bg-[var(--surface)]">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface-muted)] text-[var(--text-primary)] transition group-hover:bg-[var(--surface)]">
                   <FiWifi
                     className={`h-3.5 w-3.5 ${metricsLoading ? "animate-pulse" : ""}`}
                   />
@@ -616,11 +623,13 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
                     label: "Uptime",
                     series: metrics?.uptime,
                   },
-                ].map((item) => (
+                ].map((item, index) => (
                   <MetricChartCard
                     key={item.label}
                     label={item.label}
                     series={item.series}
+                    chartId={`vps-${vm.id}-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
+                    animationIndex={index}
                   />
                 ))}
               </div>
