@@ -284,7 +284,6 @@ export default function OverviewPage() {
         activeDomains={summary.activeDomains}
         failedJobs={summary.failedJobs}
         runningJobs={summary.runningJobs}
-        lastUpdated={lastUpdated}
         loading={{
           vps: loadingSections.vps,
           jobs: loadingSections.jobs,

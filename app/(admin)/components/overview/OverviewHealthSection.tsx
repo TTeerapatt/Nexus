@@ -4,16 +4,17 @@ import Link from "next/link";
 import {
   FiActivity,
   FiAlertCircle,
+  FiArrowRight,
   FiCheckCircle,
   FiClock,
   FiGlobe,
+  FiLayers,
   FiServer,
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
 import { LoadingDots } from "@/app/components/loading";
 import { ICON_TONE } from "@/app/lib/uiTone";
 import type { OverviewData } from "./overviewTypes";
-import { formatDateTime } from "./overviewUtils";
 
 type OverviewHealthSectionProps = {
   overview: OverviewData;
@@ -21,7 +22,6 @@ type OverviewHealthSectionProps = {
   activeDomains: number;
   failedJobs: number;
   runningJobs: number;
-  lastUpdated: string | null;
   loading?: {
     vps?: boolean;
     jobs?: boolean;
@@ -69,7 +69,6 @@ export default function OverviewHealthSection({
   activeDomains,
   failedJobs,
   runningJobs,
-  lastUpdated,
   loading = {},
 }: OverviewHealthSectionProps) {
   const statusLoading =
@@ -91,7 +90,7 @@ export default function OverviewHealthSection({
       : "Current status across connected services";
 
   return (
-    <section className="grid grid-cols-1 gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+    <section className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-[1.15fr_0.85fr]">
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -167,8 +166,11 @@ export default function OverviewHealthSection({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
-        <div className="flex items-start justify-between gap-3">
+      <div className="relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_8px_24px_rgba(36,46,66,0.06)]">
+        <div className="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-[rgba(91,134,255,0.06)] blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-16 -left-8 h-32 w-32 rounded-full bg-[rgba(52,211,153,0.04)] blur-3xl" />
+
+        <div className="relative flex items-start justify-between gap-3">
           <div>
             <h2 className="text-[16px] font-bold text-[var(--text-primary)]">
               Deployment status
@@ -177,64 +179,125 @@ export default function OverviewHealthSection({
               Jenkins job summary
             </p>
           </div>
-          <Link
+          {/* <Link
             href="/ci-cd"
-            className="text-[12px] font-semibold text-[var(--brand-primary)] hover:underline"
+            className="inline-flex shrink-0 items-center gap-1 text-[12px] font-semibold text-[var(--brand-primary)] transition hover:underline"
           >
             View jobs
-          </Link>
+            <FiArrowRight className="h-3.5 w-3.5" />
+          </Link> */}
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-3">
+
+        <div className="relative mt-5 grid flex-1 grid-cols-3 gap-3">
           {[
             {
               label: "Total",
               value: loading.jobs ? null : overview.jobs.length,
-              tone: "text-[var(--text-primary)]",
+              icon: FiLayers,
+              iconTone: ICON_TONE.slate,
+              valueTone: "text-[var(--text-primary)]",
+              card: "border-[var(--border)] bg-[var(--surface-muted)]",
+              accent: "from-white/[0.04] via-transparent to-transparent",
             },
             {
               label: "Running",
               value: loading.jobs ? null : runningJobs,
-              tone: "text-[#5b86ff]",
+              icon: FiActivity,
+              iconTone: ICON_TONE.blue,
+              valueTone: "text-[#93c5fd]",
+              card: "border-[rgba(91,134,255,0.16)] bg-[rgba(91,134,255,0.05)]",
+              accent: "from-[#5b86ff]/15 via-transparent to-transparent",
             },
             {
               label: "Failed",
               value: loading.jobs ? null : failedJobs,
-              tone: "text-[#f87171]",
+              icon: FiAlertCircle,
+              iconTone: ICON_TONE.rose,
+              valueTone: "text-[#fca5a5]",
+              card: "border-[rgba(248,113,113,0.16)] bg-[rgba(248,113,113,0.05)]",
+              accent: "from-[#f87171]/15 via-transparent to-transparent",
             },
-          ].map((item) => (
-            <div key={item.label} className="rounded-xl bg-[var(--surface-muted)] px-3 py-4">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-                {item.label}
-              </p>
-              <p className={`mt-2 text-[24px] font-bold ${item.tone}`}>
-                {item.value === null ? (
-                  <LoadingDots className="text-[var(--text-muted)]" />
-                ) : (
-                  item.value
-                )}
-              </p>
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.label}
+                className={`relative flex min-h-[120px] min-w-0 flex-col overflow-hidden rounded-2xl border px-3 py-4 ${item.card}`}
+              >
+                <div
+                  className={`pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b ${item.accent}`}
+                />
+                <div className="relative flex items-center justify-between gap-2">
+                  <span
+                    className={`inline-flex h-8 w-8 items-center justify-center rounded-xl ${item.iconTone}`}
+                  >
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                    {item.label}
+                  </span>
+                </div>
+                <div className="relative mt-auto flex flex-1 items-end pt-4">
+                  <p
+                    className={`text-[28px] font-bold leading-none tabular-nums tracking-tight ${item.valueTone}`}
+                  >
+                    {item.value === null ? (
+                      <LoadingDots className="text-[var(--text-muted)]" />
+                    ) : (
+                      item.value
+                    )}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {!loading.jobs && overview.jobs.length > 0 ? (
+          <div className="relative mt-4">
+            <div className="mb-2 flex items-center justify-between text-[11px] font-medium text-[var(--text-muted)]">
+              <span>Pipeline mix</span>
+              <span>
+                {Math.max(
+                  0,
+                  overview.jobs.length - failedJobs - runningJobs
+                )}{" "}
+                healthy
+              </span>
             </div>
-          ))}
-        </div>
-        <div
-          className={`mt-5 flex items-center gap-2 rounded-xl px-4 py-3 text-[12px] font-medium ${
-            hasIssues
-              ? "bg-[rgba(248,113,113,0.12)] text-[#fca5a5]"
-              : "bg-[rgba(52,211,153,0.12)] text-[#6ee7b7]"
-          }`}
-        >
-          <FiClock className="h-4 w-4 shrink-0" />
-          {statusLoading ? (
-            <>
-              <span>Loading current status</span>
-              <LoadingDots
-                className={hasIssues ? "text-[#fca5a5]" : "text-[#6ee7b7]"}
-              />
-            </>
-          ) : (
-            `Last updated ${lastUpdated ? formatDateTime(lastUpdated) : "—"}`
-          )}
-        </div>
+            <div className="flex h-2 overflow-hidden rounded-full bg-[var(--surface-muted)]">
+              {(() => {
+                const total = overview.jobs.length || 1;
+                const healthy = Math.max(
+                  0,
+                  overview.jobs.length - failedJobs - runningJobs
+                );
+                return (
+                  <>
+                    {healthy > 0 ? (
+                      <span
+                        className="bg-[#34d399]"
+                        style={{ width: `${(healthy / total) * 100}%` }}
+                      />
+                    ) : null}
+                    {runningJobs > 0 ? (
+                      <span
+                        className="bg-[#5b86ff]"
+                        style={{ width: `${(runningJobs / total) * 100}%` }}
+                      />
+                    ) : null}
+                    {failedJobs > 0 ? (
+                      <span
+                        className="bg-[#f87171]"
+                        style={{ width: `${(failedJobs / total) * 100}%` }}
+                      />
+                    ) : null}
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        ) : null}
       </div>
     </section>
   );
