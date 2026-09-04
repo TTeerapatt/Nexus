@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FiRefreshCw } from "react-icons/fi";
 import { MdCloud } from "react-icons/md";
 import vpsAPI, {
   type VpsVirtualMachine,
@@ -23,11 +22,9 @@ type VpsListApiResult =
 export default function VpsMain() {
   const [vms, setVms] = useState<VpsVirtualMachine[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchVms = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
+  const fetchVms = useCallback(async () => {
+    setLoading(true);
 
     try {
       const result = (await vpsAPI.getVpsAll()) as VpsListApiResult;
@@ -48,7 +45,6 @@ export default function VpsMain() {
       setVms([]);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   }, []);
 
@@ -87,18 +83,6 @@ export default function VpsMain() {
               </p> */}
             </div>
           </div>
-
-          {/* <button
-            type="button"
-            onClick={() => void fetchVms(true)}
-            disabled={loading || refreshing}
-            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <FiRefreshCw
-              className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </button> */}
         </div>
 
         {!loading && vms.length > 0 ? (
@@ -153,7 +137,7 @@ export default function VpsMain() {
             No VPS found
           </p>
           <p className="mt-1 text-[13px] text-[var(--text-muted)]">
-            Check Hostinger API token or try Refresh
+            Check Hostinger API token configuration
           </p>
         </div>
       ) : (
@@ -163,7 +147,7 @@ export default function VpsMain() {
               key={vm.id}
               vm={vm}
               onChanged={() => {
-                void fetchVms(true);
+                void fetchVms();
               }}
             />
           ))}

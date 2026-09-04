@@ -74,12 +74,10 @@ export default function BiMain() {
   const [data, setData] = useState<BiData>(EMPTY_BI_DATA);
   const [loadingSections, setLoadingSections] =
     useState<BiLoadingState>(INITIAL_BI_LOADING);
-  const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [rangeDays, setRangeDays] = useState<BiRangeDays>(30);
 
-  const fetchBi = useCallback(async (days: BiRangeDays, isRefresh = false) => {
-    setRefreshing(isRefresh);
+  const fetchBi = useCallback(async (days: BiRangeDays) => {
     setLoadingSections(INITIAL_BI_LOADING);
 
     const loadSection = async <T,>(
@@ -119,7 +117,6 @@ export default function BiMain() {
     ]);
 
     setLastUpdated(new Date().toISOString());
-    setRefreshing(false);
   }, []);
 
   useEffect(() => {
@@ -174,11 +171,9 @@ export default function BiMain() {
     <div className="space-y-5">
       <BiHeader
         loading={loading}
-        refreshing={refreshing}
         lastUpdated={lastUpdated}
         rangeDays={rangeDays}
         onRangeChange={setRangeDays}
-        onRefresh={() => void fetchBi(rangeDays, true)}
       />
 
       <BiKpiGrid kpis={kpis} icons={KPI_ICONS} loading={loading} />

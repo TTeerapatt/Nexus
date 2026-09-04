@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FiRefreshCw } from "react-icons/fi";
 import { GoWorkflow } from "react-icons/go";
 import ciCdAPI, { type CiCdJobItem } from "@/app/services/ciCd/ciCdAPI";
 import { popup } from "@/app/ui/popUp";
@@ -21,11 +20,9 @@ type JobListApiResult =
 export default function CiCdMain() {
   const [jobs, setJobs] = useState<CiCdJobItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchJobs = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
+  const fetchJobs = useCallback(async () => {
+    setLoading(true);
 
     try {
       const result = (await ciCdAPI.getJobs()) as JobListApiResult;
@@ -46,7 +43,6 @@ export default function CiCdMain() {
       setJobs([]);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   }, []);
 
@@ -76,18 +72,6 @@ export default function CiCdMain() {
               </h1>
             </div>
           </div>
-
-          {/* <button
-            type="button"
-            onClick={() => void fetchJobs(true)}
-            disabled={loading || refreshing}
-            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <FiRefreshCw
-              className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </button> */}
         </div>
 
         {!loading && jobs.length > 0 ? (
@@ -146,7 +130,7 @@ export default function CiCdMain() {
             No Jenkins jobs found
           </p>
           <p className="mt-1 text-[13px] text-[var(--text-muted)]">
-            Check Jenkins connection or try Refresh
+            Check Jenkins connection configuration
           </p>
         </div>
       ) : (

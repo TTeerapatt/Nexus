@@ -78,11 +78,9 @@ export default function OverviewPage() {
   const [overview, setOverview] = useState<OverviewData>(EMPTY_OVERVIEW);
   const [loadingSections, setLoadingSections] =
     useState<OverviewLoadingState>(INITIAL_LOADING_STATE);
-  const [refreshing, setRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  const fetchOverview = useCallback(async (isRefresh = false) => {
-    setRefreshing(isRefresh);
+  const fetchOverview = useCallback(async () => {
     setLoadingSections(INITIAL_LOADING_STATE);
 
     const loadSection = async <T,>(
@@ -115,7 +113,6 @@ export default function OverviewPage() {
       loadSection<VpsVirtualMachine>("vps", vpsAPI.getVpsAll()),
     ]);
     setLastUpdated(new Date().toISOString());
-    setRefreshing(false);
   }, []);
 
   useEffect(() => {
@@ -236,12 +233,7 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-5">
-      <OverviewHeader
-        loading={loading}
-        refreshing={refreshing}
-        lastUpdated={lastUpdated}
-        onRefresh={() => void fetchOverview(true)}
-      />
+      <OverviewHeader loading={loading} lastUpdated={lastUpdated} />
 
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <OverviewMetricCard

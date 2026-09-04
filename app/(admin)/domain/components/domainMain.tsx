@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FiGlobe, FiRefreshCw } from "react-icons/fi";
+import { FiGlobe } from "react-icons/fi";
 import domainAPI, {
   type DomainListItem,
 } from "@/app/services/domain/domainAPI";
@@ -22,11 +22,9 @@ type DomainListApiResult =
 export default function DomainMain() {
   const [domains, setDomains] = useState<DomainListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchDomains = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
+  const fetchDomains = useCallback(async () => {
+    setLoading(true);
 
     try {
       const result = (await domainAPI.getDomainsAll()) as DomainListApiResult;
@@ -47,7 +45,6 @@ export default function DomainMain() {
       setDomains([]);
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   }, []);
 
@@ -87,18 +84,6 @@ export default function DomainMain() {
               </p> */}
             </div>
           </div>
-
-          {/* <button
-            type="button"
-            onClick={() => void fetchDomains(true)}
-            disabled={loading || refreshing}
-            className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <FiRefreshCw
-              className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
-            />
-            Refresh
-          </button> */}
         </div>
 
         {!loading && domains.length > 0 ? (
@@ -153,7 +138,7 @@ export default function DomainMain() {
             No domains found
           </p>
           <p className="mt-1 text-[13px] text-[var(--text-muted)]">
-            Check Hostinger API token or try Refresh
+            Check Hostinger API token configuration
           </p>
         </div>
       ) : (
