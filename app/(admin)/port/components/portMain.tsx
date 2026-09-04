@@ -8,6 +8,7 @@ import resourceTypeAPI, {
 } from "@/app/services/resourceType/resourceTypeAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
+import { useTabPermission } from "@/app/hooks/useTabPermission";
 import PortFilter from "./portFilter";
 import PortTable from "./portTable";
 import PortFormModal from "./portAction/portFormModal";
@@ -47,6 +48,7 @@ type ResourceTypeListApiResult =
 
 export default function PortMain() {
   const { withLoading } = useLoading();
+  const { canAdd, canEdit, canDelete } = useTabPermission("port");
   const [ports, setPorts] = useState<PortItem[]>([]);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [resourceTypes, setResourceTypes] = useState<ResourceTypeItem[]>([]);
@@ -259,40 +261,48 @@ export default function PortMain() {
         onProjectTypeChange={setProjectType}
         onResourceTypeChange={setResourceTypeId}
         onClear={handleClearFilter}
-        onAdd={() => setCreateOpen(true)}
+        onAdd={canAdd ? () => setCreateOpen(true) : undefined}
       />
 
       <PortTable
         ports={filteredPorts}
         loading={loading}
         togglingId={togglingId}
-        onEdit={setEditingPort}
-        onDelete={(port) => void handleDeletePort(port)}
-        onToggleActive={(port) => void handleToggleActive(port)}
+        onEdit={canEdit ? setEditingPort : undefined}
+        onDelete={
+          canDelete ? (port) => void handleDeletePort(port) : undefined
+        }
+        onToggleActive={
+          canEdit ? (port) => void handleToggleActive(port) : undefined
+        }
       />
 
-      <PortFormModal
-        open={createOpen}
-        projects={projects}
-        resourceTypes={resourceTypes}
-        usedPairs={usedPairs}
-        onClose={() => setCreateOpen(false)}
-        onSaved={() => {
-          void fetchPorts();
-        }}
-      />
+      {canAdd ? (
+        <PortFormModal
+          open={createOpen}
+          projects={projects}
+          resourceTypes={resourceTypes}
+          usedPairs={usedPairs}
+          onClose={() => setCreateOpen(false)}
+          onSaved={() => {
+            void fetchPorts();
+          }}
+        />
+      ) : null}
 
-      <PortFormModal
-        open={editingPort != null}
-        port={editingPort}
-        projects={projects}
-        resourceTypes={resourceTypes}
-        usedPairs={usedPairs}
-        onClose={() => setEditingPort(null)}
-        onSaved={() => {
-          void fetchPorts();
-        }}
-      />
+      {canEdit ? (
+        <PortFormModal
+          open={editingPort != null}
+          port={editingPort}
+          projects={projects}
+          resourceTypes={resourceTypes}
+          usedPairs={usedPairs}
+          onClose={() => setEditingPort(null)}
+          onSaved={() => {
+            void fetchPorts();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

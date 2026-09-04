@@ -39,8 +39,11 @@ export default function AdminTable({
   onEdit,
   onDelete,
 }: AdminTableProps) {
-  const columns = useMemo<TableColumn<AdminItem>[]>(
-    () => [
+  const canEdit = typeof onEdit === "function";
+  const canDelete = typeof onDelete === "function";
+
+  const columns = useMemo<TableColumn<AdminItem>[]>(() => {
+    const cols: TableColumn<AdminItem>[] = [
       {
         key: "index",
         title: "No.",
@@ -51,7 +54,9 @@ export default function AdminTable({
         key: "display_name",
         title: "Name",
         render: (admin) => (
-          <span className="font-semibold text-[var(--text-primary)]">{admin.display_name}</span>
+          <span className="font-semibold text-[var(--text-primary)]">
+            {admin.display_name}
+          </span>
         ),
       },
       {
@@ -75,12 +80,10 @@ export default function AdminTable({
         title: "Last login",
         render: (admin) => formatDateTime(admin.last_login_at),
       },
-      // {
-      //   key: "created_at",
-      //   title: "Created date",
-      //   render: (admin) => formatDateTime(admin.created_at),
-      // },
-      {
+    ];
+
+    if (canEdit || canDelete) {
+      cols.push({
         key: "actions",
         title: "Actions",
         headerClassName: "text-right",
@@ -89,14 +92,17 @@ export default function AdminTable({
           <TableIconActions
             editLabel={`Edit ${admin.display_name}`}
             deleteLabel={`Delete ${admin.display_name}`}
+            showEdit={canEdit}
+            showDelete={canDelete}
             onEdit={() => onEdit?.(admin)}
             onDelete={() => onDelete?.(admin)}
           />
         ),
-      },
-    ],
-    [onDelete, onEdit]
-  );
+      });
+    }
+
+    return cols;
+  }, [canDelete, canEdit, onDelete, onEdit]);
 
   return (
     <DataTable

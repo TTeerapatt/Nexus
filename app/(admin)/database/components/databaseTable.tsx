@@ -35,8 +35,12 @@ export default function DatabaseTable({
   onDelete,
   onToggleActive,
 }: DatabaseTableProps) {
-  const columns = useMemo<TableColumn<DatabaseItem>[]>(
-    () => [
+  const canEdit = typeof onEdit === "function";
+  const canDelete = typeof onDelete === "function";
+  const canToggle = typeof onToggleActive === "function";
+
+  const columns = useMemo<TableColumn<DatabaseItem>[]>(() => {
+    const cols: TableColumn<DatabaseItem>[] = [
       {
         key: "index",
         title: "No.",
@@ -47,7 +51,9 @@ export default function DatabaseTable({
         key: "name",
         title: "Name",
         render: (database) => (
-          <span className="font-semibold text-[var(--text-primary)]">{database.name}</span>
+          <span className="font-semibold text-[var(--text-primary)]">
+            {database.name}
+          </span>
         ),
       },
       {
@@ -83,6 +89,17 @@ export default function DatabaseTable({
         key: "is_active",
         title: "Status",
         render: (database) => {
+          const label = database.is_active ? "Active" : "Inactive";
+          const tone = getActiveTone(database.is_active);
+          if (!canToggle) {
+            return (
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold ${tone}`}
+              >
+                {label}
+              </span>
+            );
+          }
           const busy = togglingId === database.id;
           return (
             <button
@@ -90,9 +107,9 @@ export default function DatabaseTable({
               disabled={busy}
               onClick={() => onToggleActive?.(database)}
               title={database.is_active ? "Deactivate" : "Activate"}
-              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${getActiveTone(database.is_active)}`}
+              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${tone}`}
             >
-              {busy ? "..." : database.is_active ? "Active" : "Inactive"}
+              {busy ? "..." : label}
             </button>
           );
         },
@@ -102,7 +119,10 @@ export default function DatabaseTable({
         title: "Created at",
         render: (database) => formatDateTime(database.created_at),
       },
-      {
+    ];
+
+    if (canEdit || canDelete) {
+      cols.push({
         key: "actions",
         title: "Actions",
         headerClassName: "text-right",
@@ -111,14 +131,17 @@ export default function DatabaseTable({
           <TableIconActions
             editLabel={`Edit ${database.name}`}
             deleteLabel={`Delete ${database.name}`}
+            showEdit={canEdit}
+            showDelete={canDelete}
             onEdit={() => onEdit?.(database)}
             onDelete={() => onDelete?.(database)}
           />
         ),
-      },
-    ],
-    [onDelete, onEdit, onToggleActive, togglingId]
-  );
+      });
+    }
+
+    return cols;
+  }, [canDelete, canEdit, canToggle, onDelete, onEdit, onToggleActive, togglingId]);
 
   return (
     <DataTable

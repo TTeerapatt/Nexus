@@ -7,6 +7,7 @@ import resourceTypeAPI, {
 } from "@/app/services/resourceType/resourceTypeAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
+import { useTabPermission } from "@/app/hooks/useTabPermission";
 import ProjectFilter from "./projectFilter";
 import ProjectTable from "./projectTable";
 import ProjectFormModal from "./projectAction/projectFormModal";
@@ -35,6 +36,7 @@ type ResourceTypeListApiResult =
 
 export default function ProjectMain() {
   const { withLoading } = useLoading();
+  const { canAdd, canEdit, canDelete } = useTabPermission("projects");
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [resourceTypes, setResourceTypes] = useState<ResourceTypeItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -223,36 +225,44 @@ export default function ProjectMain() {
         onProjectTypeChange={setProjectType}
         onResourceTypeChange={setResourceTypeId}
         onClear={handleClearFilter}
-        onAdd={() => setCreateOpen(true)}
+        onAdd={canAdd ? () => setCreateOpen(true) : undefined}
       />
 
       <ProjectTable
         projects={filteredProjects}
         loading={loading}
         togglingId={togglingId}
-        onEdit={setEditingProject}
-        onDelete={(project) => void handleDeleteProject(project)}
-        onToggleActive={(project) => void handleToggleActive(project)}
+        onEdit={canEdit ? setEditingProject : undefined}
+        onDelete={
+          canDelete ? (project) => void handleDeleteProject(project) : undefined
+        }
+        onToggleActive={
+          canEdit ? (project) => void handleToggleActive(project) : undefined
+        }
       />
 
-      <ProjectFormModal
-        open={createOpen}
-        resourceTypes={resourceTypes}
-        onClose={() => setCreateOpen(false)}
-        onSaved={() => {
-          void fetchProjects();
-        }}
-      />
+      {canAdd ? (
+        <ProjectFormModal
+          open={createOpen}
+          resourceTypes={resourceTypes}
+          onClose={() => setCreateOpen(false)}
+          onSaved={() => {
+            void fetchProjects();
+          }}
+        />
+      ) : null}
 
-      <ProjectFormModal
-        open={editingProject != null}
-        project={editingProject}
-        resourceTypes={resourceTypes}
-        onClose={() => setEditingProject(null)}
-        onSaved={() => {
-          void fetchProjects();
-        }}
-      />
+      {canEdit ? (
+        <ProjectFormModal
+          open={editingProject != null}
+          project={editingProject}
+          resourceTypes={resourceTypes}
+          onClose={() => setEditingProject(null)}
+          onSaved={() => {
+            void fetchProjects();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

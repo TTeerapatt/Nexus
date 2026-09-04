@@ -32,6 +32,7 @@ import vpsAPI, {
 } from "@/app/services/vps/vpsAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
+import { useTabPermission } from "@/app/hooks/useTabPermission";
 
 const SPARKLINE_MAX_POINTS = 40;
 
@@ -275,6 +276,7 @@ function primaryIp(vm: VpsVirtualMachine): string {
 
 export default function VpsCard({ vm, onChanged }: VpsCardProps) {
   const { withLoading } = useLoading();
+  const { canEdit } = useTabPermission("vps");
   const [open, setOpen] = useState(false);
   const [metrics, setMetrics] = useState<VpsMetrics | null>(null);
   const [metricsLoading, setMetricsLoading] = useState(false);
@@ -516,43 +518,47 @@ export default function VpsCard({ vm, onChanged }: VpsCardProps) {
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5">
-              <button
-                type="button"
-                disabled={actionBusy || !canStart}
-                onClick={() => void handlePower("start")}
-                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#16a34a] px-4 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(22,163,74,0.28)] transition hover:bg-[#15803d] hover:shadow-[0_8px_18px_rgba(22,163,74,0.34)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#86efac] disabled:shadow-none disabled:opacity-70"
-              >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
-                  <FiPlay className="h-3.5 w-3.5 fill-current" />
-                </span>
-                Start
-              </button>
+              {canEdit ? (
+                <>
+                  <button
+                    type="button"
+                    disabled={actionBusy || !canStart}
+                    onClick={() => void handlePower("start")}
+                    className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#16a34a] px-4 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(22,163,74,0.28)] transition hover:bg-[#15803d] hover:shadow-[0_8px_18px_rgba(22,163,74,0.34)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#86efac] disabled:shadow-none disabled:opacity-70"
+                  >
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
+                      <FiPlay className="h-3.5 w-3.5 fill-current" />
+                    </span>
+                    Start
+                  </button>
 
-              <button
-                type="button"
-                disabled={actionBusy || !canStop}
-                onClick={() => void handlePower("stop")}
-                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#dc2626] px-4 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(220,38,38,0.28)] transition hover:bg-[#b91c1c] hover:shadow-[0_8px_18px_rgba(220,38,38,0.34)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#fca5a5] disabled:shadow-none disabled:opacity-70"
-              >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
-                  <FiSquare className="h-3.5 w-3.5 fill-current" />
-                </span>
-                Stop
-              </button>
+                  <button
+                    type="button"
+                    disabled={actionBusy || !canStop}
+                    onClick={() => void handlePower("stop")}
+                    className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[#dc2626] px-4 text-[13px] font-semibold text-white shadow-[0_6px_14px_rgba(220,38,38,0.28)] transition hover:bg-[#b91c1c] hover:shadow-[0_8px_18px_rgba(220,38,38,0.34)] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#fca5a5] disabled:shadow-none disabled:opacity-70"
+                  >
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
+                      <FiSquare className="h-3.5 w-3.5 fill-current" />
+                    </span>
+                    Stop
+                  </button>
 
-              <button
-                type="button"
-                disabled={actionBusy || !canRestart}
-                onClick={() => void handlePower("restart")}
-                className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#93b0f5] disabled:shadow-none disabled:opacity-70"
-              >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
-                  <FiRefreshCw className="h-3.5 w-3.5" />
-                </span>
-                Restart
-              </button>
+                  <button
+                    type="button"
+                    disabled={actionBusy || !canRestart}
+                    onClick={() => void handlePower("restart")}
+                    className="group inline-flex h-11 cursor-pointer items-center gap-2.5 rounded-xl bg-[var(--surface-raised)] px-4 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[var(--surface-soft)] hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#93b0f5] disabled:shadow-none disabled:opacity-70"
+                  >
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--surface)]/20 transition group-hover:bg-[var(--surface)]/25">
+                      <FiRefreshCw className="h-3.5 w-3.5" />
+                    </span>
+                    Restart
+                  </button>
 
-              <div className="mx-0.5 hidden h-8 w-px bg-[var(--border-strong)] sm:block" />
+                  <div className="mx-0.5 hidden h-8 w-px bg-[var(--border-strong)] sm:block" />
+                </>
+              ) : null}
 
               <button
                 type="button"

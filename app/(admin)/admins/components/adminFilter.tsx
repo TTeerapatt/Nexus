@@ -67,24 +67,26 @@ export default function AdminFilter({
             </div>
           </FilterField>
 
-          <button
-            type="button"
-            onClick={onClear}
-            className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface)] hover:shadow-md active:scale-[0.98]"
-          >
-            <FiXCircle className="h-4 w-4" />
-            Clear filters
-          </button>
-        </div>
-
         <button
           type="button"
-          onClick={onAdd}
-          className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 text-[14px] font-semibold text-white shadow-sm transition hover:brightness-110 hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40"
+          onClick={onClear}
+          className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-[13px] font-semibold text-[var(--text-primary)] shadow-sm transition hover:border-[var(--brand-primary)] hover:bg-[var(--surface)] hover:shadow-md active:scale-[0.98]"
         >
-          <FiPlus className="h-4 w-4" />
-          Add admin
+          <FiXCircle className="h-4 w-4" />
+          Clear filters
         </button>
+        </div>
+
+        {onAdd ? (
+          <button
+            type="button"
+            onClick={onAdd}
+            className="inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-xl bg-[var(--brand-primary)] px-5 text-[14px] font-semibold text-white shadow-sm transition hover:brightness-110 hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/40"
+          >
+            <FiPlus className="h-4 w-4" />
+            Add admin
+          </button>
+        ) : null}
       </div>
     </FilterPanel>
   );

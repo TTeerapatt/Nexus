@@ -70,8 +70,12 @@ export default function PortTable({
   onDelete,
   onToggleActive,
 }: PortTableProps) {
-  const columns = useMemo<TableColumn<PortItem>[]>(
-    () => [
+  const canEdit = typeof onEdit === "function";
+  const canDelete = typeof onDelete === "function";
+  const canToggle = typeof onToggleActive === "function";
+
+  const columns = useMemo<TableColumn<PortItem>[]>(() => {
+    const cols: TableColumn<PortItem>[] = [
       {
         key: "index",
         title: "No.",
@@ -119,19 +123,21 @@ export default function PortTable({
           </span>
         ),
       },
-      // {
-      //   key: "description",
-      //   title: "Description",
-      //   render: (port) => (
-      //     <span className="text-[var(--text-secondary)]">
-      //       {port.description?.trim() ? port.description : "-"}
-      //     </span>
-      //   ),
-      // },
       {
         key: "is_active",
         title: "Status",
         render: (port) => {
+          const label = port.is_active ? "Active" : "Inactive";
+          const tone = getActiveTone(port.is_active);
+          if (!canToggle) {
+            return (
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold ${tone}`}
+              >
+                {label}
+              </span>
+            );
+          }
           const busy = togglingId === port.id;
           return (
             <button
@@ -139,9 +145,9 @@ export default function PortTable({
               disabled={busy}
               onClick={() => onToggleActive?.(port)}
               title={port.is_active ? "Deactivate" : "Activate"}
-              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${getActiveTone(port.is_active)}`}
+              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${tone}`}
             >
-              {busy ? "..." : port.is_active ? "Active" : "Inactive"}
+              {busy ? "..." : label}
             </button>
           );
         },
@@ -151,12 +157,10 @@ export default function PortTable({
         title: "Created at",
         render: (port) => formatDateTime(port.created_at),
       },
-      // {
-      //   key: "updated_at",
-      //   title: "Updated at",
-      //   render: (port) => formatDateTime(port.updated_at),
-      // },
-      {
+    ];
+
+    if (canEdit || canDelete) {
+      cols.push({
         key: "actions",
         title: "Actions",
         headerClassName: "text-right",
@@ -165,14 +169,17 @@ export default function PortTable({
           <TableIconActions
             editLabel={`Edit port ${port.port_number}`}
             deleteLabel={`Delete port ${port.port_number}`}
+            showEdit={canEdit}
+            showDelete={canDelete}
             onEdit={() => onEdit?.(port)}
             onDelete={() => onDelete?.(port)}
           />
         ),
-      },
-    ],
-    [onDelete, onEdit, onToggleActive, togglingId]
-  );
+      });
+    }
+
+    return cols;
+  }, [canDelete, canEdit, canToggle, onDelete, onEdit, onToggleActive, togglingId]);
 
   return (
     <DataTable

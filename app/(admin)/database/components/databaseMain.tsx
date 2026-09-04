@@ -12,6 +12,7 @@ import projectAPI, {
 } from "@/app/services/project/projectAPI";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
+import { useTabPermission } from "@/app/hooks/useTabPermission";
 import DatabaseFilter from "./databaseFilter";
 import DatabaseTable from "./databaseTable";
 import DatabaseFormModal from "./databaseAction/databaseFormModal";
@@ -51,6 +52,7 @@ type ProjectListApiResult =
 
 export default function DatabaseMain() {
   const { withLoading } = useLoading();
+  const { canAdd, canEdit, canDelete } = useTabPermission("database");
   const [databases, setDatabases] = useState<DatabaseItem[]>([]);
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [allDatabases, setAllDatabases] = useState<AllDatabaseItem[]>([]);
@@ -264,38 +266,50 @@ export default function DatabaseMain() {
         onProjectChange={setProjectId}
         onAllDatabaseChange={setAllDatabaseId}
         onClear={handleClearFilter}
-        onAdd={() => setCreateOpen(true)}
+        onAdd={canAdd ? () => setCreateOpen(true) : undefined}
       />
 
       <DatabaseTable
         databases={filteredDatabases}
         loading={loading}
         togglingId={togglingId}
-        onEdit={setEditingDatabase}
-        onDelete={(database) => void handleDeleteDatabase(database)}
-        onToggleActive={(database) => void handleToggleActive(database)}
+        onEdit={canEdit ? setEditingDatabase : undefined}
+        onDelete={
+          canDelete
+            ? (database) => void handleDeleteDatabase(database)
+            : undefined
+        }
+        onToggleActive={
+          canEdit
+            ? (database) => void handleToggleActive(database)
+            : undefined
+        }
       />
 
-      <DatabaseFormModal
-        open={createOpen}
-        projects={projects}
-        allDatabases={allDatabases}
-        onClose={() => setCreateOpen(false)}
-        onSaved={() => {
-          void fetchDatabases();
-        }}
-      />
+      {canAdd ? (
+        <DatabaseFormModal
+          open={createOpen}
+          projects={projects}
+          allDatabases={allDatabases}
+          onClose={() => setCreateOpen(false)}
+          onSaved={() => {
+            void fetchDatabases();
+          }}
+        />
+      ) : null}
 
-      <DatabaseFormModal
-        open={editingDatabase != null}
-        database={editingDatabase}
-        projects={projects}
-        allDatabases={allDatabases}
-        onClose={() => setEditingDatabase(null)}
-        onSaved={() => {
-          void fetchDatabases();
-        }}
-      />
+      {canEdit ? (
+        <DatabaseFormModal
+          open={editingDatabase != null}
+          database={editingDatabase}
+          projects={projects}
+          allDatabases={allDatabases}
+          onClose={() => setEditingDatabase(null)}
+          onSaved={() => {
+            void fetchDatabases();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

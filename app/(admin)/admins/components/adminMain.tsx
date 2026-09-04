@@ -5,6 +5,7 @@ import adminAPI, { type AdminItem } from "@/app/services/admin/adminAPI";
 import { getStoredAdmin } from "@/app/lib/adminStorage";
 import { popup } from "@/app/ui/popUp";
 import { useLoading } from "@/app/providers/LoadingProvider";
+import { useTabPermission } from "@/app/hooks/useTabPermission";
 import AdminCreateModal from "./adminAction/adminFormModal";
 import AdminFilter from "./adminFilter";
 import AdminTable from "./adminTable";
@@ -22,6 +23,7 @@ type AdminListApiResult =
 
 export default function AdminMain() {
   const { withLoading } = useLoading();
+  const { canAdd, canEdit, canDelete } = useTabPermission("admins");
   const [admins, setAdmins] = useState<AdminItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -142,35 +144,41 @@ export default function AdminMain() {
         onSearchChange={setSearch}
         onRoleChange={setRole}
         onClear={handleClearFilter}
-        onAdd={() => setCreateOpen(true)}
+        onAdd={canAdd ? () => setCreateOpen(true) : undefined}
       />
 
       <AdminTable
         admins={filteredAdmins}
         loading={loading}
-        onEdit={handleEditAdmin}
-        onDelete={handleDeleteAdmin}
+        onEdit={canEdit ? handleEditAdmin : undefined}
+        onDelete={
+          canDelete ? (admin) => void handleDeleteAdmin(admin) : undefined
+        }
       />
 
-      <AdminCreateModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        onCreated={() => {
-          void fetchAdmins();
-        }}
-      />
+      {canAdd ? (
+        <AdminCreateModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          onCreated={() => {
+            void fetchAdmins();
+          }}
+        />
+      ) : null}
 
-      <AdminCreateModal
-        open={editingAdminId != null}
-        adminId={editingAdminId}
-        onClose={() => setEditingAdminId(null)}
-        onCreated={() => {
-          void fetchAdmins();
-        }}
-        onUpdated={() => {
-          void fetchAdmins();
-        }}
-      />
+      {canEdit ? (
+        <AdminCreateModal
+          open={editingAdminId != null}
+          adminId={editingAdminId}
+          onClose={() => setEditingAdminId(null)}
+          onCreated={() => {
+            void fetchAdmins();
+          }}
+          onUpdated={() => {
+            void fetchAdmins();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

@@ -46,8 +46,12 @@ export default function ProjectTable({
   onDelete,
   onToggleActive,
 }: ProjectTableProps) {
-  const columns = useMemo<TableColumn<ProjectItem>[]>(
-    () => [
+  const canEdit = typeof onEdit === "function";
+  const canDelete = typeof onDelete === "function";
+  const canToggle = typeof onToggleActive === "function";
+
+  const columns = useMemo<TableColumn<ProjectItem>[]>(() => {
+    const cols: TableColumn<ProjectItem>[] = [
       {
         key: "index",
         title: "No.",
@@ -58,7 +62,9 @@ export default function ProjectTable({
         key: "name",
         title: "Name",
         render: (project) => (
-          <span className="font-semibold text-[var(--text-primary)]">{project.name}</span>
+          <span className="font-semibold text-[var(--text-primary)]">
+            {project.name}
+          </span>
         ),
       },
       {
@@ -87,6 +93,17 @@ export default function ProjectTable({
         key: "is_active",
         title: "Status",
         render: (project) => {
+          const label = project.is_active ? "Active" : "Inactive";
+          const tone = getActiveTone(project.is_active);
+          if (!canToggle) {
+            return (
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold ${tone}`}
+              >
+                {label}
+              </span>
+            );
+          }
           const busy = togglingId === project.id;
           return (
             <button
@@ -94,9 +111,9 @@ export default function ProjectTable({
               disabled={busy}
               onClick={() => onToggleActive?.(project)}
               title={project.is_active ? "Deactivate" : "Activate"}
-              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${getActiveTone(project.is_active)}`}
+              className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold transition disabled:cursor-wait disabled:opacity-60 ${tone}`}
             >
-              {busy ? "..." : project.is_active ? "Active" : "Inactive"}
+              {busy ? "..." : label}
             </button>
           );
         },
@@ -106,12 +123,10 @@ export default function ProjectTable({
         title: "Created at",
         render: (project) => formatDateTime(project.created_at),
       },
-      // {
-      //   key: "updated_at",
-      //   title: "Updated at",
-      //   render: (project) => formatDateTime(project.updated_at),
-      // },
-      {
+    ];
+
+    if (canEdit || canDelete) {
+      cols.push({
         key: "actions",
         title: "Actions",
         headerClassName: "text-right",
@@ -120,14 +135,17 @@ export default function ProjectTable({
           <TableIconActions
             editLabel={`Edit ${project.name}`}
             deleteLabel={`Delete ${project.name}`}
+            showEdit={canEdit}
+            showDelete={canDelete}
             onEdit={() => onEdit?.(project)}
             onDelete={() => onDelete?.(project)}
           />
         ),
-      },
-    ],
-    [onDelete, onEdit, onToggleActive, togglingId]
-  );
+      });
+    }
+
+    return cols;
+  }, [canDelete, canEdit, canToggle, onDelete, onEdit, onToggleActive, togglingId]);
 
   return (
     <DataTable
